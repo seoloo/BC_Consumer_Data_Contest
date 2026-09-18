@@ -62,7 +62,7 @@ Future Stress가 음수이면 현재 소비구조가 미래 인구감소에 더 
 ```text
 notebooks/    실행 출력과 인증정보를 제거한 분석 노트북
 assets/       포트폴리오용 결과 이미지
-docs/         최종 발표자료와 추가 분석 페이지
+docs/         최종 발표자료
 data/         데이터 비공개 사유와 재현 안내
 results/      발표자료에 사용한 소규모 집계 결과 CSV
 scripts/      공개용 노트북 정리 스크립트
@@ -83,5 +83,3 @@ scripts/      공개용 노트북 정리 스크립트
 ## 발표자료
 
 - [최종 발표자료](docs/bc_card_future_consumer_stress.pptx)
-- [데이터 모델링 흐름도](docs/modeling_pipeline_slide.pptx)
-- [현재 성장 사례의 65.4%가 미래 취약으로 분류된 핵심 발견 페이지](docs/core_finding_65_percent_slide.pptx)
