@@ -1,0 +1,183 @@
+<!-- size: 1600x2400 -->
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>Project Overview</title>
+<link rel="stylesheet" href="_style.css">
+<style>
+  .problem { background: linear-gradient(120deg, #1B2333 0%, #26345A 100%); color: #fff; border-radius: 18px; padding: 26px 28px; }
+  .problem .tag-line { font-size: 13.5px; font-weight: 700; color: #9FB4FF; letter-spacing: .05em; margin-bottom: 10px; }
+  .problem h2 { font-size: 26px; font-weight: 800; line-height: 1.4; }
+  .problem h2 em { font-style: normal; color: #9FB4FF; }
+  .problem p { color: #C9D2E3; margin-top: 12px; font-size: 15px; }
+  .questions li { list-style: none; display: flex; gap: 12px; padding: 11px 0; border-top: 1px solid var(--line); color: var(--ink); font-size: 15px; }
+  .questions li:first-child { border-top: 0; padding-top: 4px; }
+  .questions .q { flex: none; width: 26px; height: 26px; border-radius: 8px; background: var(--primary-soft); color: var(--primary); font-weight: 800; font-size: 13px; display: grid; place-items: center; }
+  .formula { background: var(--ink); color: #fff; border-radius: 12px; padding: 16px; text-align: center; font-size: 17px; font-weight: 700; line-height: 1.5; }
+  .formula small { display: block; color: #B9C2D3; font-weight: 500; font-size: 13px; margin-top: 4px; }
+  .result-card { padding: 22px; display: flex; flex-direction: column; gap: 12px; }
+  .result-card .kicker { font-size: 13px; font-weight: 800; letter-spacing: .03em; }
+  .big { font-size: 46px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; }
+  .big small { font-size: 18px; font-weight: 700; color: var(--muted); margin-left: 6px; letter-spacing: 0; }
+  .result-card h3 { font-size: 18px; }
+  .mini { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .mini div { background: var(--soft); border-radius: 10px; padding: 9px 10px; text-align: center; }
+  .mini b { display: block; font-size: 19px; color: var(--ink); }
+  .mini span { font-size: 12px; color: var(--muted); }
+  .matrix { display: grid; grid-template-columns: 90px 1fr 1fr; grid-template-rows: 32px 1fr 1fr; gap: 10px; }
+  .axis { font-size: 14px; font-weight: 700; color: var(--sub); display: grid; place-items: center; text-align: center; }
+  .cell { border-radius: 14px; padding: 16px 18px; display: grid; grid-template-columns: 1fr auto; gap: 6px 14px; align-items: start; }
+  .cell .name { font-size: 20px; font-weight: 800; }
+  .cell .dir { font-size: 13px; font-weight: 800; padding: 2px 9px; border-radius: 6px; background: rgba(255,255,255,.8); justify-self: start; }
+  .cell .desc { grid-column: 1 / 2; font-size: 13.5px; color: var(--sub); }
+  .cell .ex { grid-column: 1 / 2; font-size: 13px; color: var(--sub); }
+  .cell .counts { grid-row: 1 / 5; grid-column: 2; display: flex; gap: 6px; }
+  .cell .counts div { background: rgba(255,255,255,.85); border-radius: 10px; padding: 8px 10px; text-align: center; min-width: 58px; }
+  .cell .counts b { display: block; font-size: 22px; color: var(--ink); }
+  .cell .counts span { font-size: 12px; color: var(--sub); font-weight: 600; }
+  .data-strip { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .data-strip div { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .data-strip b { display: block; font-size: 20px; }
+  .data-strip span { font-size: 13px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="eyebrow"><span class="no">01</span>한눈에 보기</div>
+    <h1>미래 소비기반 스트레스 테스트</h1>
+    <p class="lede">BC카드 결제 데이터와 장래인구를 결합해, 지금의 매출 성장 뒤에 숨은 미래 고객 기반의 위험을 지역 × 업종 단위로 진단합니다.</p>
+  </div>
+  <div class="version"><b>BC카드 소비데이터 공모전</b><br>2026.10 갱신</div>
+</div>
+
+<!-- 1. 문제의식 -->
+<div class="section">
+  <div class="section-label"><span class="num">1</span><span class="title">문제의식과 핵심 아이디어</span></div>
+  <div class="grid" style="grid-template-columns: 1.1fr 1fr 1fr;">
+    <div class="problem">
+      <div class="tag-line">문제의식</div>
+      <h2>매출이 오르는 상권은 정말 안전할까?<br><em>핵심 고객 연령대의 인구가 줄면</em><br>지금의 성장은 착시일 수 있습니다.</h2>
+      <p>매출 추이만 보면 놓치는 '고객 구성의 미래 위험'을 숫자로 보여주는 것이 목표입니다.</p>
+    </div>
+    <div class="card pad">
+      <h3 style="margin-bottom:10px">분석 질문</h3>
+      <ul class="questions">
+        <li><span class="q">Q1</span>현재 성장 중인 상권의 소비기반은 2040년에도 유지되는가?</li>
+        <li><span class="q">Q2</span>결제 고객 · 관심 고객 · 미래 고객은 어떻게 다른가?</li>
+        <li><span class="q">Q3</span>생활 · 유동인구를 반영해도 진단과 위험 순위가 유지되는가?</li>
+      </ul>
+    </div>
+    <div class="card pad stack" style="gap:12px">
+      <h3>핵심 지표 · Future Stress</h3>
+      <div class="formula">Σ (연령별 이용금액 비중 × 2040 인구증감률)<small>지역 × 업종마다 6개 연령대를 모두 더한 값</small></div>
+      <p><b style="color:var(--red)">음수</b>일수록 지금의 고객이 미래에 줄어드는 연령대에 몰려 있다는 뜻입니다. 매출 예측값이 아니라 <b>구조위험을 비교하는 지표</b>입니다.</p>
+    </div>
+  </div>
+</div>
+
+<!-- 2. 핵심 결과 -->
+<div class="section">
+  <div class="section-label"><span class="num">2</span><span class="title">핵심 결과</span><span class="desc">서울 · 이용금액 상위 25% · 6개월 완전관측 114건 기준</span></div>
+  <div class="grid g3">
+    <div class="card result-card">
+      <span class="kicker" style="color:var(--t-illusion)">진단 · 착시성장</span>
+      <div class="big" style="color:var(--t-illusion)">100%<small>14 / 14건</small></div>
+      <h3>지금 성장하는 상권 14건 모두 2035년 소비기반 위험</h3>
+      <div class="mini">
+        <div><b>74%</b><span>비성장 위험비율</span></div>
+        <div><b>-11.61</b><span>성장군 2040 중앙값</span></div>
+        <div><b>-6.67</b><span>비성장 2040 중앙값</span></div>
+      </div>
+      <p class="small">Fisher p = 0.0206 · Mann-Whitney(2040) p = 0.0006</p>
+    </div>
+    <div class="card result-card">
+      <span class="kicker" style="color:var(--primary)">전략 · 방어형 고객</span>
+      <div class="big" style="color:var(--primary)">11건<small>/ 14건</small></div>
+      <h3>2040년까지 유효한 방어형 고객을 찾은 착시성장 사례</h3>
+      <div class="mini">
+        <div><b>11.3%</b><span>평균 위험완화</span></div>
+        <div><b>28.8%</b><span>최대 위험완화</span></div>
+        <div><b>2건</b><span>후보 없음</span></div>
+      </div>
+      <p class="small">방어형 고객: 늘릴 여력이 있고 핵심 고객보다 미래 인구 전망이 좋은 연령대</p>
+    </div>
+    <div class="card result-card">
+      <span class="kicker" style="color:var(--green)">검증 · 외부유입 보정</span>
+      <div class="big" style="color:var(--green)">90%+<small>분류 일치</small></div>
+      <h3>생활 · 유동인구로 보정해도 위험/안정 판정이 유지</h3>
+      <div class="mini">
+        <div><b>95.1%</b><span>서울 (ρ 0.974)</span></div>
+        <div><b>90.2%</b><span>부산 (ρ 0.966)</span></div>
+        <div><b>90.0%</b><span>경기 (ρ 0.991)</span></div>
+      </div>
+      <p class="small">지역마다 보정 자료와 방식이 달라 지역 간 수치는 직접 비교하지 않습니다</p>
+    </div>
+  </div>
+</div>
+
+<!-- 3. 4유형 -->
+<div class="section">
+  <div class="section-label"><span class="num">3</span><span class="title">4유형 진단</span><span class="desc">현재 성장 여부 × 2040 Future Stress 부호 · 숫자는 각 지역 내부 상위 25% 사례 수</span></div>
+  <div class="card pad">
+    <div class="matrix">
+      <div class="axis"></div>
+      <div class="axis">미래 취약 · Stress &lt; 0</div>
+      <div class="axis">미래 안정 · Stress ≥ 0</div>
+
+      <div class="axis">현재<br>성장</div>
+      <div class="cell illusion">
+        <span class="name">착시성장형</span>
+        <div class="counts"><div><b>9</b><span>서울</span></div><div><b>4</b><span>부산</span></div><div><b>4</b><span>경기</span></div></div>
+        <span class="dir">방어</span>
+        <span class="desc">지금은 성장하지만 핵심 고객층의 인구가 줄어듦</span>
+        <span class="ex">예: 서울 성동구 · 서양음식</span>
+      </div>
+      <div class="cell sustain">
+        <span class="name">지속성장형</span>
+        <div class="counts"><div><b>0</b><span>서울</span></div><div><b>0</b><span>부산</span></div><div><b>9</b><span>경기</span></div></div>
+        <span class="dir">확장</span>
+        <span class="desc">지금도 성장하고 미래 고객 기반도 안정적</span>
+        <span class="ex">예: 경기 평택시 · 일반한식</span>
+      </div>
+
+      <div class="axis">현재<br>비성장</div>
+      <div class="cell fragile">
+        <span class="name">구조취약형</span>
+        <div class="counts"><div><b>41</b><span>서울</span></div><div><b>34</b><span>부산</span></div><div><b>17</b><span>경기</span></div></div>
+        <span class="dir">재편</span>
+        <span class="desc">지금도 정체이고 미래 고객 기반도 약해짐</span>
+        <span class="ex">예: 부산 사상구 · 편의점</span>
+      </div>
+      <div class="cell recover">
+        <span class="name">회복기회형</span>
+        <div class="counts"><div><b>11</b><span>서울</span></div><div><b>3</b><span>부산</span></div><div><b>44</b><span>경기</span></div></div>
+        <span class="dir">선점</span>
+        <span class="desc">지금은 정체지만 미래 고객 기반은 안정적</span>
+        <span class="ex">예: 경기 시흥시 · 대형할인점</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 4. 데이터 규모 -->
+<div class="section">
+  <div class="section-label"><span class="num">4</span><span class="title">사용한 데이터</span></div>
+  <div class="data-strip">
+    <div><b>242,574행</b><span>BC카드 결제 · 2026.01–06</span></div>
+    <div><b>3개 시도</b><span>서울 · 부산 · 경기 장래인구</span></div>
+    <div><b>6개월</b><span>행안부 주민등록인구</span></div>
+    <div><b>3종</b><span>서울 · 부산 생활인구, 경기 유동인구</span></div>
+    <div><b>2종</b><span>NAVER 검색어 트렌드 · 쇼핑인사이트</span></div>
+  </div>
+</div>
+
+<div class="footer">
+  <span>미래 소비기반 스트레스 테스트 · 흐름도 시리즈</span>
+  <div class="series"><span class="on">01 한눈에</span><span>02 데이터</span><span>03 파이프라인</span><span>04 검증</span><span>05 전략</span><span>06 코드 구조</span><span>07 목표 아키텍처</span><span>08 로드맵</span></div>
+</div>
+
+</body>
+</html>

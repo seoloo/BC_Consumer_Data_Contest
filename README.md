@@ -2,6 +2,39 @@
 
 현재 매출이 성장하는 상권도 핵심 소비연령의 인구가 감소하면 미래 소비기반이 약해질 수 있습니다. 이 프로젝트는 BC Card 결제 데이터와 장래인구, NAVER 관심도 자료를 결합해 지역과 업종별 미래 구조위험을 진단하고 유형별 고객 및 상품 전략을 제안합니다.
 
+## 한눈에 보기
+
+![한눈에 보기](docs/diagrams/01_overview.png)
+
+## 흐름도 시리즈
+
+주제별로 나눈 흐름도입니다. 프로젝트 단계가 끝날 때마다 갱신합니다 (`docs/diagrams/*.html` 수정 후 `render.py` 실행).
+
+| # | 흐름도 | 내용 |
+|---|---|---|
+| 01 | [한눈에 보기](docs/diagrams/01_overview.png) | 문제의식, 핵심 결과, 4유형 |
+| 02 | [데이터](docs/diagrams/02_data.png) | 원본 8종의 까다로운 점과 처리 함수, 표준화 기준표 |
+| 03 | [분석 파이프라인](docs/diagrams/03_pipeline.png) | STEP 1~5 상세와 서울 실제 건수 |
+| 04 | [검증](docs/diagrams/04_validation.png) | 통계 검정, 규모 민감도, 외부유입 보정, 재현 검증 |
+| 05 | [전략](docs/diagrams/05_strategy.png) | 방어형 고객, 고객 구성 최적화, 메뉴 · 상품 전략 |
+| 06 | [코드 구조](docs/diagrams/06_code_structure.png) | Phase 1 리팩토링 결과, 모듈 지도, 테스트 |
+| 07 | [목표 아키텍처](docs/diagrams/07_target_architecture.png) | Phase 2~4에서 만들 데이터 마트 구조 (계획) |
+| 08 | [로드맵](docs/diagrams/08_roadmap.png) | 단계별 할 일과 완료 기준, 진행 기록 |
+
+## 포트폴리오 전환 로드맵
+
+공모전 분석을 금융권 데이터 엔지니어링 포트폴리오로 확장하고 있습니다.
+
+![전환 로드맵](docs/diagrams/08_roadmap.png)
+
+| 단계 | 내용 | 상태 |
+|---|---|---|
+| Phase 0 | 공모전 분석 (노트북) | 완료 |
+| Phase 1 | 리팩토링: 노트북 → `src/future_stress` 모듈 + 테스트, 발표 결과 6/6 재현 ([리팩토링 노트](docs/refactoring_notes.md)) | 완료 |
+| Phase 2 | 합성 데이터 · 공공 API 수집 | 다음 |
+| Phase 3 | PostgreSQL + dbt 데이터 마트 · 품질 검사 | 예정 |
+| Phase 4 | Airflow 배치 · CI · 대시보드 | 예정 |
+
 ## 분석 질문
 
 - 현재 성장 중인 상권의 소비기반은 2040년에도 유지되는가?
@@ -56,13 +89,38 @@ Future Stress가 음수이면 현재 소비구조가 미래 인구감소에 더 
 - SciPy
 - requests
 - Matplotlib
+- pytest
+
+## 실행 방법
+
+Windows PowerShell 기준입니다. 저장소 폴더에서 한 줄씩 실행합니다.
+
+```powershell
+python -m venv .venv
+```
+
+```powershell
+.venv\Scripts\python -m pip install -e ".[dev]"
+```
+
+```powershell
+.venv\Scripts\python -m pytest
+```
+
+원본 데이터를 `data/raw/`에 넣었다면 전체 분석을 실행하고 발표 수치와 비교할 수 있습니다.
+
+```powershell
+.venv\Scripts\python -m future_stress.pipeline --compare
+```
 
 ## 저장소 구성
 
 ```text
-notebooks/    실행 출력과 인증정보를 제거한 분석 노트북
+src/          분석 로직 패키지 (future_stress)
+tests/        단위 테스트와 전체 실행 테스트
+notebooks/    실행 출력과 인증정보를 제거한 원래 분석 노트북 (보존용)
 assets/       포트폴리오용 결과 이미지
-docs/         최종 발표자료
+docs/         최종 발표자료, 흐름도 시리즈(diagrams/), 리팩토링 노트
 data/         데이터 비공개 사유와 재현 안내
 results/      발표자료에 사용한 소규모 집계 결과 CSV
 scripts/      공개용 노트북 정리 스크립트

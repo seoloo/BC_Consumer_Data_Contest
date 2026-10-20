@@ -1,0 +1,174 @@
+<!-- size: 1600x2600 -->
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>Data Sources</title>
+<link rel="stylesheet" href="_style.css">
+<style>
+  .src-table td { padding: 14px 14px 14px 0; }
+  .src-table td:first-child { width: 210px; }
+  .src-name { display: flex; gap: 12px; align-items: center; }
+  .src-name .ic { width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; flex: none; }
+  .src-name .ic svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .src-name b { font-size: 15.5px; display: block; }
+  .src-name span { font-size: 12.5px; color: var(--muted); }
+  .issue { display: flex; flex-direction: column; gap: 4px; }
+  .issue div { font-size: 13.5px; color: var(--ink); padding-left: 14px; position: relative; line-height: 1.5; }
+  .issue div::before { content: ""; position: absolute; left: 2px; top: 8px; width: 6px; height: 6px; border-radius: 50%; background: var(--red); }
+  .fn { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+  .fn .file { font-size: 12px; color: var(--muted); }
+  .std { display: grid; grid-template-columns: 1fr 60px 220px; gap: 12px; align-items: center; }
+  .labels { display: flex; flex-direction: column; gap: 7px; }
+  .labels div { display: flex; justify-content: space-between; align-items: center; background: var(--soft); border-radius: 9px; padding: 8px 12px; font-size: 13.5px; }
+  .labels div span:last-child { color: var(--muted); font-size: 12.5px; }
+  .target { background: var(--primary); color: #fff; border-radius: 14px; padding: 18px; text-align: center; }
+  .target b { font-size: 30px; display: block; }
+  .target span { font-size: 13px; color: #DCE3FF; }
+  .ages { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 4px; }
+  .ages div { text-align: center; padding: 10px 4px; border-radius: 10px; background: var(--primary-soft); color: var(--primary); font-weight: 800; font-size: 15px; }
+  .map-row { display: grid; grid-template-columns: 1fr 30px 1fr; align-items: center; gap: 8px; padding: 9px 0; border-top: 1px solid var(--line); font-size: 14px; }
+  .map-row:first-of-type { border-top: 0; }
+  .map-row .from { color: var(--sub); }
+  .map-row .to { font-weight: 800; }
+  .map-row .why { grid-column: 1 / -1; font-size: 12.5px; color: var(--muted); margin-top: -2px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="eyebrow"><span class="no">02</span>데이터</div>
+    <h1>데이터 수집과 표준화</h1>
+    <p class="lede">출처도, 형식도, 연령 표기도 제각각인 8종의 데이터를 '시군구 × 연령대'라는 같은 기준으로 맞추는 단계입니다.<br>
+    원본의 까다로운 점마다 처리하는 함수를 하나씩 만들었습니다.</p>
+  </div>
+  <div class="version"><b>src/future_stress</b><br>card_spending · population · naver_datalab</div>
+</div>
+
+<div class="section">
+  <div class="section-label"><span class="num">1</span><span class="title">원본 데이터와 처리 함수</span><span class="desc">빨간 점 = 원본을 그대로 쓰면 생기는 문제</span></div>
+  <div class="card pad">
+    <table class="src-table">
+      <tr><th>데이터</th><th>제공 · 기간 · 형식</th><th>무엇에 쓰나</th><th>원본의 까다로운 점</th><th>처리 함수</th></tr>
+
+      <tr>
+        <td><div class="src-name"><div class="ic" style="color:var(--primary);background:var(--primary-soft)"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><line x1="2.5" y1="10" x2="21.5" y2="10"/></svg></div>
+          <div><b>BC카드 결제</b><span>242,574행</span></div></div></td>
+        <td>공모전 제공<br>2026.01 – 06 · 월별<br><span class="small">CSV · utf-8-sig</span></td>
+        <td>연령별 소비 비중<br>현재 성장 판정</td>
+        <td><div class="issue"><div>성별 코드 1 · 2 외에 '3' · 'x'가 섞여 있음 (약 34%) → 남녀가 확인되는 개인 결제만 사용</div><div>업종명 안에 공백 ('편 의 점')</div><div>코드값(AGE_CD 3)만 있어 사람이 읽기 어려움</div></div></td>
+        <td><div class="fn"><code>clean_card_spending()</code><span class="file">card_spending.py</span></div></td>
+      </tr>
+
+      <tr>
+        <td><div class="src-name"><div class="ic" style="color:var(--teal);background:var(--teal-soft)"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.4"/><path d="M2.8 20c0-3.5 2.8-6 6.2-6s6.2 2.5 6.2 6"/><circle cx="17.2" cy="9" r="2.5"/><path d="M16.4 14.1c2.8.3 4.8 2.5 4.8 5.9"/></svg></div>
+          <div><b>주민등록인구</b><span>월별 파일 6개</span></div></div></td>
+        <td>행정안전부<br>2026.01 – 06<br><span class="small">CSV · cp949 · 10세 단위</span></td>
+        <td>생활 · 유동인구 보정의 기준값</td>
+        <td><div class="issue"><div>열 이름에 월이 붙어 달마다 다름 ('2026년01월_계_0~9세')</div><div>숫자에 쉼표 ('1,234')</div><div>지역명 끝에 행정코드 ('종로구 (1111000000)')</div></div></td>
+        <td><div class="fn"><code>load_resident_population()</code><span class="file">population.py</span></div></td>
+      </tr>
+
+      <tr>
+        <td><div class="src-name"><div class="ic" style="color:var(--teal);background:var(--teal-soft)"><svg viewBox="0 0 24 24"><path d="M3 6.5l6 6 4-4 8 8"/><path d="M15 16.5h6v-6"/></svg></div>
+          <div><b>서울 장래인구</b><span>2022 – 2042 추계</span></div></div></td>
+        <td>서울시<br>2026 → 2035 · 2040<br><span class="small">CSV · 5세 단위 '0~4세'</span></td>
+        <td rowspan="2">Future Stress의<br><b style="color:var(--ink)">2040 인구증감률</b></td>
+        <td><div class="issue"><div>닫히지 않은 따옴표 때문에 pandas.read_csv가 ParserError</div><div>5세 구간 · 1세 단위 · 합계 행이 섞여 중복 집계 위험</div><div>마지막 구간이 '90~94세 · 95세 이상' (원래 코드는 90세 이상 누락)</div></div></td>
+        <td><div class="fn"><code>load_seoul_future_population()</code><span class="file">population.py</span></div></td>
+      </tr>
+
+      <tr>
+        <td><div class="src-name"><div class="ic" style="color:var(--teal);background:var(--teal-soft)"><svg viewBox="0 0 24 24"><path d="M3 6.5l6 6 4-4 8 8"/><path d="M15 16.5h6v-6"/></svg></div>
+          <div><b>부산 · 경기 장래인구</b><span>KOSIS 형식</span></div></div></td>
+        <td>통계청 KOSIS<br>2026 → 2035 · 2040<br><span class="small">Excel · 5세 단위 '0-4세'</span></td>
+        <td><div class="issue"><div>병합된 셀 때문에 시군구 · 성별이 첫 행에만 있음</div><div>'소계'와 세부 행, 시도 합계 행이 함께 있음</div></div></td>
+        <td><div class="fn"><code>load_kosis_future_population()</code><span class="file">population.py</span></div></td>
+      </tr>
+
+      <tr>
+        <td><div class="src-name"><div class="ic" style="color:var(--amber);background:var(--amber-soft)"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></div>
+          <div><b>서울 생활인구</b><span>76MB</span></div></div></td>
+        <td>서울시<br>2025 · 시간대별<br><span class="small">CSV · 성별 × 5세 열</span></td>
+        <td rowspan="3">외부유입 보정<br><span class="small">(04 검증)</span></td>
+        <td><div class="issue"><div>지역명 없이 자치구 코드(11200)만 있음</div><div>연령 열이 74세까지만 있음 → 60대이상 = 60~74세</div></div></td>
+        <td><div class="fn"><code>load_seoul_living_population_shares()</code><span class="file">population.py</span></div></td>
+      </tr>
+
+      <tr>
+        <td><div class="src-name"><div class="ic" style="color:var(--amber);background:var(--amber-soft)"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></div>
+          <div><b>부산 생활인구</b><span>행정동 단위</span></div></div></td>
+        <td>부산시<br>2025 · 월별<br><span class="small">Excel · 주거 / 직장 / 방문</span></td>
+        <td><div class="issue"><div>행정동 단위라 구 단위로 다시 합산 필요</div><div>연령 이름이 '20대미만'</div></div></td>
+        <td><div class="fn"><code>load_busan_living_exposure()</code><span class="file">population.py</span></div></td>
+      </tr>
+
+      <tr>
+        <td><div class="src-name"><div class="ic" style="color:var(--amber);background:var(--amber-soft)"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></div>
+          <div><b>경기 유동인구</b><span>CSV 48개 · 16개 시군</span></div></div></td>
+        <td>경기도<br>2026.01 – 03<br><span class="small">시군 × 월별 파일</span></td>
+        <td><div class="issue"><div>파일이 시군 × 월로 쪼개져 있음</div><div>'연천군'을 '연천시'로 잘못 표기, 10세 미만 자료 없음</div></div></td>
+        <td><div class="fn"><code>load_gyeonggi_floating_population_shares()</code><span class="file">population.py</span></div></td>
+      </tr>
+
+      <tr>
+        <td><div class="src-name"><div class="ic" style="color:var(--violet);background:var(--violet-soft)"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.5" y1="15.5" x2="21" y2="21"/></svg></div>
+          <div><b>NAVER 데이터랩</b><span>API 2종</span></div></div></td>
+        <td>NAVER Cloud<br>2026.01 – 08<br><span class="small">REST API · JSON</span></td>
+        <td>관심 고객 · 메뉴 상품 후보<br><span class="small">(05 전략)</span></td>
+        <td><div class="issue"><div>호출 제한(429) · 일시 오류 시 그대로 멈춤</div><div>검색도는 요청마다 최댓값을 100으로 맞춘 상대값</div></div></td>
+        <td><div class="fn"><code>NaverDataLabClient</code><span class="file">naver_datalab.py</span></div></td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label"><span class="num">2</span><span class="title">표준화 기준표</span><span class="desc">데이터를 합칠 때 쓰는 '같은 이름'을 한 파일에서만 관리합니다</span></div>
+  <div class="grid" style="grid-template-columns: 1.35fr 1fr;">
+    <div class="card pad stack" style="gap:14px">
+      <div class="row" style="justify-content:space-between"><h3>연령대 통일</h3><code>age_groups.py</code></div>
+      <div class="std">
+        <div class="labels">
+          <div><span>AGE_CD <b>3</b></span><span>BC카드</span></div>
+          <div><span><b>30~34세</b> · 35~39세</span><span>서울 장래인구</span></div>
+          <div><span><b>30-34세</b> · 35-39세</span><span>부산 · 경기 장래인구</span></div>
+          <div><span>계_<b>30~39세</b></span><span>주민등록인구</span></div>
+          <div><span>male_f<b>30t34</b>_lvpop_co …</span><span>서울 생활인구</span></div>
+          <div><span>M_<b>30</b>_CNT · F_<b>35</b>_CNT</span><span>경기 유동인구</span></div>
+        </div>
+        <div class="arrow-r"><svg viewBox="0 0 26 26"><path d="M5 13h15M14 6.5l6.5 6.5-6.5 6.5" fill="none" stroke="#AEB6C4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="target"><b>30대</b><span>구간의 시작 나이로 판정<br><code style="background:rgba(255,255,255,.15);color:#fff">age_group_from_label()</code></span></div>
+      </div>
+      <div>
+        <p class="small" style="margin-bottom:6px">분석에 쓰는 6개 연령대 (이 순서로 정렬 · 표시)</p>
+        <div class="ages"><div>20대이하</div><div>20대</div><div>30대</div><div>40대</div><div>50대</div><div>60대이상</div></div>
+      </div>
+      <div class="callout warn"><span class="ico">!</span><span>원래 노트북에서는 서울 장래인구만 '20대미만'으로 남아 BC카드의 '20대이하'와 merge가 비는 문제가 있었습니다. 기준표에 별칭(20대미만 → 20대이하, 60대 · 70대이상 → 60대이상)을 등록해 해결했습니다.</span></div>
+    </div>
+
+    <div class="card pad stack" style="gap:12px">
+      <div class="row" style="justify-content:space-between"><h3>지역명 통일</h3><code>regions.py</code></div>
+      <div>
+        <div class="map-row"><span class="from">수원시 장안구 · 수원시 권선구</span><span>→</span><span class="to">수원시</span>
+          <span class="why">경기 장래인구 · 유동인구가 시 단위라서 BC카드의 일반구를 시로 합침 · <code>to_parent_city()</code></span></div>
+        <div class="map-row"><span class="from">11200</span><span>→</span><span class="to">성동구</span>
+          <span class="why">서울 생활인구는 자치구 코드만 있음 · <code>SEOUL_DISTRICT_CODE_TO_NAME</code></span></div>
+        <div class="map-row"><span class="from">연천시</span><span>→</span><span class="to">연천군</span>
+          <span class="why">경기 유동인구 원본의 오타 · <code>fix_region_name()</code></span></div>
+        <div class="map-row"><span class="from">'편 의 점'</span><span>→</span><span class="to">편의점</span>
+          <span class="why">업종명 공백 제거 · <code>clean_card_spending()</code></span></div>
+      </div>
+      <div class="callout info"><span class="ico">i</span><span>인코딩도 파일마다 달라(utf-8-sig / cp949) <code>read_csv_with_encoding_fallback()</code>이 차례로 시도해 읽습니다.</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <span>미래 소비기반 스트레스 테스트 · 흐름도 시리즈</span>
+  <div class="series"><span>01 한눈에</span><span class="on">02 데이터</span><span>03 파이프라인</span><span>04 검증</span><span>05 전략</span><span>06 코드 구조</span><span>07 목표 아키텍처</span><span>08 로드맵</span></div>
+</div>
+
+</body>
+</html>

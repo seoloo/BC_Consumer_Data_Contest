@@ -1,0 +1,173 @@
+<!-- size: 1600x2800 -->
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>Validation</title>
+<link rel="stylesheet" href="_style.css">
+<style>
+  .compare-bars { display: flex; flex-direction: column; gap: 14px; }
+  .cb-row { display: grid; grid-template-columns: 150px 1fr; gap: 14px; align-items: center; }
+  .cb-row .cb-label { font-size: 14px; font-weight: 700; }
+  .cb-row .cb-label span { display: block; font-size: 12.5px; color: var(--muted); font-weight: 500; }
+  .cb-pair { display: flex; flex-direction: column; gap: 5px; }
+  .cb-line { display: grid; grid-template-columns: 70px 1fr 64px; gap: 10px; align-items: center; font-size: 13px; }
+  .cb-line .who { color: var(--sub); font-weight: 600; }
+  .cb-track { height: 22px; background: #EEF1F6; border-radius: 6px; overflow: hidden; }
+  .cb-fill { height: 100%; border-radius: 6px; }
+  .cb-line .v { text-align: right; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .test-card { border-radius: 14px; padding: 18px; background: var(--soft); display: flex; flex-direction: column; gap: 8px; }
+  .test-card .t-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .test-card .p { font-size: 26px; font-weight: 800; color: var(--primary); }
+  .test-card .p small { font-size: 13px; color: var(--muted); font-weight: 600; }
+  .method { border-radius: 14px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; }
+  .method .formula { background: #fff; border-radius: 10px; padding: 10px 12px; font-size: 14px; font-weight: 700; color: var(--ink); border: 1px solid var(--line); }
+  .meter { display: flex; align-items: center; gap: 8px; }
+  .meter .track { flex: 1; height: 8px; background: #E4E8F0; border-radius: 99px; overflow: hidden; }
+  .meter .fill { height: 100%; background: var(--green); border-radius: 99px; }
+  .repro { display: grid; grid-template-columns: 300px 1fr; gap: 22px; align-items: center; }
+  .repro .big { font-size: 54px; font-weight: 800; color: var(--green); line-height: 1; }
+  .repro .big small { font-size: 20px; color: var(--muted); }
+  .check-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .check-list div { display: flex; gap: 8px; align-items: center; font-size: 13.5px; background: var(--green-soft); color: #1E5E2B; border-radius: 9px; padding: 9px 11px; font-weight: 600; }
+  .check-list div::before { content: "✓"; font-weight: 800; }
+  .check-list div.skip { background: #F1F3F7; color: var(--muted); }
+  .check-list div.skip::before { content: "–"; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="eyebrow"><span class="no">04</span>검증</div>
+    <h1>결과가 우연이 아닌지 세 가지로 확인했습니다</h1>
+    <p class="lede">① 성장군과 비성장군의 차이가 통계적으로 의미 있는가 · ② 규모 기준을 바꿔도 같은가 · ③ 외부에서 온 소비자를 반영해도 같은가</p>
+  </div>
+  <div class="version"><b>validation.py · robustness.py</b><br>원본 데이터로 재계산한 값</div>
+</div>
+
+<!-- 1 -->
+<div class="section">
+  <div class="section-label"><span class="num">1</span><span class="title">성장군 vs 비성장군</span><span class="desc">서울 · 전국 상위 25% 분석 대상 114건 (성장 14 / 비성장 100)</span></div>
+  <div class="grid" style="grid-template-columns: 1.1fr 1fr;">
+    <div class="card pad stack" style="gap:16px">
+      <h3>현재 성장 상권일수록 미래 위험이 더 컸습니다</h3>
+      <div class="compare-bars">
+        <div class="cb-row"><div class="cb-label">2035 위험 비율<span>2035 Stress &lt; 0</span></div>
+          <div class="cb-pair">
+            <div class="cb-line"><span class="who">성장 14</span><div class="cb-track"><div class="cb-fill" style="width:100%;background:var(--t-illusion)"></div></div><span class="v">100%</span></div>
+            <div class="cb-line"><span class="who">비성장 100</span><div class="cb-track"><div class="cb-fill" style="width:74%;background:#AEB6C4"></div></div><span class="v">74%</span></div>
+          </div></div>
+        <div class="cb-row"><div class="cb-label">2040 추가 악화<span>2040이 2035보다 나쁨</span></div>
+          <div class="cb-pair">
+            <div class="cb-line"><span class="who">성장 14</span><div class="cb-track"><div class="cb-fill" style="width:100%;background:var(--t-illusion)"></div></div><span class="v">100%</span></div>
+            <div class="cb-line"><span class="who">비성장 100</span><div class="cb-track"><div class="cb-fill" style="width:84%;background:#AEB6C4"></div></div><span class="v">84%</span></div>
+          </div></div>
+        <div class="cb-row"><div class="cb-label">2035 Stress 중앙값<span>음수가 클수록 위험</span></div>
+          <div class="cb-pair">
+            <div class="cb-line"><span class="who">성장 14</span><div class="cb-track"><div class="cb-fill" style="width:64%;background:var(--t-illusion)"></div></div><span class="v">-7.70</span></div>
+            <div class="cb-line"><span class="who">비성장 100</span><div class="cb-track"><div class="cb-fill" style="width:32%;background:#AEB6C4"></div></div><span class="v">-3.89</span></div>
+          </div></div>
+        <div class="cb-row"><div class="cb-label">2040 Stress 중앙값<span>음수가 클수록 위험</span></div>
+          <div class="cb-pair">
+            <div class="cb-line"><span class="who">성장 14</span><div class="cb-track"><div class="cb-fill" style="width:96.8%;background:var(--t-illusion)"></div></div><span class="v">-11.61</span></div>
+            <div class="cb-line"><span class="who">비성장 100</span><div class="cb-track"><div class="cb-fill" style="width:55.6%;background:#AEB6C4"></div></div><span class="v">-6.67</span></div>
+          </div></div>
+      </div>
+      <p class="small">중앙값 막대 길이: |Stress| ÷ 12 기준. 평균 대신 중앙값을 쓰는 이유는 극단적인 사례 몇 건에 값이 끌려가지 않게 하기 위해서입니다.</p>
+    </div>
+
+    <div class="card pad stack" style="gap:12px">
+      <h3>통계 검정 · 차이가 우연일 확률</h3>
+      <div class="test-card">
+        <div class="t-head"><h4>Fisher 정확검정</h4><span class="p">0.0206<small> p-value</small></span></div>
+        <p><b style="color:var(--ink)">무엇을</b> · 2035 위험 비율(14/14 vs 74/100)이 성장군에서 더 높은가</p>
+        <p><b style="color:var(--ink)">왜 이 검정</b> · 성장군이 14건으로 작아서, 표본이 작아도 정확한 확률을 계산하는 방법을 선택</p>
+      </div>
+      <div class="test-card">
+        <div class="t-head"><h4>Mann-Whitney U 검정</h4><span class="p">0.0008 · 0.0006<small> 2035 · 2040</small></span></div>
+        <p><b style="color:var(--ink)">무엇을</b> · 성장군의 Stress 값 분포가 비성장군보다 더 낮은가(더 위험한가)</p>
+        <p><b style="color:var(--ink)">왜 이 검정</b> · Stress가 정규분포라는 보장이 없어 평균 비교(t-검정) 대신 순위로 비교</p>
+      </div>
+      <div class="callout info"><span class="ico">i</span><span>p-value가 0.05보다 작으면 "우연히 이런 차이가 날 가능성은 낮다"고 봅니다. 세 검정 모두 0.05보다 작습니다.</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- 2 -->
+<div class="section">
+  <div class="section-label"><span class="num">2</span><span class="title">규모 기준 민감도</span><span class="desc">'상위 25%'라는 기준을 바꾸면 결론이 달라질까?</span></div>
+  <div class="grid" style="grid-template-columns: 1.4fr 1fr;">
+    <div class="card pad">
+      <table>
+        <tr><th>규모 기준</th><th class="num">현재 성장 사례</th><th class="num">2035 위험</th><th class="num">2035 위험 비율</th><th class="num">2040 추가 악화 비율</th></tr>
+        <tr><td>상위 20%</td><td class="num">11건</td><td class="num">11건</td><td class="num">100%</td><td class="num">100%</td></tr>
+        <tr style="background:var(--primary-soft)"><td><b>상위 25%</b> <span class="tag t-primary">발표 기준</span></td><td class="num">14건</td><td class="num">14건</td><td class="num">100%</td><td class="num">100%</td></tr>
+        <tr><td>상위 30%</td><td class="num">16건</td><td class="num">16건</td><td class="num">100%</td><td class="num">100%</td></tr>
+      </table>
+    </div>
+    <div class="card pad stack" style="gap:10px; justify-content:center">
+      <h3>기준을 넓히든 좁히든 결론은 같음</h3>
+      <p>사례 수는 11 → 14 → 16건으로 달라지지만 <b style="color:var(--ink)">현재 성장 사례는 모두 2035년 위험</b>이고 2040년에 더 나빠집니다. 특정 기준을 골라서 나온 결과가 아니라는 근거입니다.</p>
+      <p class="small"><code>run_size_sensitivity()</code> · validation.py</p>
+    </div>
+  </div>
+</div>
+
+<!-- 3 -->
+<div class="section">
+  <div class="section-label"><span class="num">3</span><span class="title">외부유입 보정</span><span class="desc">장래인구는 '사는 사람'만 예측하지만 상권에는 출퇴근 · 방문객도 옵니다</span></div>
+  <div class="grid g3" style="margin-bottom:16px">
+    <div class="method" style="background:var(--primary-soft)">
+      <div class="row" style="justify-content:space-between"><h4>방법 A · 재가중 (서울 · 경기)</h4><span class="tag t-primary">reweight_stress_by_external_population()</span></div>
+      <div class="formula">보정계수 = 생활(유동)인구 연령 비중 ÷ 주민등록인구 연령 비중</div>
+      <p>소비비중 × 보정계수 → 합이 1이 되도록 다시 나눔 → Stress 재계산. "실제로 그 지역에 와 있는 연령 구성"에 맞춰 비중을 조정합니다.</p>
+    </div>
+    <div class="method" style="background:var(--amber-soft)">
+      <div class="row" style="justify-content:space-between"><h4>방법 B · 거주노출 (부산)</h4><span class="tag t-amber">adjust_stress_by_resident_exposure()</span></div>
+      <div class="formula">보정 Stress = Σ 소비비중 × 인구증감률 × 거주노출비율</div>
+      <p>거주노출비율 = 주거인구 ÷ (주거 + 직장 + 방문). 그 지역에 사는 사람의 비율만큼만 인구 변화의 영향을 받는다고 봅니다.</p>
+    </div>
+    <div class="method" style="background:var(--green-soft)">
+      <h4>판단 기준</h4>
+      <p><b style="color:var(--ink)">분류 일치율</b> · 위험/안정 판정이 보정 전후로 그대로인 사례 비율</p>
+      <p><b style="color:var(--ink)">Spearman ρ</b> · 보정 전후 '어디가 더 위험한가' 순위의 상관. 1에 가까울수록 순위 유지</p>
+      <p class="small">두 방식의 값은 서로 비교하지 않고 각 지역 안에서 보정 전 vs 후만 비교합니다.</p>
+    </div>
+  </div>
+  <div class="card pad">
+    <table>
+      <tr><th>지역</th><th>보정 자료</th><th>방법</th><th class="num">검증 사례</th><th style="width:300px">분류 일치율</th><th class="num">변경</th><th class="num">Spearman ρ</th></tr>
+      <tr><td><b>서울</b><span class="sub">25개 자치구</span></td><td>생활인구 2025 vs 주민등록 2026.01–06</td><td>A · 6개 연령대</td><td class="num">61건</td>
+        <td><div class="meter"><div class="track"><div class="fill" style="width:95.1%"></div></div><b>95.1%</b></div></td><td class="num">3건</td><td class="num">0.974</td></tr>
+      <tr><td><b>부산</b><span class="sub">지역 내 상위 25%</span></td><td>생활인구 2025 (주거 · 직장 · 방문)</td><td>B</td><td class="num">41건</td>
+        <td><div class="meter"><div class="track"><div class="fill" style="width:90.2%"></div></div><b>90.2%</b></div></td><td class="num">4건</td><td class="num">0.966</td></tr>
+      <tr><td><b>경기</b><span class="sub">유동인구 제공 15개 시군</span></td><td>유동인구 2026.01–03 vs 주민등록 같은 기간</td><td>A · 20대 이상</td><td class="num">50건</td>
+        <td><div class="meter"><div class="track"><div class="fill" style="width:90%"></div></div><b>90.0%</b></div></td><td class="num">5건</td><td class="num">0.991</td></tr>
+    </table>
+    <p class="small" style="margin-top:12px">한계: 서울 생활인구의 60대이상은 60~74세만 포함, 서울 장래인구는 90세 이상이 빠져 있음 (docs/refactoring_notes.md 4절).</p>
+  </div>
+</div>
+
+<!-- 4 -->
+<div class="section">
+  <div class="section-label"><span class="num">4</span><span class="title">재현 검증</span><span class="desc">리팩토링한 코드로 원본 데이터를 다시 계산해 발표 수치와 비교 (2026-10-20)</span></div>
+  <div class="card pad repro">
+    <div><div class="big">6 / 6<small> 표 일치</small></div><p class="small" style="margin-top:10px">실행 명령<br><code>python -m future_stress.pipeline</code><br><code style="margin-top:4px;display:inline-block">--compare</code></p></div>
+    <div class="stack" style="gap:10px">
+      <div class="check-list">
+        <div>성장 vs 비성장 비교표</div><div>통계 검정 p-value</div><div>규모 기준 민감도</div>
+        <div>착시성장 14건 표</div><div>대표 3사례 표</div><div>3개 지역 외부유입 보정</div>
+      </div>
+      <p>원래 노트북에서 <b style="color:var(--ink)">손으로 입력했던 결과표의 숫자들이 실제 계산 결과와 같다</b>는 것도 함께 확인했습니다. 4유형 분류 건수도 원본 중간 결과와 3개 지역 모두 같습니다.</p>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <span>미래 소비기반 스트레스 테스트 · 흐름도 시리즈</span>
+  <div class="series"><span>01 한눈에</span><span>02 데이터</span><span>03 파이프라인</span><span class="on">04 검증</span><span>05 전략</span><span>06 코드 구조</span><span>07 목표 아키텍처</span><span>08 로드맵</span></div>
+</div>
+
+</body>
+</html>
