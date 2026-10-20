@@ -48,10 +48,10 @@
 <div class="header">
   <div>
     <div class="eyebrow"><span class="no">06</span>코드 구조 · Phase 1 리팩토링 결과</div>
-    <h1>노트북 555개 셀을 역할별 모듈 13개로</h1>
+    <h1>노트북 555개 셀을 역할별 모듈 14개로</h1>
     <p class="lede">원래 로직과 결과는 그대로 두고, 읽고 설명하기 쉬운 구조로 다시 정리했습니다.<br>모든 모듈 첫머리에 역할 · 필요한 이유 · 원래 노트북 위치를 주석으로 남겼습니다.</p>
   </div>
-  <div class="version"><b>src/future_stress</b><br>2026-10-20 · 브랜치 refactor/modular-pipeline</div>
+  <div class="version"><b>src/future_stress</b><br>2026-10-21 · 메달리온 계층 추가</div>
 </div>
 
 <!-- 1 -->
@@ -71,12 +71,12 @@
     <div class="arrow-r"><svg viewBox="0 0 26 26"><path d="M5 13h15M14 6.5l6.5 6.5-6.5 6.5" fill="none" stroke="#AEB6C4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     <div class="side after">
       <span class="label">리팩토링 후 · 파이썬 패키지</span>
-      <div class="nums"><div><b>13개</b><span>모듈 · 약 2,240줄</span></div><div><b>38개</b><span>테스트 · 모두 통과</span></div><div><b>6/6</b><span>발표 결과 재현</span></div></div>
+      <div class="nums"><div><b>14개</b><span>모듈 · 약 2,590줄</span></div><div><b>42개</b><span>테스트 · 모두 통과</span></div><div><b>6/6</b><span>발표 결과 재현</span></div></div>
       <ul>
         <li>계산마다 함수 하나, 하는 일이 드러나는 이름 (bc_age → build_age_spending_structure)</li>
         <li>연령 · 지역 기준표를 한 파일에서 관리 (age_groups.py · regions.py)</li>
         <li>결과표를 데이터에서 계산하고 발표 수치와 자동 비교 (--compare)</li>
-        <li>명령 한 번으로 원본 → 결과 CSV 10개 (약 10초)</li>
+        <li>명령 한 번으로 Bronze → Silver → Gold → 결과 CSV (약 14초), 계층 사이 대사 10개</li>
       </ul>
     </div>
   </div>
@@ -128,9 +128,10 @@
     <div class="down">▼</div>
 
     <div class="layer">
-      <div class="l-name" style="background:var(--ink);color:#fff"><b>실행</b><span>전체를 순서대로</span></div>
-      <div class="mods" style="grid-template-columns: 1fr;">
-        <div class="mod"><div class="m-head"><b>pipeline.py</b><span>294</span></div><p>원본 파일 확인 → STEP 1~5 → 검증 → 전략 → 결과 CSV 10개 저장 → 발표 결과(results/)와 표별 비교. 함수 안의 주석 [STEP 1] ~ [전략]이 흐름도 단계 이름과 같습니다.</p><div class="fns"><code>check_raw_files</code><code>run_pipeline</code><code>compare_with_published</code><code>main (CLI)</code></div></div>
+      <div class="l-name" style="background:var(--ink);color:#fff"><b>실행</b><span>메달리온 계층 순서로</span></div>
+      <div class="mods" style="grid-template-columns: 1.4fr 1fr;">
+        <div class="mod" style="border:2px solid #B7860B"><div class="m-head"><b>medallion.py</b><span>476</span></div><p>Bronze(원본 + 적재 영수증) → Silver(정제 Parquet) → Gold(분석 Parquet), 계층 사이 건수 · 금액 대사 10개. 함수 안의 주석 [STEP 1] ~ [전략]이 흐름도 단계 이름과 같습니다.</p><div class="fns"><code>build_bronze</code><code>build_silver</code><code>build_gold</code><code>run_quality_checks</code></div></div>
+        <div class="mod"><div class="m-head"><b>pipeline.py</b><span>139</span></div><p>세 계층 + 대사를 순서대로 실행하고, 대사가 실패하면 멈춤. 발표 결과(results/)와 표별 비교.</p><div class="fns"><code>run_pipeline</code><code>compare_with_published</code><code>main (CLI)</code></div></div>
       </div>
     </div>
   </div>
@@ -140,7 +141,7 @@
 <div class="section">
   <div class="grid" style="grid-template-columns: 1.15fr 1fr;">
     <div class="card pad stack" style="gap:12px">
-      <div class="section-label" style="margin-bottom:2px"><span class="num">3</span><span class="title">테스트 38개</span><span class="desc">tests/ · pytest</span></div>
+      <div class="section-label" style="margin-bottom:2px"><span class="num">3</span><span class="title">테스트 42개</span><span class="desc">tests/ · pytest</span></div>
       <table>
         <tr><th>파일</th><th>무엇을 확인하나</th><th class="num">개수</th></tr>
         <tr><td><code>test_standardization</code></td><td>연령 표기 9가지 · 지역명이 표준 이름으로 바뀌는지</td><td class="num">16</td></tr>
@@ -148,7 +149,7 @@
         <tr><td><code>test_diagnosis_and_validation</code></td><td>성장 3조건 · 4유형 · 데이터로 만든 Fisher p = 0.0206</td><td class="num">4</td></tr>
         <tr><td><code>test_robustness_and_strategy</code></td><td>보정계수 1이면 Stress 불변 · 최적화 제약 준수</td><td class="num">7</td></tr>
         <tr><td><code>test_naver_datalab</code></td><td>API 응답 해석(실제 호출 없이) · 메뉴 유형 분류</td><td class="num">4</td></tr>
-        <tr><td><code>test_pipeline_smoke</code></td><td>가짜 원본으로 전체 파이프라인이 끝까지 도는지</td><td class="num">2</td></tr>
+        <tr><td><code>test_pipeline_smoke</code></td><td>가짜 원본으로 Bronze → Silver → Gold 전체 실행 · 대사 · 멱등성 · 손실 탐지</td><td class="num">6</td></tr>
       </table>
     </div>
     <div class="stack" style="gap:16px">
@@ -164,7 +165,8 @@
           <span class="ro"><i>3</i>stress</span><span class="sep">→</span>
           <span class="ro"><i>4</i>diagnosis</span><span class="sep">→</span>
           <span class="ro"><i>5</i>validation</span><span class="sep">→</span>
-          <span class="ro"><i>6</i>pipeline</span>
+          <span class="ro"><i>6</i>medallion</span><span class="sep">→</span>
+          <span class="ro"><i>7</i>pipeline</span>
         </div>
         <p class="small">핵심 흐름(정제 → Stress → 진단 → 검증)을 먼저 익히고, population · robustness · strategy는 필요할 때 읽으면 됩니다. 노트북 변수 → 함수 대응표는 docs/refactoring_notes.md에 있습니다.</p>
       </div>
@@ -174,7 +176,7 @@
 
 <div class="footer">
   <span>미래 소비기반 스트레스 테스트 · 흐름도 시리즈</span>
-  <div class="series"><span>00 목표 · 기술</span><span>01 한눈에</span><span>02 데이터</span><span>03 파이프라인</span><span>04 검증</span><span>05 전략</span><span class="on">06 코드 구조</span><span>07 목표 아키텍처</span><span>08 로드맵</span></div>
+  <div class="series"><span>00 목표 · 기술</span><span>01 한눈에</span><span>02 데이터</span><span>03 파이프라인</span><span>04 검증</span><span>05 전략</span><span class="on">06 코드 구조</span><span>07 메달리온</span><span>08 목표 아키텍처</span><span>09 로드맵</span></div>
 </div>
 
 </body>

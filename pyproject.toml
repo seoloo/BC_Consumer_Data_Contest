@@ -12,6 +12,7 @@ dependencies = [
     "numpy",
     "scipy",
     "openpyxl",
+    "pyarrow",
     "requests",
     "matplotlib",
 ]

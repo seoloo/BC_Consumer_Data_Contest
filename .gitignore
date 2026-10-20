@@ -28,3 +28,6 @@ Thumbs.db
 # 로컬 가상환경
 .venv/
 *.egg-info/
+data/bronze/
+data/silver/
+data/gold/

@@ -51,6 +51,28 @@ def save_csv(dataframe, path):
     return path
 
 
+def save_parquet(dataframe, path):
+    """메달리온 계층(Silver · Gold)의 표를 Parquet으로 저장합니다.
+
+    한 열에 숫자와 문자가 섞여 있으면(예: 대표 사례 표의 '전환 후'에 -14.85와 '-'가 함께 있음)
+    Parquet이 열의 타입을 정하지 못해 저장에 실패합니다. 그런 열만 문자로 바꿔 저장합니다.
+    """
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    table = dataframe.copy()
+    for column in table.columns[table.dtypes == object]:
+        value_types = {type(value) for value in table[column].dropna()}
+        if len(value_types) > 1:
+            table[column] = table[column].map(lambda value: value if pd.isna(value) else str(value))
+    table.to_parquet(path, index=False)
+    return path
+
+
+def read_parquet(path):
+    """Parquet 표를 읽습니다. (저장할 때의 열 타입이 그대로 돌아옵니다)"""
+    return pd.read_parquet(path)
+
+
 def to_number(series):
     """'1,234' 처럼 쉼표가 들어간 문자열을 숫자로 바꿉니다.
 

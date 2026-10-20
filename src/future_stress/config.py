@@ -15,10 +15,20 @@ from pathlib import Path
 # 노트북은 "../data/raw" 같은 상대경로를 써서 실행 위치에 따라 깨졌기 때문에,
 # 파일 위치를 기준으로 한 절대경로를 사용합니다.
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-RAW_DATA_DIR = PROJECT_ROOT / "data" / "raw"            # 공모전 원본 (저장소에 올리지 않음)
-PROCESSED_DATA_DIR = PROJECT_ROOT / "data" / "processed"  # 중간 결과 (저장소에 올리지 않음)
-OUTPUT_DIR = PROJECT_ROOT / "output"                    # 파이프라인이 새로 만든 결과
+DATA_DIR = PROJECT_ROOT / "data"
+RAW_DATA_DIR = DATA_DIR / "raw"                         # 공모전 원본을 처음 넣어 두는 곳 (저장소에 올리지 않음)
+OUTPUT_DIR = PROJECT_ROOT / "output"                    # 발표 결과와 같은 형식의 CSV
 PUBLISHED_RESULTS_DIR = PROJECT_ROOT / "results"        # 발표자료에 실린 결과 (비교 기준)
+
+# ---------------------------------------------------------------------------
+# 메달리온 아키텍처 계층 (Bronze → Silver → Gold)
+# ---------------------------------------------------------------------------
+# 데이터를 '얼마나 다듬어졌는가'에 따라 세 층으로 나눠 저장합니다.
+# 각 층은 바로 앞 층만 읽기 때문에, 문제가 생기면 어느 층에서 생겼는지 바로 알 수 있고
+# 그 층부터 다시 만들면 됩니다. 세 층 모두 원본에서 나온 데이터라 저장소에는 올리지 않습니다.
+BRONZE_DIR = DATA_DIR / "bronze"   # 원본 그대로 + 적재 영수증(_manifest.json)
+SILVER_DIR = DATA_DIR / "silver"   # 정제 · 표준화된 데이터 (원본과 같은 단위, 집계 전)
+GOLD_DIR = DATA_DIR / "gold"       # 분석 결과 (Stress, 4유형, 검증, 전략)
 
 # ---------------------------------------------------------------------------
 # 분석 기간

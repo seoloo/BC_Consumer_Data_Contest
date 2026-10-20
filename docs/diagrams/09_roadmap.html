@@ -63,11 +63,11 @@
 
 <div class="header">
   <div>
-    <div class="eyebrow"><span class="no">08</span>로드맵</div>
+    <div class="eyebrow"><span class="no">09</span>로드맵</div>
     <h1>카드 소비 데이터 파이프라인 · 전환 로드맵</h1>
     <p class="lede">공모전 분석 노트북을 금융권 데이터 엔지니어 포트폴리오로 바꾸는 과정입니다. 단계가 끝날 때마다 이 그림을 갱신합니다.</p>
   </div>
-  <div class="version"><b>로드맵 v2</b><br>2026-10-20 · Phase 1 완료</div>
+  <div class="version"><b>로드맵 v3</b><br>2026-10-21 · 메달리온 계층 세팅</div>
 </div>
 
 <div class="goal">
@@ -108,11 +108,12 @@
         <h4>리팩토링</h4>
         <p class="p-goal">노트북 로직을 이해하기 쉬운 모듈로 정리하고 결과가 그대로인지 확인</p>
         <div><div class="block-label">한 일</div><ul class="todo">
-          <li class="ok">역할별 모듈 13개 · 알아보기 쉬운 이름</li>
+          <li class="ok">역할별 모듈 14개 · 알아보기 쉬운 이름</li>
           <li class="ok">역할 · 사용 이유 주석, 노트 문서</li>
-          <li class="ok">테스트 38개 (단위 + 전체 실행)</li>
+          <li class="ok">테스트 42개 (단위 + 전체 실행)</li>
           <li class="ok">원본 데이터로 발표 결과 6/6 재현</li>
-          <li class="ok">흐름도 시리즈 9장 (목표 · 기술 선택 포함)</li></ul></div>
+          <li class="ok">메달리온 계층 로컬 세팅 · 계층 대사 10개</li>
+          <li class="ok">흐름도 시리즈 10장 (목표 · 기술, 메달리온 포함)</li></ul></div>
         <div class="techs"><span class="tech main">Python 패키지</span><span class="tech">pytest</span></div>
         <div class="dod"><b>완료 기준 충족</b> · <code>--compare</code>로 발표 수치와 모두 일치</div>
       </div></div>
@@ -125,7 +126,7 @@
         <div><div class="block-label">할 일</div><ul class="todo">
           <li>BC카드 형식 합성 데이터 생성기</li>
           <li>KOSIS · 공공데이터 인구 수집기 (재시도 · 멱등)</li>
-          <li>MinIO에 기준월별 원본 보관</li>
+          <li>MinIO를 Bronze 저장소로 (기준월 파티션)</li>
           <li>Docker Compose 뼈대</li></ul></div>
         <div class="techs"><span class="tech">NumPy</span><span class="tech">requests</span><span class="tech">KOSIS</span><span class="tech">MinIO</span><span class="tech">Docker</span></div>
         <div class="dod"><b>완료 기준</b> · 원본 없이 파이프라인 전체 실행 성공, 수집기를 다시 돌려도 같은 결과</div>
@@ -135,9 +136,9 @@
       <div class="card p-card">
         <div class="p-head"><span class="p-no">PHASE 3</span><span class="status s-next">예정</span></div>
         <h4>데이터 마트 · 품질</h4>
-        <p class="p-goal">파이썬 계산을 raw → staging → mart SQL 모델로 옮기고 품질 검사를 붙임</p>
+        <p class="p-goal">Silver · Gold 파이썬 계산을 SQL 모델로 옮기고 품질 검사를 붙임</p>
         <div><div class="block-label">할 일</div><ul class="todo">
-          <li>PostgreSQL 스키마 (raw · staging · mart)</li>
+          <li>PostgreSQL silver · gold 스키마</li>
           <li>dbt 모델 · dim_region · dim_age_group</li>
           <li>dbt tests · 원천 ↔ 마트 대사 리포트</li>
           <li>ERD · 데이터 계보 문서</li></ul></div>
@@ -168,6 +169,7 @@
       <div class="log">
         <div class="log-row"><span class="date">2026-09-18</span><span class="dot" style="background:var(--green)"></span><div><b>공모전 최종 제출 · 저장소 공개</b><p>노트북, 발표자료, 공개용 결과 CSV</p></div></div>
         <div class="log-row"><span class="date">2026-10-20</span><span class="dot" style="background:var(--green)"></span><div><b>Phase 1 리팩토링 완료</b><p>모듈 13개 · 테스트 38개 · 발표 결과 6/6 재현 · 원본에서 새 한계 2건 발견(서울 90세 이상 누락 등)</p></div></div>
+        <div class="log-row"><span class="date">2026-10-21</span><span class="dot" style="background:var(--green)"></span><div><b>메달리온 아키텍처 로컬 세팅</b><p>Bronze(원본 + 영수증) · Silver(Parquet 6개) · Gold(Parquet 16개), 계층 사이 대사 10개 통과, 발표 결과 6/6 유지</p></div></div>
         <div class="log-row"><span class="date">다음</span><span class="dot" style="background:var(--primary)"></span><div><b>Phase 2 시작 · 합성 데이터 생성기</b><p>실제 데이터의 지역 · 업종 · 연령 분포를 흉내 낸 가짜 결제 데이터</p></div></div>
       </div>
     </div>
@@ -181,7 +183,8 @@
         <tr><td><b>04</b> 검증</td><td>통계 검정 · 민감도 · 외부유입 보정 · 재현</td></tr>
         <tr><td><b>05</b> 전략</td><td>방어형 고객 · 최적화 · 메뉴 전략</td></tr>
         <tr><td><b>06</b> 코드 구조</td><td>Phase 1 결과 · 모듈 지도 · 테스트</td></tr>
-        <tr><td><b>07</b> 목표 아키텍처</td><td>Phase 2~4에서 만들 구조 (계획)</td></tr>
+        <tr><td><b>07</b> 메달리온</td><td>Bronze → Silver → Gold 계층과 대사</td></tr>
+        <tr><td><b>08</b> 목표 아키텍처</td><td>Phase 2~4에서 만들 구조 (계획)</td></tr>
       </table>
     </div>
   </div>
@@ -200,7 +203,7 @@
 
 <div class="footer">
   <span>미래 소비기반 스트레스 테스트 · 흐름도 시리즈</span>
-  <div class="series"><span>00 목표 · 기술</span><span>01 한눈에</span><span>02 데이터</span><span>03 파이프라인</span><span>04 검증</span><span>05 전략</span><span>06 코드 구조</span><span>07 목표 아키텍처</span><span class="on">08 로드맵</span></div>
+  <div class="series"><span>00 목표 · 기술</span><span>01 한눈에</span><span>02 데이터</span><span>03 파이프라인</span><span>04 검증</span><span>05 전략</span><span>06 코드 구조</span><span>07 메달리온</span><span>08 목표 아키텍처</span><span class="on">09 로드맵</span></div>
 </div>
 
 </body>

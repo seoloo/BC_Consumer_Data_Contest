@@ -25,19 +25,21 @@
 | 04 | [검증](docs/diagrams/04_validation.png) | 통계 검정, 규모 민감도, 외부유입 보정, 재현 검증 |
 | 05 | [전략](docs/diagrams/05_strategy.png) | 방어형 고객, 고객 구성 최적화, 메뉴 · 상품 전략 |
 | 06 | [코드 구조](docs/diagrams/06_code_structure.png) | Phase 1 리팩토링 결과, 모듈 지도, 테스트 |
-| 07 | [목표 아키텍처](docs/diagrams/07_target_architecture.png) | Phase 2~4에서 만들 데이터 마트 구조 (계획) |
-| 08 | [로드맵](docs/diagrams/08_roadmap.png) | 단계별 할 일과 완료 기준, 진행 기록 |
+| 07 | [메달리온 아키텍처](docs/diagrams/07_medallion.png) | Bronze → Silver → Gold 계층, 계층 사이 대사 |
+| 08 | [목표 아키텍처](docs/diagrams/08_target_architecture.png) | Phase 2~4에서 만들 데이터 마트 구조 (계획) |
+| 09 | [로드맵](docs/diagrams/09_roadmap.png) | 단계별 할 일과 완료 기준, 진행 기록 |
 
 ## 포트폴리오 전환 로드맵
 
 공모전 분석을 금융권 데이터 엔지니어링 포트폴리오로 확장하고 있습니다.
 
-![전환 로드맵](docs/diagrams/08_roadmap.png)
+![전환 로드맵](docs/diagrams/09_roadmap.png)
 
 | 단계 | 내용 | 상태 |
 |---|---|---|
 | Phase 0 | 공모전 분석 (노트북) | 완료 |
 | Phase 1 | 리팩토링: 노트북 → `src/future_stress` 모듈 + 테스트, 발표 결과 6/6 재현 ([리팩토링 노트](docs/refactoring_notes.md)) | 완료 |
+| Phase 1.5 | 메달리온 아키텍처 로컬 세팅: Bronze → Silver → Gold, 계층 사이 대사 10개 | 완료 |
 | Phase 2 | 합성 데이터 · 공공 API 수집 | 다음 |
 | Phase 3 | PostgreSQL + dbt 데이터 마트 · 품질 검사 | 예정 |
 | Phase 4 | Airflow 배치 · CI · 대시보드 | 예정 |
@@ -96,6 +98,7 @@ Future Stress가 음수이면 현재 소비구조가 미래 인구감소에 더 
 | 구분 | 기술 | 상태 |
 |---|---|---|
 | 처리 · 분석 | Python, pandas, NumPy, SciPy | 사용 중 |
+| 데이터 구조 · 저장 | 메달리온 아키텍처 (Bronze · Silver · Gold), Parquet (pyarrow) | 사용 중 |
 | 테스트 | pytest | 사용 중 |
 | 수집 | requests (KOSIS · NAVER API), 합성 데이터 생성기 | Phase 2 |
 | 원본 보관 | MinIO (S3 호환) | Phase 2 |
@@ -118,7 +121,7 @@ python -m venv .venv
 .venv\Scripts\python -m pytest
 ```
 
-원본 데이터를 `data/raw/`에 넣었다면 전체 분석을 실행하고 발표 수치와 비교할 수 있습니다.
+원본 데이터를 `data/raw/`에 넣었다면 전체 분석을 실행하고 발표 수치와 비교할 수 있습니다. 실행하면 `data/bronze` (원본 + 적재 영수증) → `data/silver` (정제 Parquet) → `data/gold` (분석 Parquet) 순서로 계층이 만들어지고, 계층 사이 건수 · 금액 대사를 통과해야 `output/`에 결과 CSV가 저장됩니다.
 
 ```powershell
 .venv\Scripts\python -m future_stress.pipeline --compare
@@ -132,7 +135,7 @@ tests/        단위 테스트와 전체 실행 테스트
 notebooks/    실행 출력과 인증정보를 제거한 원래 분석 노트북 (보존용)
 assets/       포트폴리오용 결과 이미지
 docs/         최종 발표자료, 흐름도 시리즈(diagrams/), 리팩토링 노트
-data/         데이터 비공개 사유와 재현 안내
+data/         데이터 비공개 사유와 재현 안내 (실행하면 raw · bronze · silver · gold가 생기며 모두 git 제외)
 results/      발표자료에 사용한 소규모 집계 결과 CSV
 scripts/      공개용 노트북 정리 스크립트
 ```

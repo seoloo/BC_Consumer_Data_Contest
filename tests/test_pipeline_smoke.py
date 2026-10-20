@@ -1,12 +1,16 @@
 """파이프라인 전체를 가짜 원본으로 끝까지 실행해 보는 테스트 (smoke test).
 
-숫자가 맞는지가 아니라, 파일 읽기 → 정제 → Stress → 검증 → 전략 → 저장이
-중간에 끊기지 않고 이어지는지, 결과 표의 열 이름이 발표 결과 CSV와 같은지를 확인합니다.
+숫자가 맞는지가 아니라, Bronze → Silver → Gold → 대사 → 내보내기가 중간에 끊기지 않고
+이어지는지, 결과 표의 열 이름이 발표 결과 CSV와 같은지를 확인합니다.
+모든 계층은 pytest가 만든 임시 폴더(tmp_path)에 만들어 실제 data/ 폴더를 건드리지 않습니다.
 """
+
+import json
 
 import pandas as pd
 import pytest
 
+from future_stress.medallion import build_bronze, run_quality_checks
 from future_stress.pipeline import check_raw_files, compare_with_published, run_pipeline
 from synthetic_raw_files import write_all_raw_files
 
@@ -24,17 +28,35 @@ PUBLISHED_COLUMNS = {
 }
 
 
+@pytest.fixture(scope="module")
+def pipeline_run(tmp_path_factory):
+    """가짜 원본으로 파이프라인을 한 번 실행하고, 여러 테스트가 결과를 함께 씁니다."""
+    root = tmp_path_factory.mktemp("pipeline")
+    raw_dir, data_dir, output_dir = root / "raw", root / "data", root / "output"
+    write_all_raw_files(raw_dir)
+    tables = run_pipeline(raw_dir, output_dir, data_dir)
+    return {"raw": raw_dir, "data": data_dir, "output": output_dir, "tables": tables}
+
+
 def test_missing_raw_files_are_reported_at_once(tmp_path):
     with pytest.raises(FileNotFoundError, match="bc_card_202601_202606.csv"):
         check_raw_files(tmp_path)
 
 
-def test_pipeline_runs_end_to_end(tmp_path):
-    raw_dir, output_dir = tmp_path / "raw", tmp_path / "output"
-    write_all_raw_files(raw_dir)
+def test_each_layer_is_written(pipeline_run):
+    data_dir = pipeline_run["data"]
+    assert (data_dir / "bronze" / "_manifest.json").exists()
+    assert (data_dir / "bronze" / "card_spending" / "bc_card_202601_202606.csv").exists()
+    assert {p.stem for p in (data_dir / "silver").glob("*.parquet")} == {
+        "card_spending", "future_population", "resident_population",
+        "seoul_living_share", "busan_living_exposure", "gyeonggi_flow_share",
+    }
+    assert (data_dir / "gold" / "future_stress.parquet").exists()
+    assert (data_dir / "gold" / "_quality_report.csv").exists()
 
-    tables = run_pipeline(raw_dir, output_dir)
 
+def test_published_tables_have_same_columns(pipeline_run):
+    tables, output_dir = pipeline_run["tables"], pipeline_run["output"]
     for name, columns in PUBLISHED_COLUMNS.items():
         assert (output_dir / f"{name}.csv").exists(), name
         assert tables[name].columns.tolist() == columns, name
@@ -42,9 +64,37 @@ def test_pipeline_runs_end_to_end(tmp_path):
     robustness = tables["final_3region_robustness"].set_index("지역")
     assert robustness.index.tolist() == ["서울", "부산", "경기"]
     assert (robustness["검증사례수"] > 0).all()
-    assert set(tables["market_type_counts"].columns) == {"유형", "서울", "부산", "경기"}
 
     # 발표 결과와의 비교 함수도 끝까지 돌아야 함 (가짜 데이터라 값은 '불일치'가 정상)
     report = compare_with_published(output_dir)
     assert set(report["결과"]) <= {"일치", "불일치", "비교불가"}
-    assert isinstance(report, pd.DataFrame)
+
+
+def test_quality_checks_reconcile_layers(pipeline_run):
+    """가짜 원본에는 개인이 아닌 결제 1행이 들어 있습니다. 대사가 그 1행만큼 정확히 맞아야 합니다."""
+    report = pipeline_run["tables"]["quality_report"].set_index("검사")
+    assert report.loc["카드 행 수 대사", "결과"] == "통과"
+    assert report.loc["카드 금액 대사", "결과"] == "통과"
+    assert report.loc["전국 소비구조 금액 대사", "결과"] == "통과"
+    assert report.loc["경기 시 단위 통합 대사", "결과"] == "통과"
+    assert "실패" not in set(report["결과"])
+
+
+def test_quality_check_detects_lost_rows(pipeline_run):
+    """Silver에서 행이 사라지면 대사가 '실패'를 내야 합니다 (검사가 실제로 동작하는지 확인)."""
+    from future_stress.medallion import read_silver
+
+    silver = read_silver(pipeline_run["data"] / "silver")
+    silver["card_spending"] = silver["card_spending"].iloc[1:]   # 일부러 한 행을 지움
+    report = run_quality_checks(pipeline_run["data"] / "bronze", silver, pipeline_run["tables"]).set_index("검사")
+    assert report.loc["카드 행 수 대사", "결과"] == "실패"
+
+
+def test_bronze_is_idempotent(pipeline_run):
+    """같은 원본으로 다시 적재하면 파일을 다시 복사하지 않고 '변경 없음'으로 기록합니다."""
+    manifest = build_bronze(pipeline_run["raw"], pipeline_run["data"] / "bronze")
+    assert {entry["status"] for entry in manifest["files"]} == {"변경 없음"}
+    saved = json.loads((pipeline_run["data"] / "bronze" / "_manifest.json").read_text(encoding="utf-8"))
+    card_entry = next(e for e in saved["files"] if e["source"] == "card")
+    assert len(card_entry["sha256"]) == 64 and card_entry["rows"] > 0
+    assert isinstance(pd.Timestamp(saved["ingested_at"]), pd.Timestamp)

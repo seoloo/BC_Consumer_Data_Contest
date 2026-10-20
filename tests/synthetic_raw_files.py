@@ -126,7 +126,7 @@ def write_gyeonggi_flow_folder(folder, rng):
 
 
 def write_all_raw_files(raw_dir, seed=7):
-    """pipeline.RAW_FILES에 적힌 이름 그대로 가짜 원본을 만듭니다."""
+    """medallion.RAW_SOURCES에 적힌 이름 그대로 가짜 원본을 만듭니다."""
     rng = np.random.default_rng(seed)
     raw_dir.mkdir(parents=True, exist_ok=True)
     write_card_csv(raw_dir / "bc_card_202601_202606.csv", rng)

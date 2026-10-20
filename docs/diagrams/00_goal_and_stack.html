@@ -78,7 +78,7 @@
       <ol>
         <li><code>docker compose up</code> 한 번으로 DB · 저장소 · Airflow · 대시보드가 뜸</li>
         <li>Airflow가 매월 원천을 수집해 원본 보관소에 기준월별로 저장</li>
-        <li>dbt가 raw → staging → mart로 변환하고 품질 · 정합성 검사</li>
+        <li>dbt가 Bronze → Silver → Gold 계층으로 변환하고 층마다 품질 · 정합성 검사</li>
         <li>검사를 통과하면 대시보드에서 Stress · 4유형 조회, 실패하면 알림</li>
         <li>코드를 올릴 때마다 GitHub Actions가 합성 데이터로 전체를 검증</li>
       </ol>
@@ -115,6 +115,21 @@
         <td class="fin-cell">변경 전후 검증 · 회귀 테스트</td>
       </tr>
 
+      <tr>
+        <td class="layer-cell"><span class="lname">데이터 구조</span><br><span class="lphase t-green">Phase 1.5 · 사용 중</span></td>
+        <td class="tech-cell"><span class="tname">메달리온 아키텍처</span><span class="tsub">Bronze → Silver → Gold</span></td>
+        <td class="why-cell">원본 / 정제 / 분석 결과를 세 층으로 나누고 각 층은 앞 층만 읽게 해, <b>재처리 · 추적 · 층 사이 대사</b>가 가능하게 합니다. (07 메달리온)</td>
+        <td class="alt-cell"><b>원본에서 바로 결과 만들기 대신</b> · 노트북 방식은 중간 CSV 30여 개가 남아 어느 단계 결과인지 추적 불가.</td>
+        <td class="fin-cell">원천 → 정제 → 마트 계층 구조, 원천 데이터 접근 통제</td>
+      </tr>
+      <tr>
+        <td class="layer-cell"><span class="lname">저장 형식</span><br><span class="lphase t-green">Phase 1.5 · 사용 중</span></td>
+        <td class="tech-cell"><span class="tname">Parquet</span><span class="tsub">pyarrow</span></td>
+        <td class="why-cell">Silver · Gold를 열 단위로 압축 저장해 <b>16.4MB CSV → 1.4MB</b>, 숫자 · 문자 타입이 함께 저장되어 다시 읽어도 그대로입니다.</td>
+        <td class="alt-cell"><b>CSV 대신</b> · 실제로 cp949 / utf-8 인코딩이 섞여 깨졌고, 다시 읽을 때 타입이 바뀌는 문제가 있었음.</td>
+        <td class="fin-cell">데이터 레이크 · 웨어하우스 표준 저장 형식</td>
+      </tr>
+
       <tr class="group-row"><td colspan="5">수집 · 적재</td></tr>
       <tr>
         <td class="layer-cell"><span class="lname">합성 데이터</span><br><span class="lphase t-primary">Phase 2</span></td>
@@ -132,7 +147,7 @@
       </tr>
       <tr>
         <td class="layer-cell"><span class="lname">원본 보관</span><br><span class="lphase t-primary">Phase 2</span></td>
-        <td class="tech-cell"><span class="tname">MinIO</span><span class="tsub">S3 호환 객체 저장소</span></td>
+        <td class="tech-cell"><span class="tname">MinIO</span><span class="tsub">Bronze 계층 저장소 (S3 호환)</span></td>
         <td class="why-cell">받은 원본을 수정 없이 <b>기준월별 폴더</b>로 보관해, 문제가 생기면 그 달만 다시 처리할 수 있게 합니다.</td>
         <td class="alt-cell"><b>로컬 폴더 대신</b> · S3와 같은 방식이라 클라우드로 옮겨도 코드가 거의 그대로. <b>AWS S3 대신</b> · 로컬에서 무료.</td>
         <td class="fin-cell">원본 데이터 보존 · 데이터 레이크의 landing 영역</td>
@@ -141,7 +156,7 @@
       <tr class="group-row"><td colspan="5">저장 · 변환 · 품질</td></tr>
       <tr>
         <td class="layer-cell"><span class="lname">데이터 웨어하우스</span><br><span class="lphase t-violet">Phase 3</span></td>
-        <td class="tech-cell"><span class="tname">PostgreSQL</span><span class="tsub">raw · staging · mart 스키마</span></td>
+        <td class="tech-cell"><span class="tname">PostgreSQL</span><span class="tsub">Silver · Gold 스키마</span></td>
         <td class="why-cell">계층별 스키마와 표준 SQL로 마트를 만들고, 서버형 DB를 운영 · 설계하는 경험을 보여줍니다.</td>
         <td class="alt-cell"><b>DuckDB 대신</b> · 가볍지만 서버 · 권한 · 동시 접속 같은 운영 요소를 보여주기 어려움.</td>
         <td class="fin-cell">금융권 RDB(Oracle 등)와 같은 SQL · 스키마 설계</td>
@@ -218,9 +233,9 @@
   <div class="card pad">
     <table class="skills">
       <tr><th>요구 역량</th><th>이 프로젝트에서의 증거</th><th>단계</th></tr>
-      <tr><td>데이터 정합성 · 검증</td><td>발표 수치 6/6 자동 비교(--compare), 원천 ↔ 마트 합계 대사, dbt tests</td><td><span class="tag t-green">Phase 1 완료</span> <span class="tag t-violet">Phase 3</span></td></tr>
+      <tr><td>데이터 정합성 · 검증</td><td>발표 수치 6/6 자동 비교(--compare), 메달리온 계층 사이 건수 · 금액 대사 10개, dbt tests</td><td><span class="tag t-green">Phase 1 완료</span> <span class="tag t-violet">Phase 3</span></td></tr>
       <tr><td>배치 파이프라인 설계 · 운영</td><td>월 단위 DAG, backfill, 실패 재시도 · 알림, 멱등한 수집</td><td><span class="tag t-primary">Phase 2</span> <span class="tag t-amber">Phase 4</span></td></tr>
-      <tr><td>SQL · 데이터 모델링</td><td>raw → staging → mart 계층, 기준표(dim_region · dim_age_group), ERD</td><td><span class="tag t-violet">Phase 3</span></td></tr>
+      <tr><td>SQL · 데이터 모델링</td><td>Bronze → Silver → Gold 계층, 기준표(dim_region · dim_age_group), ERD</td><td><span class="tag t-violet">Phase 3</span></td></tr>
       <tr><td>개인정보 보호 · 보안</td><td>원본 비공개, 합성 데이터, 인증정보 분리, 집계 셀 마스킹</td><td><span class="tag t-green">진행 중</span> <span class="tag t-primary">Phase 2</span></td></tr>
       <tr><td>코드 품질 · 협업</td><td>역할별 모듈, 이유 주석, 테스트 38개, CI</td><td><span class="tag t-green">Phase 1 완료</span> <span class="tag t-amber">Phase 4</span></td></tr>
       <tr><td>도메인 이해 (카드 · 소비)</td><td>카드 결제 데이터로 상권 위험 지표 설계, 통계 검증, 외부유입 보정</td><td><span class="tag t-green">Phase 0 완료</span></td></tr>
@@ -231,7 +246,7 @@
 
 <div class="footer">
   <span>미래 소비기반 스트레스 테스트 · 흐름도 시리즈</span>
-  <div class="series"><span class="on">00 목표 · 기술</span><span>01 한눈에</span><span>02 데이터</span><span>03 파이프라인</span><span>04 검증</span><span>05 전략</span><span>06 코드 구조</span><span>07 목표 아키텍처</span><span>08 로드맵</span></div>
+  <div class="series"><span class="on">00 목표 · 기술</span><span>01 한눈에</span><span>02 데이터</span><span>03 파이프라인</span><span>04 검증</span><span>05 전략</span><span>06 코드 구조</span><span>07 메달리온</span><span>08 목표 아키텍처</span><span>09 로드맵</span></div>
 </div>
 
 </body>
