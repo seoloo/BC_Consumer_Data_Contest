@@ -30,6 +30,12 @@ BRONZE_DIR = DATA_DIR / "bronze"   # 원본 그대로 + 적재 영수증(_manife
 SILVER_DIR = DATA_DIR / "silver"   # 정제 · 표준화된 데이터 (원본과 같은 단위, 집계 전)
 GOLD_DIR = DATA_DIR / "gold"       # 분석 결과 (Stress, 4유형, 검증, 전략)
 
+# 합성 데이터로 돌릴 때는 원본 결과와 섞이지 않도록 data/synthetic 아래에 따로 만듭니다.
+# raw · bronze · silver · gold · output이 모두 이 폴더 안에 생기고, 시드만 같으면 언제든 다시 만들 수 있어 저장소에 올리지 않습니다.
+SYNTHETIC_DIR = DATA_DIR / "synthetic"
+SYNTHETIC_RAW_DIR = SYNTHETIC_DIR / "raw"
+SYNTHETIC_OUTPUT_DIR = SYNTHETIC_DIR / "output"
+
 # ---------------------------------------------------------------------------
 # 분석 기간
 # ---------------------------------------------------------------------------

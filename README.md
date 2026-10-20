@@ -51,7 +51,7 @@
 | Phase 0 | 공모전 분석 (노트북) | 완료 |
 | Phase 1 | 리팩토링: 노트북 → `src/future_stress` 모듈 + 테스트, 발표 결과 6/6 재현 ([리팩토링 노트](docs/refactoring_notes.md)) | 완료 |
 | Phase 1.5 | 메달리온 아키텍처 로컬 세팅: Bronze → Silver → Gold, 계층 사이 대사 10개 | 완료 |
-| Phase 2 | 합성 데이터 · 공공 API 수집 | 다음 |
+| Phase 2 | 합성 데이터 생성기 (완료) · 공공 API 수집 | 진행 중 |
 | Phase 3 | PostgreSQL + dbt 데이터 마트 · 품질 검사 | 예정 |
 | Phase 4 | Airflow 배치 · CI · 대시보드 | 예정 |
 
@@ -111,7 +111,8 @@ Future Stress가 음수이면 현재 소비구조가 미래 인구감소에 더 
 | 처리 · 분석 | Python, pandas, NumPy, SciPy | 사용 중 |
 | 데이터 구조 · 저장 | 메달리온 아키텍처 (Bronze · Silver · Gold), Parquet (pyarrow) | 사용 중 |
 | 테스트 | pytest | 사용 중 |
-| 수집 | requests (KOSIS · NAVER API), 합성 데이터 생성기 | Phase 2 |
+| 합성 데이터 | NumPy 생성기 (원본 8종과 같은 형식, 시드 고정) | 사용 중 |
+| 수집 | requests (KOSIS · NAVER API) | Phase 2 |
 | 원본 보관 | MinIO (S3 호환) | Phase 2 |
 | 저장 · 변환 · 품질 | PostgreSQL, dbt, dbt tests | Phase 3 |
 | 운영 · 제공 | Airflow, Docker Compose, GitHub Actions, Streamlit | Phase 2 ~ 4 |
@@ -132,6 +133,12 @@ python -m venv .venv
 .venv\Scripts\python -m pytest
 ```
 
+원본 데이터가 없어도 합성 데이터로 전체 과정을 돌려 볼 수 있습니다. 원본과 형식이 같은 파일을 `data/synthetic/raw/`에 만든 뒤, 같은 폴더 아래에 bronze · silver · gold · output을 만듭니다. 숫자는 직접 정한 값이라 발표 결과와는 다릅니다.
+
+```powershell
+.venv\Scripts\python -m future_stress.pipeline --synthetic
+```
+
 원본 데이터를 `data/raw/`에 넣었다면 전체 분석을 실행하고 발표 수치와 비교할 수 있습니다. 실행하면 `data/bronze` (원본 + 적재 영수증) → `data/silver` (정제 Parquet) → `data/gold` (분석 Parquet) 순서로 계층이 만들어지고, 계층 사이 건수 · 금액 대사를 통과해야 `output/`에 결과 CSV가 저장됩니다.
 
 ```powershell
@@ -146,7 +153,7 @@ tests/        단위 테스트와 전체 실행 테스트
 notebooks/    실행 출력과 인증정보를 제거한 원래 분석 노트북 (보존용)
 assets/       발표에 쓴 결과 이미지
 docs/         최종 발표자료, 흐름도 시리즈(diagrams/), 리팩토링 노트
-data/         데이터 비공개 사유와 재현 안내 (실행하면 raw · bronze · silver · gold가 생기며 모두 git 제외)
+data/         데이터 비공개 사유와 재현 안내 (실행하면 raw · bronze · silver · gold · synthetic이 생기며 모두 git 제외)
 results/      발표자료에 사용한 소규모 집계 결과 CSV
 scripts/      공개용 노트북 정리 스크립트
 ```
