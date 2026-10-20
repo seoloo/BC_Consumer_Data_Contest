@@ -1,0 +1,210 @@
+<!-- size: 1600x2600 -->
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>Roadmap</title>
+<link rel="stylesheet" href="_style.css">
+<style>
+  .goal {
+    background: linear-gradient(120deg, #1B2333 0%, #26345A 100%); color: #fff; border-radius: 20px;
+    padding: 28px 32px; display: grid; grid-template-columns: 1.15fr 1fr; gap: 28px; align-items: center; margin-bottom: 30px;
+  }
+  .goal .tag-line { font-size: 13.5px; font-weight: 700; color: #9FB4FF; letter-spacing: .06em; margin-bottom: 10px; }
+  .goal h2 { font-size: 28px; font-weight: 800; line-height: 1.4; }
+  .goal h2 em { font-style: normal; color: #9FB4FF; }
+  .goal .quote { margin-top: 14px; font-size: 15px; color: #C9D2E3; line-height: 1.6; border-left: 3px solid #5C7CFA; padding-left: 14px; }
+  .pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .pillar { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12); border-radius: 14px; padding: 16px; }
+  .pillar b { display: block; font-size: 18px; margin-bottom: 6px; }
+  .pillar span { font-size: 13.5px; color: #C9D2E3; line-height: 1.5; }
+  .timeline { position: relative; display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+  .track { position: absolute; left: 30px; right: 30px; top: 15px; height: 4px; background: #DDE2EA; border-radius: 4px; }
+  .track-fill { position: absolute; left: 30px; top: 15px; height: 4px; width: 43%; background: var(--green); border-radius: 4px; }
+  .phase { position: relative; padding-top: 44px; }
+  .marker { position: absolute; top: 3px; left: 18px; width: 28px; height: 28px; border-radius: 50%; background: #fff; border: 4px solid #C9D0DB; }
+  .phase.done .marker { background: var(--green); border-color: var(--green); }
+  .phase.done .marker::after { content: ""; position: absolute; left: 6px; top: 3px; width: 6px; height: 10px; border: solid #fff; border-width: 0 2.5px 2.5px 0; transform: rotate(45deg); }
+  .phase.now .marker { border-color: var(--primary); box-shadow: 0 0 0 6px rgba(59,91,219,.18); }
+  .phase.now .marker::after { content: ""; position: absolute; inset: 4px; border-radius: 50%; background: var(--primary); }
+  .p-card { padding: 18px; display: flex; flex-direction: column; gap: 10px; height: 100%; }
+  .phase.now .p-card { border: 2px solid var(--primary); box-shadow: 0 8px 24px rgba(59, 91, 219, .16); }
+  .phase.done .p-card { background: #FBFDFB; }
+  .p-head { display: flex; justify-content: space-between; align-items: center; }
+  .p-no { font-size: 13px; font-weight: 800; color: var(--muted); }
+  .status { font-size: 12.5px; font-weight: 800; padding: 3px 9px; border-radius: 999px; }
+  .s-done { color: var(--green); background: var(--green-soft); }
+  .s-now { color: #fff; background: var(--primary); }
+  .s-next { color: var(--sub); background: #EEF1F6; }
+  .p-card h4 { font-size: 19px; }
+  .p-goal { font-size: 13.5px; color: var(--sub); line-height: 1.5; }
+  .block-label { font-size: 12px; font-weight: 800; color: var(--muted); margin-bottom: 5px; }
+  .todo { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+  .todo li { font-size: 13px; line-height: 1.45; padding-left: 20px; position: relative; color: var(--ink); }
+  .todo li::before { content: ""; position: absolute; left: 0; top: 3px; width: 12px; height: 12px; border-radius: 4px; border: 2px solid #C9D0DB; }
+  .todo li.ok::before { background: var(--green); border-color: var(--green); }
+  .todo li.ok::after { content: ""; position: absolute; left: 4px; top: 5px; width: 3px; height: 6px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+  .techs { display: flex; flex-wrap: wrap; gap: 5px; }
+  .dod { margin-top: auto; border-top: 1px dashed var(--line); padding-top: 10px; font-size: 13px; color: var(--sub); line-height: 1.5; }
+  .dod b { color: var(--ink); }
+  .log { display: flex; flex-direction: column; gap: 0; }
+  .log-row { display: grid; grid-template-columns: 110px 18px 1fr; gap: 12px; align-items: start; padding: 10px 0; }
+  .log-row .date { font-size: 13px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .log-row .dot { width: 12px; height: 12px; border-radius: 50%; margin-top: 4px; }
+  .log-row b { font-size: 14.5px; }
+  .log-row p { font-size: 13px; }
+  .appeal { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  .appeal div { background: var(--primary-soft); border-radius: 12px; padding: 12px 14px; }
+  .appeal b { display: block; font-size: 14.5px; color: var(--primary); }
+  .appeal span { font-size: 12.5px; color: var(--sub); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="eyebrow"><span class="no">09</span>로드맵</div>
+    <h1>카드 소비 데이터 파이프라인 · 전환 로드맵</h1>
+    <p class="lede">공모전 분석 노트북을 금융권 데이터 엔지니어 포트폴리오로 바꾸는 과정입니다. 단계가 끝날 때마다 이 그림을 갱신합니다.</p>
+  </div>
+  <div class="version"><b>로드맵 v3</b><br>2026-10-21 · 메달리온 계층 세팅</div>
+</div>
+
+<div class="goal">
+  <div>
+    <div class="tag-line">최종 목표</div>
+    <h2>흩어진 분석 노트북을<br><em>명령 한 번으로 재현되는 카드 소비 데이터 마트</em>로</h2>
+    <p class="quote">"분석하면서 겪은 재현 불가 · 형식 불일치 · 수작업 검증 문제를<br>데이터 엔지니어링으로 해결했다" — 면접에서 말할 한 문장</p>
+  </div>
+  <div class="pillars">
+    <div class="pillar"><b>재현성</b><span>원본 없이도 합성 데이터로 누구나 전체 실행</span></div>
+    <div class="pillar"><b>정합성</b><span>원천 합계와 마트 합계를 자동 대사</span></div>
+    <div class="pillar"><b>보안</b><span>원본 비공개 · 인증정보 분리 · 집계 셀 마스킹</span></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label"><span class="num">1</span><span class="title">진행 단계</span><span class="desc">체크 = 완료한 일 · 완료 기준 = 다음 단계로 넘어가는 조건</span></div>
+  <div class="timeline">
+    <div class="track"></div><div class="track-fill"></div>
+
+    <div class="phase done"><span class="marker"></span>
+      <div class="card p-card">
+        <div class="p-head"><span class="p-no">PHASE 0</span><span class="status s-done">완료 · 2026.09</span></div>
+        <h4>공모전 분석</h4>
+        <p class="p-goal">Future Stress 지표와 4유형 진단을 만들고 통계로 검증</p>
+        <div><div class="block-label">한 일</div><ul class="todo">
+          <li class="ok">BC카드 + 장래인구 결합, Stress 계산</li>
+          <li class="ok">통계 검정 · 3개 지역 보정 검증</li>
+          <li class="ok">NAVER 관심도로 메뉴 · 상품 전략</li>
+          <li class="ok">발표자료 · 공개 결과 CSV</li></ul></div>
+        <div class="techs"><span class="tech">pandas</span><span class="tech">SciPy</span><span class="tech">Jupyter</span></div>
+        <div class="dod"><b>결과</b> · 노트북 3개, 셀 555개</div>
+      </div></div>
+
+    <div class="phase done"><span class="marker"></span>
+      <div class="card p-card">
+        <div class="p-head"><span class="p-no">PHASE 1</span><span class="status s-done">완료 · 2026.10</span></div>
+        <h4>리팩토링</h4>
+        <p class="p-goal">노트북 로직을 이해하기 쉬운 모듈로 정리하고 결과가 그대로인지 확인</p>
+        <div><div class="block-label">한 일</div><ul class="todo">
+          <li class="ok">역할별 모듈 14개 · 알아보기 쉬운 이름</li>
+          <li class="ok">역할 · 사용 이유 주석, 노트 문서</li>
+          <li class="ok">테스트 42개 (단위 + 전체 실행)</li>
+          <li class="ok">원본 데이터로 발표 결과 6/6 재현</li>
+          <li class="ok">메달리온 계층 로컬 세팅 · 계층 대사 10개</li>
+          <li class="ok">흐름도 시리즈 10장 (목표 · 기술, 메달리온 포함)</li></ul></div>
+        <div class="techs"><span class="tech main">Python 패키지</span><span class="tech">pytest</span></div>
+        <div class="dod"><b>완료 기준 충족</b> · <code>--compare</code>로 발표 수치와 모두 일치</div>
+      </div></div>
+
+    <div class="phase now"><span class="marker"></span>
+      <div class="card p-card">
+        <div class="p-head"><span class="p-no">PHASE 2</span><span class="status s-now">다음 · 지금 여기</span></div>
+        <h4>합성 데이터 · 수집</h4>
+        <p class="p-goal">원본 없이도 누구나 실행할 수 있게 하고, 인구 데이터를 API로 직접 수집</p>
+        <div><div class="block-label">할 일</div><ul class="todo">
+          <li>BC카드 형식 합성 데이터 생성기</li>
+          <li>KOSIS · 공공데이터 인구 수집기 (재시도 · 멱등)</li>
+          <li>MinIO를 Bronze 저장소로 (기준월 파티션)</li>
+          <li>Docker Compose 뼈대</li></ul></div>
+        <div class="techs"><span class="tech">NumPy</span><span class="tech">requests</span><span class="tech">KOSIS</span><span class="tech">MinIO</span><span class="tech">Docker</span></div>
+        <div class="dod"><b>완료 기준</b> · 원본 없이 파이프라인 전체 실행 성공, 수집기를 다시 돌려도 같은 결과</div>
+      </div></div>
+
+    <div class="phase"><span class="marker"></span>
+      <div class="card p-card">
+        <div class="p-head"><span class="p-no">PHASE 3</span><span class="status s-next">예정</span></div>
+        <h4>데이터 마트 · 품질</h4>
+        <p class="p-goal">Silver · Gold 파이썬 계산을 SQL 모델로 옮기고 품질 검사를 붙임</p>
+        <div><div class="block-label">할 일</div><ul class="todo">
+          <li>PostgreSQL silver · gold 스키마</li>
+          <li>dbt 모델 · dim_region · dim_age_group</li>
+          <li>dbt tests · 원천 ↔ 마트 대사 리포트</li>
+          <li>ERD · 데이터 계보 문서</li></ul></div>
+        <div class="techs"><span class="tech">PostgreSQL</span><span class="tech">dbt</span><span class="tech">SQL</span></div>
+        <div class="dod"><b>완료 기준</b> · 같은 데이터에서 dbt 결과 = 파이썬 결과, 품질 검사 모두 통과</div>
+      </div></div>
+
+    <div class="phase"><span class="marker"></span>
+      <div class="card p-card">
+        <div class="p-head"><span class="p-no">PHASE 4</span><span class="status s-next">예정</span></div>
+        <h4>자동화 · 제공</h4>
+        <p class="p-goal">매월 배치 실행, 코드 변경 시 자동 검증, 결과 대시보드 제공</p>
+        <div><div class="block-label">할 일</div><ul class="todo">
+          <li>Airflow 월 배치 DAG · backfill</li>
+          <li>GitHub Actions CI (테스트 + dbt build)</li>
+          <li>Streamlit 대시보드</li>
+          <li>운영 매뉴얼(runbook) · 의사결정 기록</li></ul></div>
+        <div class="techs"><span class="tech">Airflow</span><span class="tech">GitHub Actions</span><span class="tech">Streamlit</span></div>
+        <div class="dod"><b>완료 기준</b> · DAG로 6개월 재처리 성공, CI 통과, 대시보드에서 결과 조회</div>
+      </div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="grid" style="grid-template-columns: 1fr 1fr;">
+    <div class="card pad">
+      <div class="section-label"><span class="num">2</span><span class="title">진행 기록</span></div>
+      <div class="log">
+        <div class="log-row"><span class="date">2026-09-18</span><span class="dot" style="background:var(--green)"></span><div><b>공모전 최종 제출 · 저장소 공개</b><p>노트북, 발표자료, 공개용 결과 CSV</p></div></div>
+        <div class="log-row"><span class="date">2026-10-20</span><span class="dot" style="background:var(--green)"></span><div><b>Phase 1 리팩토링 완료</b><p>모듈 13개 · 테스트 38개 · 발표 결과 6/6 재현 · 원본에서 새 한계 2건 발견(서울 90세 이상 누락 등)</p></div></div>
+        <div class="log-row"><span class="date">2026-10-21</span><span class="dot" style="background:var(--green)"></span><div><b>메달리온 아키텍처 로컬 세팅</b><p>Bronze(원본 + 영수증) · Silver(Parquet 6개) · Gold(Parquet 16개), 계층 사이 대사 10개 통과, 발표 결과 6/6 유지</p></div></div>
+        <div class="log-row"><span class="date">다음</span><span class="dot" style="background:var(--primary)"></span><div><b>Phase 2 시작 · 합성 데이터 생성기</b><p>실제 데이터의 지역 · 업종 · 연령 분포를 흉내 낸 가짜 결제 데이터</p></div></div>
+      </div>
+    </div>
+    <div class="card pad stack" style="gap:12px">
+      <div class="section-label" style="margin-bottom:0"><span class="num">3</span><span class="title">흐름도 시리즈</span><span class="desc">docs/diagrams · render.py로 한 번에 갱신</span></div>
+      <table>
+        <tr><td><b>00</b> 목표 · 기술</td><td>최종 목적, 기술 스택과 선택 이유</td></tr>
+        <tr><td><b>01</b> 한눈에 보기</td><td>문제의식 · 핵심 결과 · 4유형</td></tr>
+        <tr><td><b>02</b> 데이터</td><td>원본 8종의 까다로운 점과 처리 함수</td></tr>
+        <tr><td><b>03</b> 파이프라인</td><td>STEP 1~5 상세와 서울 실제 건수</td></tr>
+        <tr><td><b>04</b> 검증</td><td>통계 검정 · 민감도 · 외부유입 보정 · 재현</td></tr>
+        <tr><td><b>05</b> 전략</td><td>방어형 고객 · 최적화 · 메뉴 전략</td></tr>
+        <tr><td><b>06</b> 코드 구조</td><td>Phase 1 결과 · 모듈 지도 · 테스트</td></tr>
+        <tr><td><b>07</b> 메달리온</td><td>Bronze → Silver → Gold 계층과 대사</td></tr>
+        <tr><td><b>08</b> 목표 아키텍처</td><td>Phase 2~4에서 만들 구조 (계획)</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label"><span class="num">4</span><span class="title">금융권 어필 포인트</span></div>
+  <div class="appeal">
+    <div><b>정합성</b><span>원천 ↔ 마트 대사, 발표 수치 자동 비교</span></div>
+    <div><b>배치 운영</b><span>월 배치 · 재처리 · 실패 알림</span></div>
+    <div><b>개인정보 보호</b><span>원본 비공개 · 마스킹 · 인증정보 분리</span></div>
+    <div><b>SQL 마트 설계</b><span>계층 · 기준표 · 계보</span></div>
+    <div><b>운영 문서</b><span>runbook · 리팩토링 노트 · 흐름도</span></div>
+  </div>
+</div>
+
+<div class="footer">
+  <span>미래 소비기반 스트레스 테스트 · 흐름도 시리즈</span>
+  <div class="series"><span>00 목표 · 기술</span><span>01 한눈에</span><span>02 데이터</span><span>03 파이프라인</span><span>04 검증</span><span>05 전략</span><span>06 코드 구조</span><span>07 메달리온</span><span>08 목표 아키텍처</span><span class="on">09 로드맵</span></div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!-- size: 1600x2800 -->
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>Analysis Pipeline</title>
+<link rel="stylesheet" href="_style.css">
+<style>
+  .funnel { display: flex; flex-direction: column; gap: 8px; }
+  .f-row { display: grid; grid-template-columns: 240px 1fr 120px; gap: 14px; align-items: center; }
+  .f-row .f-label { font-size: 14.5px; font-weight: 700; }
+  .f-row .f-label span { display: block; font-size: 12.5px; color: var(--muted); font-weight: 500; }
+  .f-bar { height: 30px; border-radius: 8px; background: var(--primary-soft); position: relative; overflow: hidden; }
+  .f-bar div { height: 100%; border-radius: 8px; background: var(--primary); }
+  .f-row .f-num { text-align: right; font-size: 20px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .f-row.hot .f-bar div { background: var(--t-illusion); }
+  .f-row.hot .f-num { color: var(--t-illusion); }
+  .steps { display: flex; flex-direction: column; gap: 14px; }
+  .step { display: grid; grid-template-columns: 210px 1.25fr 1fr 290px; gap: 0; overflow: hidden; }
+  .step > div { padding: 20px 22px; border-left: 1px solid var(--line); }
+  .step > div:first-child { border-left: 0; background: var(--soft); }
+  .step .s-no { font-size: 13px; font-weight: 800; color: var(--primary); margin-bottom: 6px; }
+  .step .s-title { font-size: 20px; font-weight: 800; line-height: 1.3; }
+  .step .s-why { font-size: 13px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+  .col-label { font-size: 12px; font-weight: 800; color: var(--muted); letter-spacing: .03em; margin-bottom: 8px; }
+  .rules { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .rules li { font-size: 14px; color: var(--ink); background: var(--soft); border-radius: 8px; padding: 7px 10px; line-height: 1.45; }
+  .result-big { font-size: 26px; font-weight: 800; letter-spacing: -0.01em; }
+  .result-big small { font-size: 14px; color: var(--muted); font-weight: 600; margin-left: 4px; }
+  .codes { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+  .codes .file { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .step.key { border: 2px solid var(--primary); }
+  .step.key > div:first-child { background: var(--primary-soft); }
+  .formula { background: var(--ink); color: #fff; border-radius: 10px; padding: 12px; text-align: center; font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .types { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+  .types div { border-radius: 8px; padding: 7px 10px; font-size: 13.5px; font-weight: 800; display: flex; justify-content: space-between; }
+  .ex-table td, .ex-table th { padding-top: 7px; padding-bottom: 7px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="eyebrow"><span class="no">03</span>분석 파이프라인</div>
+    <h1>STEP 1 ~ 5 · 지금의 성장과 미래의 소비기반을 따로 진단하기</h1>
+    <p class="lede">각 단계가 무엇을, 어떤 기준으로 하는지와 서울에서 실제로 몇 건이 남는지, 그리고 그 일을 하는 함수를 함께 정리했습니다.</p>
+  </div>
+  <div class="version"><b>pipeline.run_pipeline()</b><br>원본 데이터 기준 실제 수치</div>
+</div>
+
+<div class="section">
+  <div class="section-label"><span class="num">1</span><span class="title">서울 사례가 걸러지는 과정</span><span class="desc">발표 기준 · 전국 상위 25% · 막대 길이는 로그 눈금 (단위가 행 → 건으로 바뀜)</span></div>
+  <div class="card pad funnel">
+    <div class="f-row"><div class="f-label">원본 결제 행<span>전국 · 2026.01–06</span></div><div class="f-bar"><div style="width:100.0%"></div></div><div class="f-num">242,574</div></div>
+    <div class="f-row"><div class="f-label">개인 결제 행<span>성별 1·2, 연령 코드 1~6</span></div><div class="f-bar"><div style="width:96.6%"></div></div><div class="f-num">159,235</div></div>
+    <div class="f-row"><div class="f-label">전국 지역 × 업종<span>17개 시도 · 11개 업종</span></div><div class="f-bar"><div style="width:62.7%"></div></div><div class="f-num">2,379건</div></div>
+    <div class="f-row"><div class="f-label">서울 지역 × 업종<span>25개 자치구</span></div><div class="f-bar"><div style="width:44.2%"></div></div><div class="f-num">241건</div></div>
+    <div class="f-row"><div class="f-label">6개월 완전관측<span>STEP 2 조건 ①</span></div><div class="f-bar"><div style="width:44.1%"></div></div><div class="f-num">236건</div></div>
+    <div class="f-row"><div class="f-label">이용금액 상위 25%<span>STEP 2 조건 ② · 분석 대상</span></div><div class="f-bar"><div style="width:38.2%"></div></div><div class="f-num">114건</div></div>
+    <div class="f-row hot"><div class="f-label">현재 성장<span>STEP 3 · 세 조건 모두 충족</span></div><div class="f-bar"><div style="width:21.3%"></div></div><div class="f-num">14건</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label"><span class="num">2</span><span class="title">단계별 상세</span></div>
+  <div class="steps">
+
+    <div class="card step">
+      <div><div class="s-no">STEP 1</div><div class="s-title">정제 · 연령별 소비구조</div><div class="s-why">왜? 연령대별 비중을 알아야 '어느 연령에 기대는 상권인지' 계산할 수 있습니다.</div></div>
+      <div><div class="col-label">무엇을 · 어떤 기준으로</div>
+        <ul class="rules">
+          <li>개인 결제만 사용, 코드 → 이름 (AGE_CD 3 → 30대)</li>
+          <li>지역 × 업종 × 연령대로 6개월 이용금액 합산</li>
+          <li><b>이용금액비중</b> = 연령대 금액 ÷ 그 지역 × 업종 전체 금액 × 100</li>
+          <li>비중이 가장 큰 연령대 = <b>현재 핵심 고객</b>, 비중² 합 = <b>연령 집중도(HHI)</b></li>
+        </ul></div>
+      <div><div class="col-label">결과</div>
+        <div class="result-big">2,379건<small>× 6개 연령대</small></div>
+        <p class="small" style="margin-top:6px">경기는 장래인구가 시 단위라 일반구를 시로 합쳐 따로 만듭니다.</p></div>
+      <div><div class="col-label">코드</div><div class="codes">
+        <code>clean_card_spending()</code><code>build_age_spending_structure()</code><code>find_main_customer_age()</code><code>calculate_age_concentration()</code><span class="file">card_spending.py</span></div></div>
+    </div>
+
+    <div class="card step">
+      <div><div class="s-no">STEP 2</div><div class="s-title">분석 대상 선정</div><div class="s-why">왜? 규모가 작으면 결제 몇 건으로 증감률이 크게 흔들려 성장 판정을 믿기 어렵습니다.</div></div>
+      <div><div class="col-label">무엇을 · 어떤 기준으로</div>
+        <ul class="rules">
+          <li>① 6개월 모두 결제가 관측된 사례</li>
+          <li>② 업종 총이용금액이 <b>상위 25%</b> (전국 75분위수 이상)</li>
+          <li>상위 20 · 30%로 바꿔도 결론이 같은지 별도로 검증 (04 검증)</li>
+        </ul></div>
+      <div><div class="col-label">결과 · 서울</div>
+        <div class="result-big">241 → 114건</div>
+        <p class="small" style="margin-top:6px">3개 지역 비교에서는 지역마다 규모가 달라 '지역 내부 상위 25%'를 따로 씁니다.</p></div>
+      <div><div class="col-label">코드</div><div class="codes">
+        <code>size_cutoff()</code><code>select_analysis_targets()</code><span class="file">diagnosis.py</span></div></div>
+    </div>
+
+    <div class="card step">
+      <div><div class="s-no">STEP 3</div><div class="s-title">현재 성장 판정</div><div class="s-why">왜? 조건 하나만 쓰면 6월 한 달 반짝 오른 상권도 '성장'으로 잡힙니다.</div></div>
+      <div><div class="col-label">무엇을 · 어떤 기준으로 (세 조건 모두)</div>
+        <ul class="rules">
+          <li>1월 → 6월 증감률 <b>&gt; 0</b> · 기간 전체로 늘었다</li>
+          <li>월평균 증감률 <b>&gt; 0</b> · 5번의 전월 대비 변화 평균</li>
+          <li>전월보다 오른 달 <b>≥ 3개월</b> · 꾸준히 늘었다</li>
+        </ul></div>
+      <div><div class="col-label">결과 · 서울</div>
+        <div class="result-big" style="color:var(--t-illusion)">114 → 14건</div>
+        <p class="small" style="margin-top:6px">6개월이 다 있지 않으면 지표를 비워 두어 자동으로 '성장 아님'이 됩니다.</p></div>
+      <div><div class="col-label">코드</div><div class="codes">
+        <code>calculate_monthly_growth()</code><code>is_strictly_growing()</code><span class="file">card_spending.py · diagnosis.py</span></div></div>
+    </div>
+
+    <div class="card step key">
+      <div><div class="s-no">STEP 4 · 핵심 지표</div><div class="s-title">Future Stress 계산</div><div class="s-why">왜? 매출 추이에는 '고객이 앞으로 줄어드는 연령대인지'가 드러나지 않습니다.</div></div>
+      <div><div class="col-label">무엇을 · 어떤 기준으로</div>
+        <div class="formula">Σ (연령별 이용금액 비중 × 2040 인구증감률)</div>
+        <table class="ex-table">
+          <tr><th>가상 예시</th><th class="num">비중</th><th class="num">인구증감률</th><th class="num">기여</th></tr>
+          <tr><td>30대</td><td class="num">40%</td><td class="num">-25%</td><td class="num" style="color:var(--red)">-10.0</td></tr>
+          <tr><td>40대</td><td class="num">25%</td><td class="num">-20%</td><td class="num" style="color:var(--red)">-5.0</td></tr>
+          <tr><td>60대이상</td><td class="num">10%</td><td class="num">+30%</td><td class="num" style="color:var(--green)">+3.0</td></tr>
+        </table></div>
+      <div><div class="col-label">결과 · 서울</div>
+        <div class="result-big">92 / 114건</div>
+        <p class="small" style="margin-top:6px">2040 Stress가 음수. 2035도 같은 방식으로 계산해 시간에 따라 더 나빠지는지 봅니다.</p></div>
+      <div><div class="col-label">코드</div><div class="codes">
+        <code>attach_population_change()</code><code>add_age_stress_contributions()</code><code>sum_stress_by_case()</code><code>build_region_result()</code><span class="file">stress.py</span></div></div>
+    </div>
+
+    <div class="card step">
+      <div><div class="s-no">STEP 5</div><div class="s-title">4유형 진단</div><div class="s-why">왜? 같은 '위험'이라도 지금 성장 중인지에 따라 필요한 전략이 다릅니다.</div></div>
+      <div><div class="col-label">무엇을 · 어떤 기준으로</div>
+        <ul class="rules">
+          <li>STEP 3 성장 여부 × STEP 4의 2040 Stress 부호</li>
+          <li>Stress = 0 은 '안정'으로 분류</li>
+        </ul></div>
+      <div><div class="col-label">결과 · 서울 114건</div>
+        <div class="types">
+          <div class="illusion">착시성장형<span>14</span></div><div class="sustain">지속성장형<span>0</span></div>
+          <div class="fragile">구조취약형<span>78</span></div><div class="recover">회복기회형<span>22</span></div>
+        </div></div>
+      <div><div class="col-label">코드</div><div class="codes">
+        <code>classify_market_type()</code><code>add_market_type()</code><span class="file">diagnosis.py</span></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="callout info" style="margin-bottom:10px"><span class="ico">i</span><span><b>메달리온 계층과의 관계</b> · STEP 1의 정제는 <b>Silver</b>, STEP 1의 연령별 소비구조부터 STEP 5까지는 <b>Gold</b> 계층에서 실행됩니다. Gold는 저장된 Silver만 읽습니다 (07 메달리온).</span></div>
+
+<div class="callout info"><span class="ico">i</span><span>이 페이지의 숫자는 <b>발표 기준(전국 상위 25%)</b>입니다. 01 한눈에 보기의 4유형 숫자(서울 9 · 0 · 41 · 11)는 3개 지역을 비교하려고 <b>지역 내부 상위 25%</b>로 다시 고른 결과라 다릅니다.</span></div>
+
+<div class="footer">
+  <span>미래 소비기반 스트레스 테스트 · 흐름도 시리즈</span>
+  <div class="series"><span>00 목표 · 기술</span><span>01 한눈에</span><span>02 데이터</span><span class="on">03 파이프라인</span><span>04 검증</span><span>05 전략</span><span>06 코드 구조</span><span>07 메달리온</span><span>08 목표 아키텍처</span><span>09 로드맵</span></div>
+</div>
+
+</body>
+</html>

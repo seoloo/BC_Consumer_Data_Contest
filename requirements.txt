@@ -3,6 +3,7 @@ matplotlib
 numpy
 openpyxl
 pandas
+pyarrow
+pytest
 requests
 scipy
-
