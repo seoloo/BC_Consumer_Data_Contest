@@ -2,6 +2,12 @@
 
 현재 매출이 성장하는 상권도 핵심 소비연령의 인구가 감소하면 미래 소비기반이 약해질 수 있습니다. 이 프로젝트는 BC Card 결제 데이터와 장래인구, NAVER 관심도 자료를 결합해 지역과 업종별 미래 구조위험을 진단하고 유형별 고객 및 상품 전략을 제안합니다.
 
+## 포트폴리오 목표와 기술 선택
+
+공모전 분석을 **금융권 데이터 엔지니어 포트폴리오**로 확장하고 있습니다. 최종 목적은 이 분석을 매월 자동으로 수집 · 적재 · 검증 · 제공되는 데이터 마트 파이프라인으로 만드는 것이고, 기술마다 선택한 이유와 일부러 쓰지 않은 기술을 함께 정리했습니다.
+
+![포트폴리오 목표와 기술 선택](docs/diagrams/00_goal_and_stack.png)
+
 ## 한눈에 보기
 
 ![한눈에 보기](docs/diagrams/01_overview.png)
@@ -12,6 +18,7 @@
 
 | # | 흐름도 | 내용 |
 |---|---|---|
+| 00 | [목표 · 기술 선택](docs/diagrams/00_goal_and_stack.png) | 최종 목적, 기술 스택과 선택 이유, 쓰지 않는 기술, 보여줄 역량 |
 | 01 | [한눈에 보기](docs/diagrams/01_overview.png) | 문제의식, 핵심 결과, 4유형 |
 | 02 | [데이터](docs/diagrams/02_data.png) | 원본 8종의 까다로운 점과 처리 함수, 표준화 기준표 |
 | 03 | [분석 파이프라인](docs/diagrams/03_pipeline.png) | STEP 1~5 상세와 서울 실제 건수 |
@@ -84,12 +91,16 @@ Future Stress가 음수이면 현재 소비구조가 미래 인구감소에 더 
 
 ## 기술 스택
 
-- Python, Jupyter Notebook
-- pandas, NumPy
-- SciPy
-- requests
-- Matplotlib
-- pytest
+선택 이유는 [00 목표 · 기술 선택](docs/diagrams/00_goal_and_stack.png)에 정리했습니다.
+
+| 구분 | 기술 | 상태 |
+|---|---|---|
+| 처리 · 분석 | Python, pandas, NumPy, SciPy | 사용 중 |
+| 테스트 | pytest | 사용 중 |
+| 수집 | requests (KOSIS · NAVER API), 합성 데이터 생성기 | Phase 2 |
+| 원본 보관 | MinIO (S3 호환) | Phase 2 |
+| 저장 · 변환 · 품질 | PostgreSQL, dbt, dbt tests | Phase 3 |
+| 운영 · 제공 | Airflow, Docker Compose, GitHub Actions, Streamlit | Phase 2 ~ 4 |
 
 ## 실행 방법
 
