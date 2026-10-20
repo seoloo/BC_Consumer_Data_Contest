@@ -34,132 +34,132 @@
 <div class="header">
   <div>
     <div class="eyebrow"><span class="no">05</span>전략</div>
-    <h1>위험한 상권이 '다음에 잡아야 할 고객'을 찾습니다</h1>
-    <p class="lede">진단에서 끝나지 않고, 착시성장 상권이 어떤 연령대를 늘리면 미래 위험이 얼마나 줄어드는지 계산하고<br>NAVER 관심도로 그 고객에게 맞는 메뉴 · 상품 후보까지 제안합니다.</p>
+    <h1>위험한 상권은 어떤 손님을 더 잡아야 할까</h1>
+    <p class="lede">위험하다고 진단만 하고 끝내고 싶지 않았습니다. 착시성장 상권이 어떤 연령대를 늘리면 위험이 얼마나 줄어드는지 계산하고,<br>NAVER 검색 관심도로 그 손님들이 좋아할 만한 메뉴와 상품까지 골라 봤습니다.</p>
   </div>
-  <div class="version"><b>strategy.py · naver_datalab.py</b><br>원본 데이터 기준 실제 결과</div>
+  <div class="version"><b>strategy.py, naver_datalab.py</b><br>원본 데이터로 계산한 결과</div>
 </div>
 
 <!-- 1 -->
-<div class="section">
-  <div class="section-label"><span class="num">1</span><span class="title">방어형 고객 찾기</span><span class="desc">서울 · 착시성장 14건 · <code>build_defense_strategy()</code></span></div>
+<div data-part="1" class="section">
+  <div class="section-label"><span class="num">1</span><span class="title">방어형 고객을 찾는 순서</span><span class="desc">서울 착시성장 14건 · <code>build_defense_strategy()</code></span></div>
   <div class="card pad">
     <div class="flow">
-      <div class="node"><span class="n-no">① 대상</span><h4>위험한 성장 상권</h4>
-        <div class="f">현재 성장 &amp; 2035 · 2040 Stress &lt; 0</div><p>서울 분석 대상 중 14건</p></div>
+      <div class="node"><span class="n-no">① 대상</span><h4>잘되지만 위험한 곳</h4>
+        <div class="f">지금 성장 중이고 2035, 2040 Stress가 모두 마이너스</div><p>서울에서 14곳이 해당됐습니다.</p></div>
       <div class="arrow-r"><svg viewBox="0 0 26 26"><path d="M5 13h15M14 6.5l6.5 6.5-6.5 6.5" fill="none" stroke="#AEB6C4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      <div class="node"><span class="n-no">② 후보</span><h4>늘릴 여력이 있는 연령대</h4>
-        <div class="f">확장여력 = 같은 업종 상위 25% 비중 − 지금 비중</div><p>핵심 고객 제외, 확장여력 &gt; 0 인 연령대만. 다른 곳에서 실제로 관측된 수준까지만 늘릴 수 있다고 봅니다.</p></div>
+      <div class="node"><span class="n-no">② 후보</span><h4>더 늘릴 수 있는 연령대</h4>
+        <div class="f">늘릴 여유 = 같은 업종 상위 25% 수준의 비중 − 지금 비중</div><p>지금 단골은 빼고, 다른 지역에서 실제로 본 수준까지만 늘릴 수 있다고 가정했습니다.</p></div>
       <div class="arrow-r"><svg viewBox="0 0 26 26"><path d="M5 13h15M14 6.5l6.5 6.5-6.5 6.5" fill="none" stroke="#AEB6C4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      <div class="node"><span class="n-no">③ 분류</span><h4>후보의 성격</h4>
+      <div class="node"><span class="n-no">③ 분류</span><h4>어떤 후보인지</h4>
         <div class="ctype">
-          <div style="background:var(--green-soft)"><b>성장·방어형</b> · 그 연령 인구 자체가 늘어남</div>
-          <div style="background:var(--primary-soft)"><b>상대안정형</b> · 줄지만 핵심 고객보다 덜 줄어듦</div>
-          <div style="background:#F1F3F7"><b>시장확장형</b> · 방어 효과는 없고 매출 확장용</div>
+          <div style="background:var(--green-soft)"><b>성장 · 방어형</b> 그 연령대 인구가 늘어남</div>
+          <div style="background:var(--primary-soft)"><b>상대 안정형</b> 줄긴 하지만 단골보다 덜 줄어듦</div>
+          <div style="background:#F1F3F7"><b>시장 확장형</b> 방어 효과는 없고 매출만 넓힘</div>
         </div></div>
       <div class="arrow-r"><svg viewBox="0 0 26 26"><path d="M5 13h15M14 6.5l6.5 6.5-6.5 6.5" fill="none" stroke="#AEB6C4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      <div class="node"><span class="n-no">④ 선택</span><h4>방어 효과가 가장 큰 1개</h4>
-        <div class="f">방어개선잠재력 = 확장여력 × 인구상대우위 ÷ 100</div><p>인구상대우위 = 후보 연령 인구증감률 − 핵심 고객 인구증감률</p></div>
+      <div class="node"><span class="n-no">④ 선택</span><h4>효과가 가장 큰 하나</h4>
+        <div class="f">개선 폭 = 늘릴 여유 × 인구 우위 ÷ 100</div><p>인구 우위는 후보 연령대와 지금 단골의 인구증감률 차이입니다.</p></div>
       <div class="arrow-r"><svg viewBox="0 0 26 26"><path d="M5 13h15M14 6.5l6.5 6.5-6.5 6.5" fill="none" stroke="#AEB6C4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      <div class="node" style="border:2px solid var(--primary)"><span class="n-no">⑤ 재확인</span><h4>2040에도 유효한가</h4>
-        <div class="f">2035 기준으로 고른 고객을 2040 인구증감률로 다시 비교</div><p>전환 후 2040 Stress와 위험완화율을 계산합니다.</p></div>
+      <div class="node" style="border:2px solid var(--primary)"><span class="n-no">⑤ 한 번 더</span><h4>2040년에도 통할까</h4>
+        <div class="f">2035년 기준으로 고른 손님층을 2040년 인구로 다시 비교</div><p>그 손님층을 늘렸을 때 2040 Stress가 얼마나 좋아지는지 계산했습니다.</p></div>
     </div>
   </div>
 </div>
 
-<div class="section">
+<div data-part="2" class="section">
   <div class="grid" style="grid-template-columns: 1.45fr 1fr;">
     <div class="card pad stack" style="gap:14px">
-      <div class="row" style="justify-content:space-between"><h3>결과 · 착시성장 14건</h3><span class="small">2040 위험완화율 = 방어형 고객을 확장여력만큼 늘렸을 때 Stress 개선 비율</span></div>
+      <div class="row" style="justify-content:space-between"><h3>14곳의 결과</h3><span class="small">위험 감소율 = 방어형 고객을 늘릴 수 있는 만큼 늘렸을 때 2040 Stress가 좋아지는 비율</span></div>
       <div class="status-bar">
-        <div style="width:78.6%;background:var(--green)">장기유효 11건</div>
+        <div style="width:78.6%;background:var(--green)">2040년까지 유효 11곳</div>
         <div style="width:7.1%;background:var(--amber)">1</div>
         <div style="width:14.3%;background:#AEB6C4">2</div>
       </div>
-      <div class="row small"><span class="tag dot t-green">장기유효 11</span><span class="tag dot t-amber">장기재검토 1 · 2040엔 역전</span><span class="tag dot t-gray">방어형 후보 없음 2</span></div>
+      <div class="row small"><span class="tag dot t-green">2040년까지 유효 11</span><span class="tag dot t-amber">다시 봐야 함 1</span><span class="tag dot t-gray">마땅한 후보 없음 2</span></div>
       <table>
-        <tr><th>지역 · 업종</th><th>핵심 고객</th><th>방어형 고객</th><th>후보 유형</th><th>상태</th><th class="num">2040 위험완화</th></tr>
-        <tr><td>강남구 · 편의점</td><td>40대</td><td>60대이상</td><td>성장·방어형</td><td>장기유효</td><td class="num">28.8%</td></tr>
-        <tr><td>용산구 · 서양음식</td><td>30대</td><td>60대이상</td><td>성장·방어형</td><td>장기유효</td><td class="num">18.9%</td></tr>
-        <tr><td>송파구 · 편의점</td><td>40대</td><td>60대이상</td><td>성장·방어형</td><td>장기유효</td><td class="num">15.8%</td></tr>
-        <tr><td>영등포구 · 편의점</td><td>30대</td><td>60대이상</td><td>성장·방어형</td><td>장기유효</td><td class="num">15.1%</td></tr>
-        <tr style="background:var(--primary-soft)"><td><b>성동구 · 서양음식</b></td><td>30대</td><td>60대이상</td><td>성장·방어형</td><td>장기유효</td><td class="num">13.8%</td></tr>
-        <tr><td>중구 · 편의점</td><td>40대</td><td>60대이상</td><td>성장·방어형</td><td>장기유효</td><td class="num">7.8%</td></tr>
-        <tr><td>종로구 · 서양음식</td><td>30대</td><td>60대이상</td><td>성장·방어형</td><td>장기유효</td><td class="num">7.3%</td></tr>
-        <tr><td>중구 · 서양음식</td><td>30대</td><td>60대이상</td><td>성장·방어형</td><td>장기유효</td><td class="num">7.0%</td></tr>
-        <tr><td>서대문구 · 서양음식</td><td>20대</td><td>30대</td><td>상대안정형</td><td>장기유효</td><td class="num">6.8%</td></tr>
-        <tr><td>도봉구 · 편의점</td><td>50대</td><td>30대</td><td>상대안정형</td><td>장기유효</td><td class="num">2.0%</td></tr>
-        <tr><td>구로구 · 서양음식</td><td>30대</td><td>60대이상</td><td>성장·방어형</td><td>장기유효</td><td class="num">1.5%</td></tr>
-        <tr><td>은평구 · 서양음식</td><td>40대</td><td>30대</td><td>상대안정형</td><td style="color:var(--amber)">장기재검토</td><td class="num" style="color:var(--red)">-13.7%</td></tr>
-        <tr><td>성북구 · 일반한식</td><td>60대이상</td><td>-</td><td>-</td><td style="color:var(--muted)">후보 없음</td><td class="num">-</td></tr>
-        <tr><td>도봉구 · 일반한식</td><td>60대이상</td><td>-</td><td>-</td><td style="color:var(--muted)">후보 없음</td><td class="num">-</td></tr>
+        <tr><th>지역 · 업종</th><th>지금 단골</th><th>방어형 고객</th><th>후보 종류</th><th>결과</th><th class="num">위험 감소</th></tr>
+        <tr><td>강남구 편의점</td><td>40대</td><td>60대이상</td><td>성장 · 방어형</td><td>유효</td><td class="num">28.8%</td></tr>
+        <tr><td>용산구 서양음식</td><td>30대</td><td>60대이상</td><td>성장 · 방어형</td><td>유효</td><td class="num">18.9%</td></tr>
+        <tr><td>송파구 편의점</td><td>40대</td><td>60대이상</td><td>성장 · 방어형</td><td>유효</td><td class="num">15.8%</td></tr>
+        <tr><td>영등포구 편의점</td><td>30대</td><td>60대이상</td><td>성장 · 방어형</td><td>유효</td><td class="num">15.1%</td></tr>
+        <tr style="background:var(--primary-soft)"><td><b>성동구 서양음식</b></td><td>30대</td><td>60대이상</td><td>성장 · 방어형</td><td>유효</td><td class="num">13.8%</td></tr>
+        <tr><td>중구 편의점</td><td>40대</td><td>60대이상</td><td>성장 · 방어형</td><td>유효</td><td class="num">7.8%</td></tr>
+        <tr><td>종로구 서양음식</td><td>30대</td><td>60대이상</td><td>성장 · 방어형</td><td>유효</td><td class="num">7.3%</td></tr>
+        <tr><td>중구 서양음식</td><td>30대</td><td>60대이상</td><td>성장 · 방어형</td><td>유효</td><td class="num">7.0%</td></tr>
+        <tr><td>서대문구 서양음식</td><td>20대</td><td>30대</td><td>상대 안정형</td><td>유효</td><td class="num">6.8%</td></tr>
+        <tr><td>도봉구 편의점</td><td>50대</td><td>30대</td><td>상대 안정형</td><td>유효</td><td class="num">2.0%</td></tr>
+        <tr><td>구로구 서양음식</td><td>30대</td><td>60대이상</td><td>성장 · 방어형</td><td>유효</td><td class="num">1.5%</td></tr>
+        <tr><td>은평구 서양음식</td><td>40대</td><td>30대</td><td>상대 안정형</td><td style="color:var(--amber)">다시 봐야 함</td><td class="num" style="color:var(--red)">-13.7%</td></tr>
+        <tr><td>성북구 일반한식</td><td>60대이상</td><td>-</td><td>-</td><td style="color:var(--muted)">후보 없음</td><td class="num">-</td></tr>
+        <tr><td>도봉구 일반한식</td><td>60대이상</td><td>-</td><td>-</td><td style="color:var(--muted)">후보 없음</td><td class="num">-</td></tr>
       </table>
     </div>
 
     <div class="stack" style="gap:16px">
       <div class="card pad stack" style="gap:12px">
-        <h3>대표 사례 · 성동구 서양음식</h3>
-        <p>핵심 고객 <b style="color:var(--ink)">30대</b>의 인구가 줄어드는 상권. 같은 업종에서 비중을 더 늘릴 여력이 있고 인구가 늘어나는 <b style="color:var(--ink)">60대이상</b>을 방어형 고객으로 제안합니다.</p>
+        <h3>예시 · 성동구 서양음식</h3>
+        <p>지금 단골인 <b style="color:var(--ink)">30대</b>가 앞으로 줄어드는 곳입니다. 같은 업종에서 아직 비중을 늘릴 여유가 있고 인구도 늘어나는 <b style="color:var(--ink)">60대이상</b>을 더 잡자는 결론이 나왔습니다.</p>
         <div class="before-after">
-          <div class="ba-line"><span>전환 전</span><div class="ba-track"><div class="ba-fill" style="width:100%;background:var(--t-illusion)"></div></div><span class="v">-17.23</span></div>
-          <div class="ba-line"><span>전환 후</span><div class="ba-track"><div class="ba-fill" style="width:86.2%;background:var(--primary)"></div></div><span class="v">-14.85</span></div>
+          <div class="ba-line"><span>지금</span><div class="ba-track"><div class="ba-fill" style="width:100%;background:var(--t-illusion)"></div></div><span class="v">-17.23</span></div>
+          <div class="ba-line"><span>늘린 뒤</span><div class="ba-track"><div class="ba-fill" style="width:86.2%;background:var(--primary)"></div></div><span class="v">-14.85</span></div>
         </div>
-        <div class="stat" style="background:var(--primary-soft)"><div class="label">2040 위험완화율</div><div class="value" style="color:var(--primary)">13.8%</div></div>
+        <div class="stat" style="background:var(--primary-soft)"><div class="label">2040 위험 감소</div><div class="value" style="color:var(--primary)">13.8%</div></div>
       </div>
       <div class="card pad stack" style="gap:10px">
-        <h3>읽는 법과 한계</h3>
-        <p><b style="color:var(--ink)">장기재검토</b> · 2035엔 핵심 고객보다 유리했지만 2040엔 역전되어 오히려 위험이 커지는 경우 (은평구).</p>
-        <p><b style="color:var(--ink)">후보 없음</b> · 핵심 고객(60대이상)보다 미래 인구 전망이 좋은 연령대가 없는 경우 → 구조적 취약형 (성북구 · 도봉구 일반한식).</p>
-        <p class="small">확장여력만큼 고객 비중을 실제로 옮길 수 있다는 가정에 기반한 시나리오 값입니다.</p>
+        <h3>이렇게 읽어 주세요</h3>
+        <p><b style="color:var(--ink)">다시 봐야 함</b> · 2035년엔 단골보다 나았는데 2040년엔 오히려 더 줄어드는 경우입니다 (은평구).</p>
+        <p><b style="color:var(--ink)">후보 없음</b> · 단골이 이미 60대이상이라 그보다 인구 전망이 좋은 연령대가 없는 경우입니다 (성북구, 도봉구 일반한식).</p>
+        <p class="small">'늘릴 수 있는 만큼 실제로 늘린다면'이라는 가정 위에서 계산한 값입니다.</p>
       </div>
     </div>
   </div>
 </div>
 
 <!-- 2 -->
-<div class="section">
-  <div class="section-label"><span class="num">2</span><span class="title">고객 구성 재조정 시뮬레이션</span><span class="desc">착시성장형 17건 · 서울 9 · 부산 4 · 경기 4 (지역 내부 상위 25%) · <code>run_rebalancing()</code></span></div>
+<div data-part="3" class="section">
+  <div class="section-label"><span class="num">2</span><span class="title">손님 구성을 조금씩 바꿔 보면</span><span class="desc">착시성장 17곳 (서울 9, 부산 4, 경기 4 · 지역 안 상위 25%) · <code>run_rebalancing()</code></span></div>
   <div class="grid g3">
     <div class="opt" style="background:var(--primary-soft)">
-      <div class="row" style="justify-content:space-between"><h4>A · 선형계획 (최대 효과)</h4><span class="tech main">scipy linprog</span></div>
-      <p>고객 비중을 <b style="color:var(--ink)">최대 5%p</b>만 옮길 때 Stress를 가장 많이 줄이는 조합</p>
-      <div class="cons"><div>비중 합 = 100%</div><div>연령별 비중은 같은 업종의 25~75분위 범위 안</div><div>|변화량| 합 ÷ 2 ≤ 5%p</div></div>
+      <div class="row" style="justify-content:space-between"><h4>A · 최대한 줄이기</h4><span class="tech main">scipy linprog</span></div>
+      <p>손님 비중을 <b style="color:var(--ink)">최대 5%p</b>까지만 옮길 수 있다면, 어떻게 옮겨야 위험이 가장 많이 줄어드는지 찾았습니다.</p>
+      <div class="cons"><div>비중의 합은 100%</div><div>연령별 비중은 같은 업종에서 실제로 본 범위(25~75%) 안</div><div>옮기는 양은 5%p 이하</div></div>
     </div>
     <div class="opt" style="background:var(--violet-soft)">
-      <div class="row" style="justify-content:space-between"><h4>B · SLSQP (최소 변화)</h4><span class="tech main" style="background:var(--violet)">scipy minimize</span></div>
-      <p>위험을 <b style="color:var(--ink)">10%</b> 줄이는 데 필요한 가장 작은 변화. 한 연령에 몰아주지 않고 나눠서 옮깁니다.</p>
-      <div class="cons"><div>변화량² 합을 최소화</div><div>새 Stress ≥ 목표 Stress</div><div>연령 집중도(HHI)가 지금보다 커지지 않게</div></div>
+      <div class="row" style="justify-content:space-between"><h4>B · 조금만 바꾸기</h4><span class="tech main" style="background:var(--violet)">scipy minimize</span></div>
+      <p>위험을 <b style="color:var(--ink)">10%</b> 줄이려면 최소한 얼마나 바꿔야 하는지 찾았습니다. 한 연령대에 몰아주지 않고 나눠서 옮기도록 했습니다.</p>
+      <div class="cons"><div>바뀌는 양(제곱합)을 최소로</div><div>목표만큼 위험이 줄어야 함</div><div>특정 연령 쏠림(HHI)이 지금보다 심해지면 안 됨</div></div>
     </div>
     <div class="card pad stack" style="gap:12px">
       <h4>결과</h4>
       <div class="result-tiles">
-        <div class="stat"><div class="label">최적 증가 연령</div><div class="value" style="font-size:24px">60대이상</div><div class="note">17건 중 12건</div></div>
-        <div class="stat"><div class="label">A 위험완화율</div><div class="value" style="font-size:24px">14.7%</div><div class="note">중앙값 · 5%p 이동</div></div>
-        <div class="stat"><div class="label">B 목표 달성</div><div class="value" style="font-size:24px">12건</div><div class="note">17건 중</div></div>
+        <div class="stat"><div class="label">가장 늘려야 할 연령</div><div class="value" style="font-size:24px">60대이상</div><div class="note">17곳 중 12곳</div></div>
+        <div class="stat"><div class="label">A 위험 감소</div><div class="value" style="font-size:24px">14.7%</div><div class="note">중앙값, 5%p 이동</div></div>
+        <div class="stat"><div class="label">B 목표 달성</div><div class="value" style="font-size:24px">12곳</div><div class="note">17곳 중</div></div>
       </div>
-      <p class="small">B가 실패한 5건은 비중 범위 안에서 10% 완화가 불가능한 사례(부산 4건 등)입니다. 원래 노트북은 SLSQP가 답을 찾고도 '실패'로 버리던 문제가 있어 리팩토링에서 고쳤습니다.</p>
+      <p class="small">B가 안 된 5곳은 정해 둔 범위 안에서는 10%까지 줄일 수 없는 곳이었습니다(부산 4곳 등). 공모전 노트북에서는 답을 찾고도 '실패'로 버리던 버그가 있어서 이번에 고쳤습니다.</p>
     </div>
   </div>
 </div>
 
 <!-- 3 -->
-<div class="section">
-  <div class="section-label"><span class="num">3</span><span class="title">4유형별 메뉴 · 상품 전략</span><span class="desc">NAVER 검색어 트렌드 · 쇼핑인사이트로 연령대별 관심 순위를 비교</span></div>
+<div data-part="3" class="section">
+  <div class="section-label"><span class="num">3</span><span class="title">유형별 메뉴 · 상품 아이디어</span><span class="desc">NAVER 검색어 트렌드, 쇼핑인사이트로 연령대별 관심 순위를 비교했습니다</span></div>
   <div class="grid" style="grid-template-columns: 1fr 2.4fr;">
     <div class="card pad stack" style="gap:10px">
-      <h4>만드는 방법</h4>
-      <p><b style="color:var(--ink)">① 관심 순위표</b> · 연령대마다 메뉴 키워드의 검색도 순위 <code>build_keyword_rank_table()</code></p>
-      <p><b style="color:var(--ink)">② 메뉴 유형</b> · 모든 세대에서 상위권이면 세대공통형, 아니면 젊은층 · 중년층 · 고연령형 <code>classify_menu_by_generation()</code></p>
-      <p><b style="color:var(--ink)">③ 결제-관심 괴리</b> · 돈을 쓰는 연령 순위와 관심 있는 연령 순위의 평균 차이 <code>calculate_payment_interest_gap()</code></p>
-      <div class="callout warn"><span class="ico">!</span><span>오른쪽 표는 위 결과를 보고 사람이 해석해 작성한 표라서 파이프라인이 자동으로 만들지 않습니다.</span></div>
+      <h4>만든 방법</h4>
+      <p><b style="color:var(--ink)">① 관심 순위</b> · 연령대마다 메뉴 키워드 검색량 순위를 매겼습니다. <code>build_keyword_rank_table()</code></p>
+      <p><b style="color:var(--ink)">② 메뉴 성격</b> · 모든 연령에서 순위가 높으면 '세대 공통', 아니면 어느 세대에서 강한지 나눴습니다. <code>classify_menu_by_generation()</code></p>
+      <p><b style="color:var(--ink)">③ 결제와 관심의 차이</b> · 돈을 쓰는 연령 순위와 관심 있는 연령 순위가 얼마나 다른지 봤습니다. <code>calculate_payment_interest_gap()</code></p>
+      <div class="callout warn"><span class="ico">!</span><span>오른쪽 표는 이 결과를 보고 제가 직접 해석해서 정리한 것이라, 파이프라인이 자동으로 만들지는 않습니다.</span></div>
     </div>
     <div class="card pad">
       <table class="menu-table">
-        <tr><th>유형 · 대표 사례</th><th class="num">결제-관심 괴리</th><th>현재 → 관심 → 미래 고객</th><th>세대공통</th><th>보완 메뉴 · 상품</th><th>전략</th></tr>
-        <tr><td><span class="tag illusion">착시성장형</span><span class="sub">서울 성동구 · 서양음식</span></td><td class="num">1.4</td><td>30대 → 40대 → 60대이상</td><td><span class="pill">피자</span></td><td><span class="pill">파스타</span><span class="pill">샐러드</span></td><td>현재고객 방어 + 관심고객 확장 + 미래고객 대비</td></tr>
-        <tr><td><span class="tag sustain">지속성장형</span><span class="sub">경기 평택시 · 일반한식</span></td><td class="num">1.0</td><td>50대 → 40대 → 60대이상</td><td><span class="pill">국밥</span><span class="pill">비빔밥</span></td><td><span class="pill">불고기</span></td><td>현재 성장기반 유지 + 관심고객 확장 + 미래고객 강화</td></tr>
-        <tr><td><span class="tag fragile">구조취약형</span><span class="sub">부산 사상구 · 편의점</span></td><td class="num">1.2</td><td>50대 → 30대 → 60대이상</td><td><span class="pill">아이스크림</span></td><td><span class="pill">디저트</span><span class="pill">도시락</span></td><td>관심고객 중심 재편 가능성 검토 + 구조위험 경고</td></tr>
-        <tr><td><span class="tag recover">회복기회형</span><span class="sub">경기 시흥시 · 대형할인점</span></td><td class="num">0.8</td><td>40대 → 30대 → 60대이상</td><td><span class="pill">밀키트</span></td><td><span class="pill">간편식</span><span class="pill">건강식품</span></td><td>관심고객 선점 + 미래고객 조기 확보</td></tr>
+        <tr><th>유형 · 예시</th><th class="num">결제-관심 차이</th><th>지금 → 관심 → 앞으로</th><th>세대 공통</th><th>더해 볼 메뉴 · 상품</th><th>방향</th></tr>
+        <tr><td><span class="tag illusion">착시성장형</span><span class="sub">서울 성동구 서양음식</span></td><td class="num">1.4</td><td>30대 → 40대 → 60대이상</td><td><span class="pill">피자</span></td><td><span class="pill">파스타</span><span class="pill">샐러드</span></td><td>지금 단골은 지키고, 관심 있는 40대로 넓히면서 60대이상을 미리 준비</td></tr>
+        <tr><td><span class="tag sustain">지속성장형</span><span class="sub">경기 평택시 일반한식</span></td><td class="num">1.0</td><td>50대 → 40대 → 60대이상</td><td><span class="pill">국밥</span><span class="pill">비빔밥</span></td><td><span class="pill">불고기</span></td><td>지금 흐름은 유지하고, 40대로 넓히면서 60대이상을 더 잡기</td></tr>
+        <tr><td><span class="tag fragile">구조취약형</span><span class="sub">부산 사상구 편의점</span></td><td class="num">1.2</td><td>50대 → 30대 → 60대이상</td><td><span class="pill">아이스크림</span></td><td><span class="pill">디저트</span><span class="pill">도시락</span></td><td>관심 있는 30대 중심으로 바꿔 볼 만한지 검토, 다만 위험 신호는 분명함</td></tr>
+        <tr><td><span class="tag recover">회복기회형</span><span class="sub">경기 시흥시 대형할인점</span></td><td class="num">0.8</td><td>40대 → 30대 → 60대이상</td><td><span class="pill">밀키트</span></td><td><span class="pill">간편식</span><span class="pill">건강식품</span></td><td>관심 있는 30대를 먼저 잡고, 60대이상도 일찍 확보</td></tr>
       </table>
     </div>
   </div>

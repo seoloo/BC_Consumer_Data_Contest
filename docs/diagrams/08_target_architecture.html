@@ -43,114 +43,103 @@
 <div class="header">
   <div>
     <div class="eyebrow"><span class="no">08</span>목표 아키텍처</div>
-    <h1>매월 자동으로 돌아가는 카드 소비 데이터 마트<span class="plan-badge">계획 · Phase 2 ~ 4</span></h1>
-    <p class="lede">로컬에 세팅한 메달리온 아키텍처(Bronze → Silver → Gold)를 실제 인프라(MinIO · PostgreSQL · dbt · Airflow)에 올립니다.<br>Docker Compose로 내 컴퓨터에서 전체를 한 번에 띄우는 것을 목표로 합니다.</p>
+    <h1>매달 알아서 돌아가는 카드 소비 데이터 마트<span class="plan-badge">계획 · Phase 2~4</span></h1>
+    <p class="lede">지금 내 컴퓨터 폴더에 만들어 둔 Bronze → Silver → Gold 구조를 MinIO, PostgreSQL, dbt, Airflow 위로 옮기려고 합니다.<br>최종적으로는 Docker Compose 명령 하나로 전체가 뜨게 만드는 게 목표입니다.</p>
   </div>
-  <div class="version"><b>아직 만들지 않은 부분</b><br>진행하며 이 그림을 갱신합니다</div>
+  <div class="version"><b>아직 만들기 전</b><br>진행하면서 이 그림을 계속 고칩니다</div>
 </div>
 
 <!-- 1 -->
-<div class="section">
+<div data-part="1" class="section">
   <div class="section-label"><span class="num">1</span><span class="title">전체 흐름</span></div>
   <div class="card pad">
     <div class="flow">
-      <div class="node"><span class="n-step">원천</span><h4>데이터 원천</h4>
-        <p>BC카드 형식 <b>합성 데이터</b> (원본은 비공개), 공공 인구 API, NAVER 데이터랩</p>
+      <div class="node"><span class="n-step">출처</span><h4>데이터 출처</h4>
+        <p>BC카드 형식의 <b>합성 데이터</b>(원본은 공개 불가), 공공 인구 API, NAVER 데이터랩</p>
         <div class="techs"><span class="tech">KOSIS API</span><span class="tech">NAVER API</span></div></div>
       <div class="arrow-r"><svg viewBox="0 0 26 26"><path d="M5 13h15M14 6.5l6.5 6.5-6.5 6.5" fill="none" stroke="#AEB6C4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <div class="node"><span class="n-step">수집</span><h4>수집기</h4>
-        <p>재시도 · 호출 제한 처리. 같은 달을 다시 받아도 결과가 같게(멱등)</p>
+        <p>실패하면 다시 시도하고, 같은 달을 두 번 받아도 결과가 같게 만듭니다</p>
         <div class="techs"><span class="tech main">Python</span><span class="tech">requests</span></div></div>
       <div class="arrow-r"><svg viewBox="0 0 26 26"><path d="M5 13h15M14 6.5l6.5 6.5-6.5 6.5" fill="none" stroke="#AEB6C4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      <div class="node"><span class="n-step">Bronze</span><h4>원본 보관소</h4>
-        <p>받은 파일을 그대로 기준월 폴더에 보관<br><code style="font-size:11px">bronze/card_spending/yyyymm=202601/</code></p>
+      <div class="node"><span class="n-step">Bronze</span><h4>원본 보관</h4>
+        <p>받은 파일을 그대로 달별 폴더에 둡니다<br><code style="font-size:11px">bronze/card_spending/yyyymm=202601/</code></p>
         <div class="techs"><span class="tech main">MinIO</span><span class="tech">S3 호환</span></div></div>
       <div class="arrow-r"><svg viewBox="0 0 26 26"><path d="M5 13h15M14 6.5l6.5 6.5-6.5 6.5" fill="none" stroke="#AEB6C4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <div class="node"><span class="n-step">변환</span><h4>데이터 웨어하우스</h4>
         <div class="wh">
-          <div style="background:#FBEFE6;color:#A0522D"><b>bronze</b><span>MinIO 원본을 그대로 적재</span><code>bronze.card_spending</code></div>
-          <div style="background:#EEF1F5;color:#5F6B7A"><b>silver</b><span>코드 · 이름 · 단위 표준화</span><code>stg_card_spending</code></div>
-          <div style="background:#B7860B;color:#fff"><b>gold</b><span style="color:#FFF3CF">Stress · 4유형 · 프로필</span><code style="color:#9A6F00">mart_future_stress</code></div>
+          <div style="background:#FBEFE6;color:#A0522D"><b>bronze</b><span>MinIO 원본을 그대로 불러옴</span><code>bronze.card_spending</code></div>
+          <div style="background:#EEF1F5;color:#5F6B7A"><b>silver</b><span>코드, 이름, 단위 정리</span><code>stg_card_spending</code></div>
+          <div style="background:#B7860B;color:#fff"><b>gold</b><span style="color:#FFF3CF">Stress, 4유형, 상권 정보</span><code style="color:#9A6F00">mart_future_stress</code></div>
         </div>
         <div class="techs"><span class="tech main">PostgreSQL</span><span class="tech main">dbt</span><span class="tech">SQL</span></div></div>
       <div class="arrow-r"><svg viewBox="0 0 26 26"><path d="M5 13h15M14 6.5l6.5 6.5-6.5 6.5" fill="none" stroke="#AEB6C4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      <div class="node"><span class="n-step">제공</span><h4>대시보드</h4>
-        <p>지역 · 업종별 Stress, 4유형, 방어형 고객 조회</p>
+      <div class="node"><span class="n-step">조회</span><h4>대시보드</h4>
+        <p>지역 · 업종별 Stress, 4유형, 방어형 고객을 찾아볼 수 있게</p>
         <div class="techs"><span class="tech main">Streamlit</span></div></div>
     </div>
     <div class="rails">
-      <div class="rail" style="background:var(--violet-soft)"><b style="color:var(--violet)">● 실행 관리</b><span>매월 정해진 순서로 실행 · 과거 기간 다시 처리(backfill) · 실패 시 재시도와 알림</span><span class="tech main" style="background:var(--violet)">Airflow</span></div>
-      <div class="rail" style="background:var(--amber-soft)"><b style="color:var(--amber)">● 품질 · 정합성</b><span>값 검사 · 참조 무결성 · 원천 합계 = 마트 합계 대사 · 이상치 탐지</span><span class="tech main" style="background:var(--amber)">dbt tests</span></div>
-      <div class="rail" style="background:var(--teal-soft)"><b style="color:var(--teal)">● 자동 검증</b><span>코드를 올릴 때마다 합성 데이터로 테스트와 전체 파이프라인 실행</span><span class="tech main" style="background:var(--teal)">GitHub Actions</span></div>
+      <div class="rail" style="background:var(--violet-soft)"><b style="color:var(--violet)">● 스케줄</b><span>매달 순서대로 실행하고, 지난 달도 다시 돌릴 수 있고, 실패하면 재시도 후 알림</span><span class="tech main" style="background:var(--violet)">Airflow</span></div>
+      <div class="rail" style="background:var(--amber-soft)"><b style="color:var(--amber)">● 숫자 확인</b><span>빈 값, 없는 코드, 원본 합계와 결과 합계, 갑자기 튀는 값</span><span class="tech main" style="background:var(--amber)">dbt tests</span></div>
+      <div class="rail" style="background:var(--teal-soft)"><b style="color:var(--teal)">● 자동 검증</b><span>코드를 올릴 때마다 가짜 데이터로 테스트와 전체 실행</span><span class="tech main" style="background:var(--teal)">GitHub Actions</span></div>
     </div>
   </div>
 </div>
 
 <!-- 2 -->
-<div class="section">
+<div data-part="2" class="section">
   <div class="grid" style="grid-template-columns: 1fr 1fr;">
     <div class="card pad stack" style="gap:12px">
-      <div class="section-label" style="margin-bottom:0"><span class="num">2</span><span class="title">지금 함수 → 앞으로의 dbt 모델</span></div>
-      <p>Phase 1에서 함수 단위로 나눠 둔 덕분에, 함수 하나가 SQL 모델 하나로 옮겨집니다. 파이썬 결과와 SQL 결과를 비교해 옮긴 뒤에도 값이 같은지 확인합니다.</p>
+      <div class="section-label" style="margin-bottom:0"><span class="num">2</span><span class="title">지금 함수를 dbt 모델로</span></div>
+      <p>Phase 1에서 계산을 함수 단위로 나눠 둬서, 함수 하나를 SQL 모델 하나로 옮길 수 있습니다. 옮긴 뒤에는 파이썬 결과와 값이 같은지 비교할 생각입니다.</p>
       <table class="map">
         <tr><th>지금 (Python)</th><th></th><th>앞으로 (dbt)</th></tr>
         <tr><td><code>clean_card_spending()</code></td><td>→</td><td><code>stg_card_spending</code></td></tr>
         <tr><td><code>load_*_future_population()</code></td><td>→</td><td><code>stg_future_population</code></td></tr>
-        <tr><td><code>age_groups.py · regions.py</code></td><td>→</td><td><code>dim_age_group · dim_region</code></td></tr>
+        <tr><td><code>age_groups.py, regions.py</code></td><td>→</td><td><code>dim_age_group, dim_region</code></td></tr>
         <tr><td><code>build_age_spending_structure()</code></td><td>→</td><td><code>int_age_spending_share</code></td></tr>
         <tr><td><code>calculate_monthly_growth()</code></td><td>→</td><td><code>int_monthly_growth</code></td></tr>
         <tr><td><code>build_region_result()</code></td><td>→</td><td><code>mart_future_stress</code></td></tr>
         <tr><td><code>add_market_type()</code></td><td>→</td><td><code>mart_market_type</code></td></tr>
-        <tr><td><code>validation · robustness</code></td><td>→</td><td>dbt tests · analyses</td></tr>
+        <tr><td><code>validation, robustness</code></td><td>→</td><td>dbt tests, analyses</td></tr>
       </table>
     </div>
 
     <div class="card pad stack" style="gap:12px">
-      <div class="section-label" style="margin-bottom:0"><span class="num">3</span><span class="title">월 배치 DAG</span><span class="desc">기준월(STRD_YYMM) 단위</span></div>
+      <div class="section-label" style="margin-bottom:0"><span class="num">3</span><span class="title">매달 도는 작업 순서</span><span class="desc">기준월(STRD_YYMM) 단위</span></div>
       <div class="dag">
-        <div class="task"><b>collect_sources</b><span>원천 수집</span></div><span class="to">→</span>
-        <div class="task"><b>land_bronze_files</b><span>MinIO 보관</span></div><span class="to">→</span>
-        <div class="task"><b>load_bronze_tables</b><span>PostgreSQL 적재</span></div>
+        <div class="task"><b>collect_sources</b><span>데이터 받기</span></div><span class="to">→</span>
+        <div class="task"><b>land_bronze_files</b><span>MinIO에 보관</span></div><span class="to">→</span>
+        <div class="task"><b>load_bronze_tables</b><span>DB로 불러오기</span></div>
       </div>
       <div class="dag">
         <span class="to">→</span>
-        <div class="task"><b>dbt_run_silver</b><span>표준화</span></div><span class="to">→</span>
-        <div class="task"><b>dbt_test_silver</b><span>값 검사 · 대사</span></div><span class="to">→</span>
-        <div class="task"><b>dbt_run_gold</b><span>Stress · 4유형</span></div>
+        <div class="task"><b>dbt_run_silver</b><span>정리</span></div><span class="to">→</span>
+        <div class="task"><b>dbt_test_silver</b><span>숫자 확인</span></div><span class="to">→</span>
+        <div class="task"><b>dbt_run_gold</b><span>Stress, 4유형</span></div>
       </div>
       <div class="dag">
         <span class="to">→</span>
-        <div class="task"><b>reconcile_totals</b><span>원천 ↔ 마트 대사</span></div><span class="to">→</span>
-        <div class="task"><b>publish_report</b><span>대시보드 · 리포트</span></div>
+        <div class="task"><b>reconcile_totals</b><span>원본과 결과 합계 비교</span></div><span class="to">→</span>
+        <div class="task"><b>publish_report</b><span>대시보드, 리포트</span></div>
       </div>
-      <div class="callout info"><span class="ico">i</span><span><b>멱등성</b> · 같은 기준월을 다시 실행하면 그 달 파티션만 지우고 다시 씀 → 몇 번 돌려도 결과가 같음. <b>backfill</b> · 2026.01~06을 한 번에 다시 처리할 수 있음.</span></div>
+      <div class="callout info"><span class="ico">i</span><span>같은 달을 다시 돌리면 그 달 데이터만 지우고 새로 씁니다. 그래서 몇 번을 돌려도 결과가 같고, 2026년 1~6월을 한꺼번에 다시 돌릴 수도 있습니다.</span></div>
     </div>
   </div>
 </div>
 
 <!-- 4 -->
-<div class="section">
-  <div class="section-label"><span class="num">4</span><span class="title">품질 · 정합성 · 보안 검사</span><span class="desc">지금은 run_quality_checks() 10개로 파이썬에 구현됨 → dbt tests · 대사 SQL로 옮김</span></div>
+<div data-part="3" class="section">
+  <div class="section-label"><span class="num">4</span><span class="title">자동으로 확인할 것들</span><span class="desc">일부는 이미 파이썬(run_quality_checks)으로 돌아가고 있고, dbt로 옮길 예정입니다</span></div>
   <div class="card pad">
     <div class="qc">
-      <div><b>값 검사</b><span>빈 값 없음, 연령대는 6개 값만, 이용금액 ≥ 0 (dbt not_null · accepted_values)</span></div>
-      <div><b>참조 무결성</b><span>모든 시군구가 dim_region에 있는지 → '20대미만' 같은 이름 불일치를 merge 전에 발견</span></div>
-      <div><b>완전성</b><span>지역 × 업종별 6개월이 모두 있는지, 기준월 누락 여부</span></div>
-      <div><b>정합성 대사</b><span>Bronze 금액 − 제외 금액 = Silver 합계 = Gold 합계 (지금 파이썬으로 동작 중)</span></div>
-      <div><b>이상치 탐지</b><span>전월 대비 건수 · 금액이 급변한 지역 × 업종을 경고</span></div>
-      <div><b>개인정보 보호</b><span>원본은 저장소 밖 · 인증정보는 환경변수 · 소규모 집계 셀은 공개 결과에서 마스킹</span></div>
+      <div><b>값이 이상하지 않은지</b><span>빈 값이 없는지, 연령대가 6개 중 하나인지, 금액이 마이너스가 아닌지</span></div>
+      <div><b>없는 코드가 없는지</b><span>모든 시군구가 지역 기준표에 있는지. '20대미만' 같은 이름 차이를 합치기 전에 잡아냅니다.</span></div>
+      <div><b>빠진 달이 없는지</b><span>지역 × 업종마다 6개월이 다 있는지, 통째로 빠진 달은 없는지</span></div>
+      <div><b>합계가 맞는지</b><span>원본 금액 − 뺀 금액 = Silver 합계 = Gold 합계 (지금도 파이썬으로 확인 중)</span></div>
+      <div><b>갑자기 튀는 곳</b><span>지난달보다 건수나 금액이 크게 변한 지역 × 업종은 경고</span></div>
+      <div><b>개인정보</b><span>원본은 저장소 밖에 두고, 키는 환경변수로, 작은 집계는 공개할 때 가립니다</span></div>
     </div>
-  </div>
-</div>
-
-<!-- 5 -->
-<div class="section">
-  <div class="section-label"><span class="num">5</span><span class="title">왜 이 구조인가</span><span class="desc">금융권 데이터 엔지니어 업무와 연결되는 지점</span></div>
-  <div class="why">
-    <div><b>정합성</b><span>원천과 마트의 합계가 맞는지 매번 대사 → 금융 데이터에서 가장 중요하게 보는 부분</span></div>
-    <div><b>배치 운영</b><span>월 배치 · 재처리 · 실패 알림 → 은행 · 카드사의 일 · 월 배치 업무 구조</span></div>
-    <div><b>계층 · 계보</b><span>Bronze → Silver → Gold와 dbt 문서로 어떤 값이 어디서 왔는지 추적</span></div>
-    <div><b>보안</b><span>원본 비공개, 인증정보 분리, 공개 결과는 집계 · 마스킹만</span></div>
   </div>
 </div>
 

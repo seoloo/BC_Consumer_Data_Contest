@@ -62,32 +62,32 @@
 <div class="header">
   <div>
     <div class="eyebrow"><span class="no">07</span>메달리온 아키텍처</div>
-    <h1>Bronze → Silver → Gold · 데이터를 다듬어진 정도에 따라 세 층으로</h1>
-    <p class="lede">원본을 그대로 남기는 층, 정제 · 표준화한 층, 분석 결과를 담는 층으로 나눴습니다. 각 층은 <b>바로 앞 층만 읽고</b>,<br>층 사이에서 건수 · 금액을 대사해 "정제하다가 데이터를 잃지 않았다"를 숫자로 확인합니다.</p>
+    <h1>데이터를 세 층으로 나눠 쌓았습니다</h1>
+    <p class="lede">원본을 그대로 두는 층(Bronze), 정리한 층(Silver), 분석 결과를 담는 층(Gold)으로 나눴습니다. 각 층은 <b>바로 앞 층만</b> 읽습니다.<br>층을 넘어갈 때마다 건수와 금액이 맞는지 확인해서, 정리하다가 데이터를 잃어버리지 않았는지 숫자로 보여줍니다.</p>
   </div>
-  <div class="version"><b>로컬 세팅 완료 · 2026-10-21</b><br>medallion.py · Phase 2~3에서 MinIO · PostgreSQL로 이전</div>
+  <div class="version"><b>2026-10-21 로컬에 구성</b><br>medallion.py · Phase 2~3에 MinIO, PostgreSQL로 이전 예정</div>
 </div>
 
 <!-- 1 -->
-<div class="section">
-  <div class="section-label"><span class="num">1</span><span class="title">세 계층</span><span class="desc">원본 데이터로 실제 실행한 결과 · 전체 약 14초</span></div>
+<div data-part="1" class="section">
+  <div class="section-label"><span class="num">1</span><span class="title">세 개의 층</span><span class="desc">원본 데이터로 실제로 돌린 결과 · 전체 14초 정도</span></div>
   <div class="layers">
     <div class="layer bronze">
-      <div class="l-head"><span class="l-tag">BRONZE · 원본 보관</span><h3>있는 그대로</h3><p>받은 파일을 한 글자도 바꾸지 않고 보관</p></div>
+      <div class="l-head"><span class="l-tag">BRONZE · 원본 보관</span><h3>받은 그대로</h3><p>파일을 한 글자도 바꾸지 않고 보관합니다</p></div>
       <div class="l-body">
-        <div class="facts"><div><b>60개</b><span>원본 파일</span></div><div><b>127MB</b><span>CSV · Excel</span></div><div><b>8종</b><span>원천</span></div></div>
+        <div class="facts"><div><b>60개</b><span>원본 파일</span></div><div><b>127MB</b><span>CSV, Excel</span></div><div><b>8종</b><span>출처</span></div></div>
         <div><div class="lbl">저장 위치</div><div class="tbls">
           <div><code>bronze/card_spending/</code><span>BC카드</span></div>
-          <div><code>bronze/future_population/</code><span>장래인구 3</span></div>
-          <div><code>bronze/resident_population/</code><span>월별 6</span></div>
-          <div><code>bronze/living_population/</code><span>서울 · 부산</span></div>
-          <div><code>bronze/floating_population/</code><span>경기 48</span></div>
-          <div><code>bronze/_manifest.json</code><span>적재 영수증</span></div>
+          <div><code>bronze/future_population/</code><span>장래인구 3개</span></div>
+          <div><code>bronze/resident_population/</code><span>월별 6개</span></div>
+          <div><code>bronze/living_population/</code><span>서울, 부산</span></div>
+          <div><code>bronze/floating_population/</code><span>경기 48개</span></div>
+          <div><code>bronze/_manifest.json</code><span>받은 기록</span></div>
         </div></div>
-        <div><div class="lbl">규칙</div><ul class="rules">
-          <li>절대 수정하지 않음 → 정제 규칙이 바뀌어도 여기서 다시 시작</li>
-          <li>영수증에 크기 · <b>SHA-256 지문</b> · 행 수 · 적재 시각 기록</li>
-          <li>같은 지문이면 다시 복사하지 않고 '변경 없음' → <b>멱등</b></li>
+        <div><div class="lbl">원칙</div><ul class="rules">
+          <li>절대 고치지 않습니다. 정리 방식이 바뀌면 여기서 다시 시작하면 됩니다.</li>
+          <li>파일마다 크기, <b>지문(SHA-256)</b>, 행 수, 받은 시각을 기록합니다.</li>
+          <li>지문이 같으면 다시 복사하지 않아서, 몇 번을 돌려도 결과가 같습니다.</li>
         </ul></div>
         <div class="fnline"><code>build_bronze()</code> · medallion.py</div>
       </div>
@@ -95,111 +95,110 @@
     <div class="arrow-r"><svg viewBox="0 0 26 26"><path d="M5 13h15M14 6.5l6.5 6.5-6.5 6.5" fill="none" stroke="#AEB6C4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
 
     <div class="layer silver">
-      <div class="l-head"><span class="l-tag">SILVER · 정제 · 표준화</span><h3>깨끗하게, 같은 이름으로</h3><p>원본과 같은 단위로 두고 집계는 하지 않음</p></div>
+      <div class="l-head"><span class="l-tag">SILVER · 정리</span><h3>깨끗하게, 같은 이름으로</h3><p>원본과 같은 단위로 두고 아직 합치지는 않습니다</p></div>
       <div class="l-body">
         <div class="facts"><div><b>6개</b><span>표</span></div><div><b>1.6MB</b><span>Parquet</span></div><div><b>159,235</b><span>카드 행</span></div></div>
         <div><div class="lbl">표</div><div class="tbls">
           <div><code>card_spending</code><span>개인 결제 159,235행</span></div>
-          <div><code>future_population</code><span>3개 시도 통합 432행</span></div>
+          <div><code>future_population</code><span>3개 시도 합쳐서 432행</span></div>
           <div><code>resident_population</code><span>1,666행</span></div>
           <div><code>seoul_living_share</code><span>자치구 × 연령</span></div>
-          <div><code>busan_living_exposure</code><span>거주노출비율</span></div>
+          <div><code>busan_living_exposure</code><span>거주 비율</span></div>
           <div><code>gyeonggi_flow_share</code><span>시군 × 연령</span></div>
         </div></div>
-        <div><div class="lbl">규칙</div><ul class="rules">
-          <li>연령대 · 지역 · 업종 이름은 <b>표준 기준표</b>를 따름</li>
-          <li>지역마다 달랐던 형식을 <b>같은 열 구조</b>로 통일</li>
-          <li>CSV 16.4MB → Parquet 1.4MB (개인 결제만, 열 압축 · 타입 보존)</li>
+        <div><div class="lbl">원칙</div><ul class="rules">
+          <li>연령대, 지역, 업종 이름은 <b>기준표</b>를 따릅니다.</li>
+          <li>지역마다 달랐던 형식을 <b>같은 열 구조</b>로 맞춥니다.</li>
+          <li>카드 데이터가 CSV 16.4MB에서 Parquet 1.4MB로 줄었습니다.</li>
         </ul></div>
-        <div class="fnline"><code>build_silver()</code> · 정제 함수는 card_spending.py · population.py</div>
+        <div class="fnline"><code>build_silver()</code> · 정리 함수는 card_spending.py, population.py</div>
       </div>
     </div>
     <div class="arrow-r"><svg viewBox="0 0 26 26"><path d="M5 13h15M14 6.5l6.5 6.5-6.5 6.5" fill="none" stroke="#AEB6C4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
 
     <div class="layer gold">
-      <div class="l-head"><span class="l-tag">GOLD · 분석 결과</span><h3>바로 쓰는 답</h3><p>Silver만 읽어 Stress · 4유형 · 검증 · 전략 계산</p></div>
+      <div class="l-head"><span class="l-tag">GOLD · 분석 결과</span><h3>바로 볼 수 있는 결과</h3><p>Silver만 읽어서 Stress, 4유형, 검증, 전략을 계산합니다</p></div>
       <div class="l-body">
-        <div class="facts"><div><b>16개</b><span>표</span></div><div><b>672KB</b><span>Parquet</span></div><div><b>6/6</b><span>발표 결과 일치</span></div></div>
+        <div class="facts"><div><b>16개</b><span>표</span></div><div><b>672KB</b><span>Parquet</span></div><div><b>6/6</b><span>발표 숫자와 같음</span></div></div>
         <div><div class="lbl">표 (일부)</div><div class="tbls">
           <div><code>future_stress</code><span>지역 × 업종 Stress</span></div>
-          <div><code>age_stress</code><span>연령별 기여도</span></div>
+          <div><code>age_stress</code><span>연령대별 기여</span></div>
           <div><code>market_type</code><span>4유형</span></div>
           <div><code>seoul_defense_strategy</code><span>방어형 고객</span></div>
-          <div><code>illusion_rebalancing</code><span>고객 구성 최적화</span></div>
+          <div><code>illusion_rebalancing</code><span>손님 구성 최적화</span></div>
           <div><code>발표 결과표 6개</code><span>→ output/*.csv</span></div>
         </div></div>
-        <div><div class="lbl">규칙</div><ul class="rules">
-          <li>메모리가 아니라 <b>저장된 Silver만</b> 읽음 → 계층이 섞이지 않음</li>
-          <li>분석 · 업무 규칙(상위 25%, 성장 3조건 등)은 여기서만 적용</li>
-          <li>대사 보고서 <code>_quality_report.csv</code> 함께 저장</li>
+        <div><div class="lbl">원칙</div><ul class="rules">
+          <li>메모리에 남은 값이 아니라 <b>저장된 Silver만</b> 읽습니다.</li>
+          <li>상위 25%, 성장 3조건 같은 분석 규칙은 이 층에서만 씁니다.</li>
+          <li>숫자 확인 결과(<code>_quality_report.csv</code>)도 같이 저장합니다.</li>
         </ul></div>
-        <div class="fnline"><code>build_gold()</code> · 계산 함수는 stress · diagnosis · validation · strategy</div>
+        <div class="fnline"><code>build_gold()</code> · 계산 함수는 stress, diagnosis, validation, strategy</div>
       </div>
     </div>
   </div>
 </div>
 
 <!-- 2 -->
-<div class="section">
-  <div class="section-label"><span class="num">2</span><span class="title">계층 사이 대사</span><span class="desc">자동 검사 10개 중 주요 6개 · 하나라도 '실패'면 결과를 내보내지 않고 멈춤 (DataQualityError)</span></div>
+<div data-part="2" class="section">
+  <div class="section-label"><span class="num">2</span><span class="title">층 사이에서 숫자 맞춰 보기</span><span class="desc">확인 항목 10개 중 주요 6개 · 하나라도 틀리면 결과를 내보내지 않고 멈춥니다</span></div>
   <div class="recon">
     <div class="card pad">
       <div class="recon-row"><div class="what">카드 행 수<span>Bronze → Silver</span></div>
-        <div class="eq">원본 242,574 <span class="minus">− 개인 아님 83,339</span> = <span class="res">159,235</span> = Silver 159,235</div><span class="ok">통과</span></div>
+        <div class="eq">원본 242,574 <span class="minus">− 개인 결제 아님 83,339</span> = <span class="res">159,235</span> = Silver 159,235</div><span class="ok">일치</span></div>
       <div class="recon-row"><div class="what">카드 금액<span>Bronze → Silver</span></div>
-        <div class="eq">원본 17.22조 <span class="minus">− 제외 2.33조 (13.6%)</span> = <span class="res">14.89조</span> = Silver 14.89조</div><span class="ok">통과</span></div>
-      <div class="recon-row"><div class="what">연령대 허용값<span>Silver</span></div>
-        <div class="eq">카드 · 장래인구 모두 6개 표준 연령대만 존재</div><span class="ok">통과</span></div>
-      <div class="recon-row"><div class="what">소비구조 금액<span>Silver → Gold</span></div>
-        <div class="eq">Silver 14.89조 = 연령별 소비구조 합계 <span class="res">14.89조</span></div><span class="ok">통과</span></div>
-      <div class="recon-row"><div class="what">경기 시 통합<span>Silver → Gold</span></div>
-        <div class="eq">일반구 → 시로 합친 뒤에도 경기 합계 <span class="res">3.51조</span> 그대로</div><span class="ok">통과</span></div>
-      <div class="recon-row"><div class="what">장래인구 매칭<span>Gold</span></div>
-        <div class="eq">인구증감률이 빠진 연령 행 0 (서울 1,398 · 부산 945 · 경기 1,710행 중)</div><span class="ok">통과</span></div>
+        <div class="eq">원본 17.22조 <span class="minus">− 뺀 금액 2.33조 (13.6%)</span> = <span class="res">14.89조</span> = Silver 14.89조</div><span class="ok">일치</span></div>
+      <div class="recon-row"><div class="what">연령대 이름<span>Silver</span></div>
+        <div class="eq">카드, 장래인구 모두 연령대 6개 외의 이름이 없음</div><span class="ok">일치</span></div>
+      <div class="recon-row"><div class="what">합친 뒤 금액<span>Silver → Gold</span></div>
+        <div class="eq">Silver 14.89조 = 연령별로 합친 금액 <span class="res">14.89조</span></div><span class="ok">일치</span></div>
+      <div class="recon-row"><div class="what">경기 구 → 시<span>Silver → Gold</span></div>
+        <div class="eq">구를 시로 합친 뒤에도 경기 합계 <span class="res">3.51조</span> 그대로</div><span class="ok">일치</span></div>
+      <div class="recon-row"><div class="what">장래인구 연결<span>Gold</span></div>
+        <div class="eq">인구증감률이 비어 있는 줄 0개 (서울 1,398 · 부산 945 · 경기 1,710줄 중)</div><span class="ok">일치</span></div>
     </div>
     <div class="stack" style="gap:14px">
       <div class="card pad stack" style="gap:10px">
-        <h3>왜 대사를 하나요?</h3>
-        <p>'개인 결제만 남기기' 같은 필터를 쓰면 행과 금액이 줄어듭니다. <b style="color:var(--ink)">줄어든 만큼이 정확히 빼기로 한 데이터인지</b> 확인해야 실수로 데이터를 잃지 않았다고 말할 수 있습니다.</p>
-        <p class="small">원장 합계와 마트 합계를 맞춰 보는 금융권 대사 업무와 같은 원리입니다.</p>
+        <h3>왜 숫자를 맞춰 보나요</h3>
+        <p>'개인 결제만 남기기'처럼 걸러 내면 행과 금액이 줄어듭니다. 줄어든 만큼이 <b style="color:var(--ink)">정확히 빼기로 한 데이터인지</b> 확인해야, 중간에 데이터를 잃어버리지 않았다고 말할 수 있습니다.</p>
       </div>
       <div class="card pad stack" style="gap:10px">
-        <h3>검사가 진짜 동작하는지도 테스트</h3>
-        <p>Silver에서 일부러 한 행을 지우면 '카드 행 수 대사'가 <b style="color:var(--red)">실패</b>하는지 확인하는 테스트를 넣었습니다.</p>
-        <p class="small"><code>test_quality_check_detects_lost_rows</code> · 전체 테스트 42개 통과</p>
+        <h3>확인 장치도 테스트했습니다</h3>
+        <p>Silver에서 일부러 한 줄을 지웠을 때 '카드 행 수' 확인이 <b style="color:var(--red)">틀렸다고</b> 알려 주는지 테스트로 만들어 두었습니다.</p>
+        <p class="small"><code>test_quality_check_detects_lost_rows</code> · 테스트 42개 모두 통과</p>
       </div>
     </div>
   </div>
 </div>
 
 <!-- 3 -->
-<div class="section">
-  <div class="section-label"><span class="num">3</span><span class="title">왜 메달리온 아키텍처인가</span></div>
+<div data-part="3" class="section">
+  <div class="section-label"><span class="num">3</span><span class="title">왜 이렇게 나눴나</span></div>
   <div class="ba" style="margin-bottom:14px">
-    <div style="background:var(--red-soft)"><b style="color:var(--red)">이전 · 노트북</b><p style="margin-top:6px">원본을 읽자마자 정제 · 집계 · 분석을 한 번에 하고, 중간 결과를 <b style="color:var(--ink)">data/processed에 이름만 다른 CSV 30여 개</b>로 남김 → 어느 단계의 결과인지, 원본이 바뀌면 무엇을 다시 만들어야 하는지 알기 어려움</p></div>
+    <div style="background:var(--red-soft)"><b style="color:var(--red)">공모전 때</b><p style="margin-top:6px">원본을 읽자마자 정리, 집계, 분석을 한 번에 했고, 중간 결과는 <b style="color:var(--ink)">data/processed에 이름만 조금씩 다른 CSV 30여 개</b>로 남았습니다. 어떤 파일이 어느 단계 결과인지, 원본이 바뀌면 뭘 다시 만들어야 하는지 저도 헷갈렸습니다.</p></div>
     <div class="arrow-r"><svg viewBox="0 0 26 26"><path d="M5 13h15M14 6.5l6.5 6.5-6.5 6.5" fill="none" stroke="#AEB6C4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    <div style="background:var(--green-soft)"><b style="color:var(--green)">지금 · 메달리온</b><p style="margin-top:6px">원본 / 정제 / 결과가 <b style="color:var(--ink)">폴더 3개로 명확히 분리</b>되고, 각 층의 입력은 앞 층 하나뿐 → 문제가 난 층부터 다시 만들면 됨, 대사로 층 사이 손실 확인</p></div>
+    <div style="background:var(--green-soft)"><b style="color:var(--green)">지금</b><p style="margin-top:6px">원본, 정리, 결과가 <b style="color:var(--ink)">폴더 세 개로 나뉘고</b> 각 층은 앞 층 하나만 봅니다. 문제가 생긴 층부터 다시 만들면 되고, 층 사이에서 숫자가 새지 않았는지도 확인할 수 있습니다.</p></div>
   </div>
   <div class="why">
-    <div><b>재처리</b><span>정제 규칙이 바뀌면 Bronze에서 Silver부터 다시. 원본을 다시 받을 필요가 없습니다.</span><em>예: 서울 90세 이상 누락 수정 시 Silver부터 재생성</em></div>
-    <div><b>추적 (계보)</b><span>Gold 숫자가 이상하면 Silver → Bronze 순서로 거슬러 올라가 원인을 찾습니다.</span><em>영수증의 지문으로 어떤 원본이었는지까지 확인</em></div>
-    <div><b>품질 관문</b><span>층을 넘어갈 때마다 대사 검사를 통과해야 다음 층으로 갑니다.</span><em>실패하면 결과를 내보내지 않음</em></div>
-    <div><b>접근 통제</b><span>원본(Bronze)은 개인 단위 정보가 가장 많은 층이라 접근을 좁히고, 분석가는 Gold만 보게 할 수 있습니다.</span><em>금융권 원천 데이터 접근 통제와 같은 구조</em></div>
+    <div><b>다시 만들기 쉬움</b><span>정리 방식이 바뀌면 Bronze에서 Silver부터 다시 만들면 됩니다. 원본을 다시 받을 필요가 없습니다.</span><em>예: 서울 90세 이상 누락을 고치면 Silver부터 다시</em></div>
+    <div><b>거슬러 올라가기</b><span>Gold 숫자가 이상하면 Silver, Bronze 순서로 올라가면서 원인을 찾을 수 있습니다.</span><em>기록된 지문으로 어떤 원본 파일이었는지까지 확인</em></div>
+    <div><b>중간 점검</b><span>다음 층으로 넘어가기 전에 숫자가 맞는지 확인합니다.</span><em>틀리면 결과를 내보내지 않음</em></div>
+    <div><b>접근 범위 나누기</b><span>원본은 개인 단위 정보가 가장 많은 층이라 접근을 좁히고, 분석하는 사람은 Gold만 보게 할 수 있습니다.</span><em>층마다 권한을 따로 줄 수 있음</em></div>
   </div>
 </div>
 
 <!-- 4 -->
-<div class="section">
-  <div class="section-label"><span class="num">4</span><span class="title">앞으로 · 같은 계층을 실제 인프라로</span><span class="desc">지금은 로컬 폴더, Phase 2~3에서 아래처럼 옮깁니다</span></div>
+<div data-part="3" class="section">
+  <div class="section-label"><span class="num">4</span><span class="title">앞으로는 실제 인프라로</span><span class="desc">지금은 내 컴퓨터 폴더에 있고, Phase 2~3에서 아래처럼 옮길 계획입니다</span></div>
   <div class="card pad">
     <table class="next">
-      <tr><th>계층</th><th>지금 (Phase 1.5)</th><th>앞으로</th><th>도입 단계</th></tr>
-      <tr><td><b style="color:var(--bronze)">Bronze</b></td><td><code>data/bronze/</code> 폴더 + <code>_manifest.json</code></td><td>MinIO 버킷 <code>bronze/card_spending/yyyymm=202601/</code> · 기준월 파티션</td><td><span class="tag t-primary">Phase 2</span></td></tr>
-      <tr><td><b style="color:var(--silver)">Silver</b></td><td><code>data/silver/*.parquet</code> · 파이썬 정제 함수</td><td>PostgreSQL <code>silver</code> 스키마 · dbt staging 모델 (<code>stg_card_spending</code> 등)</td><td><span class="tag t-violet">Phase 3</span></td></tr>
-      <tr><td><b style="color:var(--gold)">Gold</b></td><td><code>data/gold/*.parquet</code> · 파이썬 분석 함수</td><td>PostgreSQL <code>gold</code> 스키마 · dbt mart 모델 (<code>mart_future_stress</code> 등)</td><td><span class="tag t-violet">Phase 3</span></td></tr>
-      <tr><td><b>대사</b></td><td><code>run_quality_checks()</code> 10개</td><td>dbt tests + 대사 SQL, Airflow DAG에서 층마다 실행</td><td><span class="tag t-violet">Phase 3</span> <span class="tag t-amber">Phase 4</span></td></tr>
+      <tr><th>층</th><th>지금 (Phase 1.5)</th><th>앞으로</th><th>언제</th></tr>
+      <tr><td><b style="color:var(--bronze)">Bronze</b></td><td><code>data/bronze/</code> 폴더 + <code>_manifest.json</code></td><td>MinIO 버킷에 달별로 <code>bronze/card_spending/yyyymm=202601/</code></td><td><span class="tag t-primary">Phase 2</span></td></tr>
+      <tr><td><b style="color:var(--silver)">Silver</b></td><td><code>data/silver/*.parquet</code>, 파이썬 정리 함수</td><td>PostgreSQL <code>silver</code> 스키마, dbt 모델 (<code>stg_card_spending</code> 등)</td><td><span class="tag t-violet">Phase 3</span></td></tr>
+      <tr><td><b style="color:var(--gold)">Gold</b></td><td><code>data/gold/*.parquet</code>, 파이썬 분석 함수</td><td>PostgreSQL <code>gold</code> 스키마, dbt 모델 (<code>mart_future_stress</code> 등)</td><td><span class="tag t-violet">Phase 3</span></td></tr>
+      <tr><td><b>숫자 확인</b></td><td><code>run_quality_checks()</code> 10개</td><td>dbt tests와 확인용 SQL을 Airflow에서 층마다 실행</td><td><span class="tag t-violet">Phase 3</span> <span class="tag t-amber">Phase 4</span></td></tr>
     </table>
-    <p class="small" style="margin-top:10px">파이썬 Silver · Gold 결과는 SQL로 옮긴 뒤 값이 같은지 비교하는 '정답지'로 계속 씁니다.</p>
+    <p class="small" style="margin-top:10px">지금 파이썬으로 만든 Silver, Gold 결과는 SQL로 옮긴 뒤에도 값이 같은지 비교하는 기준으로 계속 씁니다.</p>
   </div>
 </div>
 
