@@ -1,4 +1,4 @@
-"""파이프라인 전체를 가짜 원본으로 끝까지 실행해 보는 테스트 (smoke test).
+"""파이프라인 전체를 합성 원본으로 끝까지 실행해 보는 테스트 (smoke test).
 
 숫자가 맞는지가 아니라, Bronze → Silver → Gold → 대사 → 내보내기가 중간에 끊기지 않고
 이어지는지, 결과 표의 열 이름이 발표 결과 CSV와 같은지를 확인합니다.
@@ -12,7 +12,6 @@ import pytest
 
 from future_stress.medallion import build_bronze, run_quality_checks
 from future_stress.pipeline import check_raw_files, compare_with_published, run_pipeline
-from synthetic_raw_files import write_all_raw_files
 
 PUBLISHED_COLUMNS = {
     "growth_vs_nongrowth_validation": ["구분", "사례수", "2035 위험비율(%)", "2035 스트레스 중앙값",
@@ -29,13 +28,12 @@ PUBLISHED_COLUMNS = {
 
 
 @pytest.fixture(scope="module")
-def pipeline_run(tmp_path_factory):
-    """가짜 원본으로 파이프라인을 한 번 실행하고, 여러 테스트가 결과를 함께 씁니다."""
+def pipeline_run(tmp_path_factory, synthetic_raw_dir):
+    """합성 원본으로 파이프라인을 한 번 실행하고, 여러 테스트가 결과를 함께 씁니다."""
     root = tmp_path_factory.mktemp("pipeline")
-    raw_dir, data_dir, output_dir = root / "raw", root / "data", root / "output"
-    write_all_raw_files(raw_dir)
-    tables = run_pipeline(raw_dir, output_dir, data_dir)
-    return {"raw": raw_dir, "data": data_dir, "output": output_dir, "tables": tables}
+    data_dir, output_dir = root / "data", root / "output"
+    tables = run_pipeline(synthetic_raw_dir, output_dir, data_dir)
+    return {"raw": synthetic_raw_dir, "data": data_dir, "output": output_dir, "tables": tables}
 
 
 def test_missing_raw_files_are_reported_at_once(tmp_path):
@@ -65,13 +63,13 @@ def test_published_tables_have_same_columns(pipeline_run):
     assert robustness.index.tolist() == ["서울", "부산", "경기"]
     assert (robustness["검증사례수"] > 0).all()
 
-    # 발표 결과와의 비교 함수도 끝까지 돌아야 함 (가짜 데이터라 값은 '불일치'가 정상)
+    # 발표 결과와의 비교 함수도 끝까지 돌아야 함 (합성 데이터라 값은 '불일치'가 정상)
     report = compare_with_published(output_dir)
     assert set(report["결과"]) <= {"일치", "불일치", "비교불가"}
 
 
 def test_quality_checks_reconcile_layers(pipeline_run):
-    """가짜 원본에는 개인이 아닌 결제 1행이 들어 있습니다. 대사가 그 1행만큼 정확히 맞아야 합니다."""
+    """합성 원본에는 개인이 아닌 결제(성별 3 · x)가 섞여 있습니다. 대사가 그만큼 정확히 맞아야 합니다."""
     report = pipeline_run["tables"]["quality_report"].set_index("검사")
     assert report.loc["카드 행 수 대사", "결과"] == "통과"
     assert report.loc["카드 금액 대사", "결과"] == "통과"

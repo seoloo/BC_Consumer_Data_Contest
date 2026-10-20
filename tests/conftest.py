@@ -1,12 +1,15 @@
-"""여러 테스트가 함께 쓰는 작은 가상 데이터.
+"""여러 테스트가 함께 쓰는 가상 데이터.
 
-실제 BC카드 원본은 공개할 수 없어서, 결과를 손으로 계산할 수 있을 만큼 작은 데이터를 만듭니다.
+실제 BC카드 원본은 공개할 수 없어서 두 가지를 씁니다.
+    - 결과를 손으로 계산할 수 있을 만큼 작은 데이터 (함수 하나하나의 계산 확인용)
+    - future_stress.synthetic이 만드는 원본 형식 그대로의 합성 데이터 (파이프라인 전체 실행용)
 """
 
 import pandas as pd
 import pytest
 
 from future_stress import config
+from future_stress.synthetic import write_synthetic_raw_files
 
 
 def make_raw_card_rows(region, industry, monthly_amounts_by_age):
@@ -49,3 +52,12 @@ def raw_card_spending():
         "TP_BUZ_NO": "W01", "TP_BUZ_NM": "서양 음식", "amt": 999999, "cnt": 1,
     })
     return pd.DataFrame(rows)
+
+
+@pytest.fixture(scope="session")
+def synthetic_raw_dir(tmp_path_factory):
+    """원본 8종과 같은 형식의 합성 원본 (시드 42). 만드는 데 10초쯤 걸려서 테스트 전체에서 한 번만 만듭니다.
+
+    여러 테스트가 같은 폴더를 읽기만 하고, 파이프라인은 각자 임시 폴더에 Bronze부터 새로 만듭니다.
+    """
+    return write_synthetic_raw_files(tmp_path_factory.mktemp("synthetic") / "raw", seed=42)

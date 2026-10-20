@@ -3,6 +3,7 @@
 실행 방법 (저장소 루트에서)
     .venv/Scripts/python -m future_stress.pipeline              # 계층별 저장 + output/에 결과 CSV
     .venv/Scripts/python -m future_stress.pipeline --compare    # 실행 후 results/의 발표 수치와 비교
+    .venv/Scripts/python -m future_stress.pipeline --synthetic  # 원본 없이 합성 데이터로 실행 (data/synthetic/)
 
 실행 순서
     1. Bronze   data/raw의 원본을 그대로 복사하고 적재 영수증을 남김     medallion.build_bronze
@@ -30,6 +31,7 @@ from .medallion import (
     check_raw_files,  # noqa: F401  (예전처럼 pipeline에서도 import할 수 있게 유지)
     run_quality_checks,
 )
+from .synthetic import write_synthetic_raw_files
 
 # 발표 결과 외에 output/에 함께 내보내는 Gold 표 (사람이 엑셀로 열어 보기 위한 용도)
 EXTRA_OUTPUT_TABLES = ["region_validation", "market_type_counts", "seoul_defense_strategy", "illusion_rebalancing"]
@@ -123,7 +125,16 @@ def main():
     parser.add_argument("--output-dir", default=config.OUTPUT_DIR, help="결과 CSV 저장 폴더 (기본: output)")
     parser.add_argument("--data-dir", default=None, help="bronze · silver · gold를 만들 폴더 (기본: data)")
     parser.add_argument("--compare", action="store_true", help="실행 후 results/의 발표 수치와 비교")
+    parser.add_argument("--synthetic", action="store_true",
+                        help="합성 원본을 만들어 data/synthetic/ 아래에서 실행 (원본 데이터가 없을 때)")
+    parser.add_argument("--seed", type=int, default=42, help="--synthetic에서 쓸 시드")
     arguments = parser.parse_args()
+
+    if arguments.synthetic:
+        # 원본 결과(data/bronze ...)와 섞이지 않도록 raw · 계층 · 결과를 모두 data/synthetic 아래에 만듭니다.
+        arguments.raw_dir = write_synthetic_raw_files(config.SYNTHETIC_RAW_DIR, arguments.seed)
+        arguments.data_dir = config.SYNTHETIC_DIR
+        arguments.output_dir = config.SYNTHETIC_OUTPUT_DIR
 
     tables = run_pipeline(arguments.raw_dir, arguments.output_dir, arguments.data_dir)
     bronze_dir, silver_dir, gold_dir = layer_dirs(arguments.data_dir)
