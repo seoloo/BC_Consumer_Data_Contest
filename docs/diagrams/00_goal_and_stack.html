@@ -58,189 +58,167 @@
 
 <div class="header">
   <div>
-    <div class="eyebrow"><span class="no">00</span>포트폴리오 목표와 기술 선택</div>
-    <h1>금융권 데이터 엔지니어 포트폴리오로 무엇을, 어떤 기술로, 왜</h1>
-    <p class="lede">공모전 분석(01~05)은 이 포트폴리오의 '업무 사례'입니다. 핵심은 그 분석을 매월 자동으로 수집 · 적재 · 검증 · 제공되는<br>데이터 파이프라인으로 만드는 것이고, 기술마다 "왜 이것을 골랐는지"를 설명할 수 있게 정리했습니다.</p>
+    <div class="eyebrow"><span class="no">00</span>목표와 기술 선택</div>
+    <h1>목표와 쓰는 기술</h1>
+    <p class="lede">공모전 때 노트북으로 한 분석(01~05)을 매달 알아서 돌아가는 파이프라인으로 다시 만들고 있습니다.<br>기술은 이 데이터에 맞는 것으로 골랐고, 고른 이유와 일부러 쓰지 않은 기술을 함께 적었습니다.</p>
   </div>
-  <div class="version"><b>목표 직무 · 금융권 DE</b><br>은행 · 카드사 데이터 엔지니어</div>
+  <div class="version"><b>src/future_stress</b><br>2026.10 기준</div>
 </div>
 
 <!-- 최종 목적 -->
-<div class="goal">
+<div data-part="1" class="goal">
   <div class="top">
     <div>
-      <div class="tag-line">최종 목적</div>
-      <h2>공모전 카드 소비 분석을<br><em>매월 자동으로 재현 · 검증되는 데이터 마트 파이프라인</em>으로</h2>
-      <p class="quote">"분석하면서 직접 겪은 재현 불가 · 형식 불일치 · 수작업 검증 문제를<br>데이터 엔지니어링으로 해결했다" — 면접에서 말할 한 문장</p>
+      <div class="tag-line">최종 목표</div>
+      <h2>공모전 카드 소비 분석을<br><em>매달 같은 결과가 나오는 데이터 마트</em>로</h2>
+      <p class="quote">공모전 때 가장 힘들었던 건 분석보다 데이터였습니다.<br>파일마다 형식이 달랐고, 다시 돌렸을 때 결과가 맞는지 확신하기 어려웠습니다. 이 문제를 푸는 게 이번 목표입니다.</p>
     </div>
     <div class="finish">
-      <b>완성되면 이렇게 동작합니다</b>
+      <b>완성되면 이렇게 돌아갑니다</b>
       <ol>
-        <li><code>docker compose up</code> 한 번으로 DB · 저장소 · Airflow · 대시보드가 뜸</li>
-        <li>Airflow가 매월 원천을 수집해 원본 보관소에 기준월별로 저장</li>
-        <li>dbt가 Bronze → Silver → Gold 계층으로 변환하고 층마다 품질 · 정합성 검사</li>
-        <li>검사를 통과하면 대시보드에서 Stress · 4유형 조회, 실패하면 알림</li>
-        <li>코드를 올릴 때마다 GitHub Actions가 합성 데이터로 전체를 검증</li>
+        <li><code>docker compose up</code> 한 번으로 DB, 저장소, Airflow, 대시보드가 함께 실행</li>
+        <li>Airflow가 매달 데이터를 받아 원본 그대로 보관</li>
+        <li>dbt가 Bronze → Silver → Gold로 정리하면서 층마다 숫자를 맞춰 봄</li>
+        <li>검사를 통과하면 대시보드에 반영, 틀리면 알림</li>
+        <li>코드를 올리면 GitHub Actions가 가짜 데이터로 처음부터 끝까지 실행</li>
       </ol>
     </div>
   </div>
   <div class="pillars">
-    <div class="pillar"><b>재현성</b><span>원본 없이도 합성 데이터로 누구나 같은 결과를 실행</span></div>
-    <div class="pillar"><b>정합성</b><span>원천 합계 = 마트 합계를 매번 자동 대사</span></div>
-    <div class="pillar"><b>자동화</b><span>월 배치 · 과거 기간 재처리 · 실패 재시도</span></div>
-    <div class="pillar"><b>보안</b><span>원본 비공개 · 인증정보 분리 · 소규모 셀 마스킹</span></div>
+    <div class="pillar"><b>재현</b><span>원본이 없어도 합성 데이터로 누구나 돌려 볼 수 있게</span></div>
+    <div class="pillar"><b>정합성</b><span>원본 합계와 결과 합계가 맞는지 매번 확인</span></div>
+    <div class="pillar"><b>자동화</b><span>매달 실행, 지난 달 다시 돌리기, 실패하면 재시도</span></div>
+    <div class="pillar"><b>보안</b><span>원본은 비공개, 키는 코드 밖에, 작은 집계는 가리기</span></div>
   </div>
 </div>
 
 <!-- 기술 스택 -->
-<div class="section">
-  <div class="section-label"><span class="num">1</span><span class="title">기술 스택과 선택 이유</span><span class="desc"><span class="done-mark">● 사용 중</span> · 나머지는 Phase 2~4에서 도입 예정</span></div>
+<div data-part="2" class="section">
+  <div class="section-label"><span class="num">1</span><span class="title">쓰는 기술과 고른 이유</span><span class="desc"><span class="done-mark">●</span> 초록색은 지금 쓰고 있는 것, 나머지는 Phase 2~4에서 붙일 예정</span></div>
   <div class="card pad">
     <table class="stack-table">
-      <tr><th>단계</th><th>기술</th><th>왜 이 기술인가</th><th>다른 선택지 대신 고른 이유</th><th>금융권 업무와의 연결</th></tr>
+      <tr><th>어디에</th><th>기술</th><th>고른 이유</th><th>대신 안 쓴 것</th></tr>
 
-      <tr class="group-row"><td colspan="5">처리 · 검증 기반</td></tr>
+      <tr class="group-row"><td colspan="4">처리 · 검증</td></tr>
       <tr>
         <td class="layer-cell"><span class="lname">처리 로직</span><br><span class="lphase t-green">Phase 1 · 사용 중</span></td>
-        <td class="tech-cell"><span class="tname">Python · pandas</span><span class="tsub">NumPy · SciPy</span></td>
-        <td class="why-cell">이미 분석 로직이 pandas로 만들어져 있고, 원본으로 발표 결과 6/6 재현까지 확인 → 앞으로 SQL로 옮길 때 <b>정답지(기준 구현)</b>로 씁니다.</td>
-        <td class="alt-cell"><b>Spark 대신</b> · 데이터가 약 24만 행이라 분산 처리가 필요 없음. 규모에 맞는 도구를 고르는 것도 설계 판단.</td>
-        <td class="fin-cell">배치 스크립트 · 데이터 가공의 표준 언어</td>
+        <td class="tech-cell"><span class="tname">Python, pandas</span><span class="tsub">NumPy, SciPy</span></td>
+        <td class="why-cell">공모전 분석이 이미 pandas로 되어 있고, 원본으로 돌려서 발표 숫자 6개가 그대로 나오는 것까지 확인했습니다. 나중에 SQL로 옮길 때 <b>맞는지 비교하는 기준</b>으로 씁니다.</td>
+        <td class="alt-cell"><b>Spark</b> · 데이터가 24만 행 정도라 나눠서 처리할 필요가 없었습니다.</td>
       </tr>
       <tr>
         <td class="layer-cell"><span class="lname">테스트</span><br><span class="lphase t-green">Phase 1 · 사용 중</span></td>
-        <td class="tech-cell"><span class="tname">pytest</span><span class="tsub">단위 + 전체 실행 38개</span></td>
-        <td class="why-cell">손계산 값과 비교해 계산이 맞는지, 코드를 바꿔도 결과가 그대로인지(회귀) 자동 확인합니다.</td>
-        <td class="alt-cell"><b>unittest 대신</b> · 문법이 짧고 여러 입력을 한 번에 검사(parametrize)하기 쉬움.</td>
-        <td class="fin-cell">변경 전후 검증 · 회귀 테스트</td>
+        <td class="tech-cell"><span class="tname">pytest</span><span class="tsub">42개</span></td>
+        <td class="why-cell">손으로 계산한 값과 맞는지, 코드를 고친 뒤에도 결과가 그대로인지 매번 확인합니다.</td>
+        <td class="alt-cell"><b>unittest</b> · 같은 검사를 입력만 바꿔 여러 번 돌리기는 pytest가 더 편했습니다.</td>
       </tr>
 
       <tr>
         <td class="layer-cell"><span class="lname">데이터 구조</span><br><span class="lphase t-green">Phase 1.5 · 사용 중</span></td>
         <td class="tech-cell"><span class="tname">메달리온 아키텍처</span><span class="tsub">Bronze → Silver → Gold</span></td>
-        <td class="why-cell">원본 / 정제 / 분석 결과를 세 층으로 나누고 각 층은 앞 층만 읽게 해, <b>재처리 · 추적 · 층 사이 대사</b>가 가능하게 합니다. (07 메달리온)</td>
-        <td class="alt-cell"><b>원본에서 바로 결과 만들기 대신</b> · 노트북 방식은 중간 CSV 30여 개가 남아 어느 단계 결과인지 추적 불가.</td>
-        <td class="fin-cell">원천 → 정제 → 마트 계층 구조, 원천 데이터 접근 통제</td>
+        <td class="why-cell">원본, 정리한 데이터, 분석 결과를 세 층으로 나눴습니다. 층마다 바로 앞 층만 읽기 때문에 문제가 생기면 <b>어디서 틀렸는지 바로 보이고, 그 층부터 다시</b> 만들면 됩니다. (07 참고)</td>
+        <td class="alt-cell"><b>노트북 방식</b> · 중간 CSV가 30개 넘게 쌓여서 어떤 파일이 어디서 나왔는지 저도 헷갈렸습니다.</td>
       </tr>
       <tr>
         <td class="layer-cell"><span class="lname">저장 형식</span><br><span class="lphase t-green">Phase 1.5 · 사용 중</span></td>
         <td class="tech-cell"><span class="tname">Parquet</span><span class="tsub">pyarrow</span></td>
-        <td class="why-cell">Silver · Gold를 열 단위로 압축 저장해 <b>16.4MB CSV → 1.4MB</b>, 숫자 · 문자 타입이 함께 저장되어 다시 읽어도 그대로입니다.</td>
-        <td class="alt-cell"><b>CSV 대신</b> · 실제로 cp949 / utf-8 인코딩이 섞여 깨졌고, 다시 읽을 때 타입이 바뀌는 문제가 있었음.</td>
-        <td class="fin-cell">데이터 레이크 · 웨어하우스 표준 저장 형식</td>
+        <td class="why-cell">카드 데이터가 CSV 16.4MB에서 <b>1.4MB</b>로 줄었고, 숫자와 문자 구분이 그대로 남아 다시 읽어도 바뀌지 않습니다.</td>
+        <td class="alt-cell"><b>CSV</b> · cp949와 utf-8이 섞여 글자가 깨진 적이 있고, 다시 읽으면 타입이 바뀌기도 했습니다.</td>
       </tr>
 
-      <tr class="group-row"><td colspan="5">수집 · 적재</td></tr>
+      <tr class="group-row"><td colspan="4">수집 · 적재</td></tr>
       <tr>
         <td class="layer-cell"><span class="lname">합성 데이터</span><br><span class="lphase t-primary">Phase 2</span></td>
         <td class="tech-cell"><span class="tname">NumPy 생성기</span><span class="tsub">시드 고정</span></td>
-        <td class="why-cell">공모전 원본은 재배포할 수 없어서, 형식과 분포를 흉내 낸 가짜 데이터로 <b>누구나 실행</b>할 수 있게 합니다.</td>
-        <td class="alt-cell"><b>원본 공개 대신</b> · 저작권 · 재식별 위험. <b>Faker 대신</b> · 이름 · 주소가 아니라 숫자 분포만 필요.</td>
-        <td class="fin-cell">개인정보 때문에 운영 데이터를 개발에 못 쓰는 환경 → 테스트 데이터 생성</td>
+        <td class="why-cell">공모전 원본은 공개할 수 없어서, 형식과 분포만 비슷한 가짜 데이터를 만들어 <b>누구든 돌려 볼 수 있게</b> 할 계획입니다.</td>
+        <td class="alt-cell"><b>원본 공개</b> · 재배포가 안 됩니다. <b>Faker</b> · 이름, 주소가 아니라 숫자 분포만 필요합니다.</td>
       </tr>
       <tr>
         <td class="layer-cell"><span class="lname">수집</span><br><span class="lphase t-primary">Phase 2</span></td>
-        <td class="tech-cell"><span class="tname">requests</span><span class="tsub">KOSIS · NAVER API</span></td>
-        <td class="why-cell">인구 데이터를 파일로 내려받던 수작업을 API 수집으로 바꾸고, 재시도 · 호출 제한 처리와 <b>멱등성</b>(다시 받아도 같은 결과)을 보장합니다.</td>
-        <td class="alt-cell"><b>수동 다운로드 대신</b> · 매월 반복 불가, 어떤 파일을 썼는지 기록이 남지 않음.</td>
-        <td class="fin-cell">대외기관 데이터 연계 배치</td>
+        <td class="tech-cell"><span class="tname">requests</span><span class="tsub">KOSIS, NAVER API</span></td>
+        <td class="why-cell">인구 데이터를 매번 사이트에서 내려받던 일을 API로 바꿉니다. 실패하면 다시 시도하고, 같은 달을 두 번 받아도 결과가 같게 만듭니다.</td>
+        <td class="alt-cell"><b>수동 다운로드</b> · 매달 반복하기 어렵고, 어떤 파일을 썼는지 기록이 남지 않았습니다.</td>
       </tr>
       <tr>
         <td class="layer-cell"><span class="lname">원본 보관</span><br><span class="lphase t-primary">Phase 2</span></td>
-        <td class="tech-cell"><span class="tname">MinIO</span><span class="tsub">Bronze 계층 저장소 (S3 호환)</span></td>
-        <td class="why-cell">받은 원본을 수정 없이 <b>기준월별 폴더</b>로 보관해, 문제가 생기면 그 달만 다시 처리할 수 있게 합니다.</td>
-        <td class="alt-cell"><b>로컬 폴더 대신</b> · S3와 같은 방식이라 클라우드로 옮겨도 코드가 거의 그대로. <b>AWS S3 대신</b> · 로컬에서 무료.</td>
-        <td class="fin-cell">원본 데이터 보존 · 데이터 레이크의 landing 영역</td>
+        <td class="tech-cell"><span class="tname">MinIO</span><span class="tsub">Bronze 저장소, S3 호환</span></td>
+        <td class="why-cell">받은 원본을 손대지 않고 <b>달별 폴더</b>에 둡니다. 한 달 데이터에 문제가 생기면 그 달만 다시 돌리면 됩니다.</td>
+        <td class="alt-cell"><b>로컬 폴더</b> · 클라우드로 옮길 때 코드를 다 바꿔야 합니다. <b>AWS S3</b> · 개인 프로젝트라 비용이 부담됩니다.</td>
       </tr>
 
-      <tr class="group-row"><td colspan="5">저장 · 변환 · 품질</td></tr>
+    </table>
+  </div>
+</div>
+
+<div data-part="3" class="section">
+  <div class="section-label"><span class="num">1</span><span class="title">쓰는 기술과 고른 이유 (이어서)</span><span class="desc">저장 · 변환 · 품질, 운영 · 제공</span></div>
+  <div class="card pad">
+    <table class="stack-table">
+      <tr><th>어디에</th><th>기술</th><th>고른 이유</th><th>대신 안 쓴 것</th></tr>
+
+      <tr class="group-row"><td colspan="4">저장 · 변환 · 품질</td></tr>
       <tr>
-        <td class="layer-cell"><span class="lname">데이터 웨어하우스</span><br><span class="lphase t-violet">Phase 3</span></td>
-        <td class="tech-cell"><span class="tname">PostgreSQL</span><span class="tsub">Silver · Gold 스키마</span></td>
-        <td class="why-cell">계층별 스키마와 표준 SQL로 마트를 만들고, 서버형 DB를 운영 · 설계하는 경험을 보여줍니다.</td>
-        <td class="alt-cell"><b>DuckDB 대신</b> · 가볍지만 서버 · 권한 · 동시 접속 같은 운영 요소를 보여주기 어려움.</td>
-        <td class="fin-cell">금융권 RDB(Oracle 등)와 같은 SQL · 스키마 설계</td>
+        <td class="layer-cell"><span class="lname">웨어하우스</span><br><span class="lphase t-violet">Phase 3</span></td>
+        <td class="tech-cell"><span class="tname">PostgreSQL</span><span class="tsub">silver, gold 스키마</span></td>
+        <td class="why-cell">Silver와 Gold를 스키마로 나눠 SQL로 관리합니다. 서버형 DB를 직접 설계하고 운영해 보려는 목적도 있습니다.</td>
+        <td class="alt-cell"><b>DuckDB</b> · 가볍고 편하지만 권한이나 동시 접속 같은 운영 부분을 다뤄 볼 수 없습니다.</td>
       </tr>
       <tr>
         <td class="layer-cell"><span class="lname">변환</span><br><span class="lphase t-violet">Phase 3</span></td>
-        <td class="tech-cell"><span class="tname">dbt</span><span class="tsub">SQL 모델 관리</span></td>
-        <td class="why-cell">Phase 1의 함수 하나를 SQL 모델 하나로 옮기고, <b>계보(lineage) 문서와 테스트</b>를 자동으로 만듭니다.</td>
-        <td class="alt-cell"><b>파이썬 스크립트 · 저장 프로시저 대신</b> · 어떤 표가 어떤 표에서 왔는지, 무엇을 검사했는지 관리가 어려움.</td>
-        <td class="fin-cell">데이터 마트 표준화 · 변경 이력 관리</td>
+        <td class="tech-cell"><span class="tname">dbt</span><span class="tsub">SQL 모델</span></td>
+        <td class="why-cell">Phase 1에서 나눠 둔 함수를 하나씩 SQL 모델로 옮깁니다. 어떤 표가 어디서 왔는지 보여주는 <b>계보 문서와 테스트</b>가 함께 생깁니다.</td>
+        <td class="alt-cell"><b>파이썬 스크립트, 프로시저</b> · 표가 많아지면 출처와 검사 내용을 따라가기 어렵습니다.</td>
       </tr>
       <tr>
-        <td class="layer-cell"><span class="lname">품질 · 정합성</span><br><span class="lphase t-violet">Phase 3</span></td>
+        <td class="layer-cell"><span class="lname">품질 검사</span><br><span class="lphase t-violet">Phase 3</span></td>
         <td class="tech-cell"><span class="tname">dbt tests</span><span class="tsub">+ 대사 쿼리</span></td>
-        <td class="why-cell">빈 값 · 허용값 · 지역코드 검사, 6개월 완전성, <b>원천 합계 = 마트 합계 대사</b>를 매번 자동 실행합니다.</td>
-        <td class="alt-cell"><b>노트북에서 눈으로 확인 대신</b> · 실제로 '20대미만' 이름 불일치를 merge 후에야 발견했던 경험.</td>
-        <td class="fin-cell">정합성 검증 · 대사 (금융 데이터의 핵심)</td>
+        <td class="why-cell">빈 값, 이상한 연령대, 없는 지역 코드, 6개월 누락, <b>원본 합계와 결과 합계</b>를 매번 자동으로 맞춰 봅니다.</td>
+        <td class="alt-cell"><b>눈으로 확인</b> · 공모전 때 '20대미만'과 '20대이하'가 달라서, 합친 뒤에야 빈칸을 발견했습니다.</td>
       </tr>
 
-      <tr class="group-row"><td colspan="5">운영 · 제공</td></tr>
+      <tr class="group-row"><td colspan="4">운영 · 제공</td></tr>
       <tr>
-        <td class="layer-cell"><span class="lname">실행 관리</span><br><span class="lphase t-amber">Phase 4</span></td>
+        <td class="layer-cell"><span class="lname">스케줄링</span><br><span class="lphase t-amber">Phase 4</span></td>
         <td class="tech-cell"><span class="tname">Airflow</span><span class="tsub">월 배치 DAG</span></td>
-        <td class="why-cell">수집 → 적재 → 변환 → 검사 → 제공의 <b>순서 · 재시도 · 과거 기간 재처리(backfill)</b>를 한곳에서 관리합니다.</td>
-        <td class="alt-cell"><b>cron 대신</b> · 작업 간 의존 관계, 실패 지점 재실행, 실행 이력 확인이 안 됨.</td>
-        <td class="fin-cell">일 · 월 배치 스케줄 운영</td>
+        <td class="why-cell">수집부터 대시보드까지 순서대로 돌리고, 실패하면 다시 시도하고, <b>지난 달을 다시 돌리는 일(backfill)</b>까지 한곳에서 관리합니다.</td>
+        <td class="alt-cell"><b>cron</b> · 작업 순서를 정하거나 실패한 지점부터 다시 돌리기가 어렵습니다.</td>
       </tr>
       <tr>
         <td class="layer-cell"><span class="lname">실행 환경</span><br><span class="lphase t-amber">Phase 2~4</span></td>
         <td class="tech-cell"><span class="tname">Docker Compose</span></td>
-        <td class="why-cell">DB · 저장소 · Airflow · 대시보드를 <b>명령 한 번</b>으로 같은 구성으로 띄웁니다.</td>
-        <td class="alt-cell"><b>각자 설치 대신</b> · 버전 · 설정 차이로 "내 컴퓨터에선 되는데" 문제가 생김.</td>
-        <td class="fin-cell">망분리 · 폐쇄망에서도 같은 구성 재현</td>
+        <td class="why-cell">DB, 저장소, Airflow, 대시보드를 <b>명령 하나로</b> 똑같이 띄웁니다.</td>
+        <td class="alt-cell"><b>하나씩 설치</b> · 버전이 조금만 달라도 "내 컴퓨터에선 되는데"가 생깁니다.</td>
       </tr>
       <tr>
         <td class="layer-cell"><span class="lname">자동 검증</span><br><span class="lphase t-amber">Phase 4</span></td>
         <td class="tech-cell"><span class="tname">GitHub Actions</span><span class="tsub">CI</span></td>
-        <td class="why-cell">코드를 올릴 때마다 테스트와 합성 데이터 전체 실행을 자동으로 돌려, 깨진 변경이 합쳐지지 않게 합니다.</td>
-        <td class="alt-cell"><b>Jenkins 대신</b> · 저장소와 바로 연동되고 별도 서버가 필요 없음.</td>
-        <td class="fin-cell">배포 전 검증 · 변경 관리</td>
+        <td class="why-cell">코드를 올릴 때마다 테스트와 전체 실행을 돌려서, 깨진 코드가 main에 들어가지 않게 합니다.</td>
+        <td class="alt-cell"><b>Jenkins</b> · 서버를 따로 띄워야 해서, 저장소에 바로 붙는 쪽을 골랐습니다.</td>
       </tr>
       <tr>
-        <td class="layer-cell"><span class="lname">제공</span><br><span class="lphase t-amber">Phase 4</span></td>
-        <td class="tech-cell"><span class="tname">Streamlit</span><span class="tsub">조회 화면</span></td>
-        <td class="why-cell">마트 결과(Stress · 4유형 · 방어형 고객)를 파이썬만으로 빠르게 보여줍니다. 핵심은 파이프라인이라 화면은 가볍게.</td>
-        <td class="alt-cell"><b>Superset · Tableau 대신</b> · 설치 · 설정이 무겁고 포트폴리오의 초점이 BI가 아님.</td>
-        <td class="fin-cell">현업 조회용 데이터 제공</td>
+        <td class="layer-cell"><span class="lname">조회 화면</span><br><span class="lphase t-amber">Phase 4</span></td>
+        <td class="tech-cell"><span class="tname">Streamlit</span></td>
+        <td class="why-cell">Stress, 4유형, 방어형 고객을 파이썬만으로 빠르게 보여줍니다. 이 프로젝트의 중심은 파이프라인이라 화면은 가볍게 가져갑니다.</td>
+        <td class="alt-cell"><b>Superset, Tableau</b> · 설치와 설정이 무겁고, BI는 이번 목표가 아닙니다.</td>
       </tr>
       <tr>
-        <td class="layer-cell"><span class="lname">보안</span><br><span class="lphase t-green">전 단계 · 사용 중</span></td>
-        <td class="tech-cell"><span class="tname">환경변수 · .gitignore</span><span class="tsub">+ 집계 마스킹</span></td>
-        <td class="why-cell">API 키는 코드 밖(.env)에, 원본 · 결과 파일은 저장소 밖에 두고, 공개 결과는 집계 · 마스킹된 값만 냅니다.</td>
-        <td class="alt-cell"><b>코드에 키 직접 작성 대신</b> · 실제로 노트북 공개 전 키를 지우는 스크립트가 필요했던 경험.</td>
-        <td class="fin-cell">개인정보 보호 · 가명정보 처리</td>
+        <td class="layer-cell"><span class="lname">보안</span><br><span class="lphase t-green">계속 · 사용 중</span></td>
+        <td class="tech-cell"><span class="tname">.env, .gitignore</span><span class="tsub">+ 집계 마스킹</span></td>
+        <td class="why-cell">API 키는 코드 밖에, 원본과 결과 파일은 저장소 밖에 둡니다. 공개하는 건 집계된 숫자뿐입니다.</td>
+        <td class="alt-cell"><b>코드에 키 작성</b> · 공모전 노트북을 공개하기 전에 키를 지우는 스크립트를 따로 만들어야 했습니다.</td>
       </tr>
     </table>
   </div>
 </div>
 
 <!-- 쓰지 않는 기술 -->
-<div class="section">
-  <div class="section-label"><span class="num">2</span><span class="title">일부러 쓰지 않는 기술</span><span class="desc">유행하는 기술을 다 넣기보다, 데이터의 성격에 맞는 것만 고릅니다</span></div>
+<div data-part="4" class="section">
+  <div class="section-label"><span class="num">2</span><span class="title">일부러 안 쓴 기술</span><span class="desc">많이 쓰는 기술이라도 이 데이터에는 맞지 않아서 뺐습니다</span></div>
   <div class="notuse">
-    <div><span class="no-use">사용 안 함</span><b>Kafka · 실시간 스트리밍</b><span>데이터가 '월 단위 집계'라서 실시간 처리가 필요 없습니다. 월 배치가 데이터 성격에 맞습니다.</span><span class="later">실시간 결제 이상거래 탐지 같은 주제라면 선택</span></div>
-    <div><span class="no-use">사용 안 함</span><b>Spark · 분산 처리</b><span>약 24만 행은 pandas · PostgreSQL로 충분합니다. 규모에 비해 운영 비용만 늘어납니다.</span><span class="later">수천만 행 이상의 거래 원장이라면 선택</span></div>
-    <div><span class="no-use">사용 안 함</span><b>클라우드 관리형 서비스</b><span>비용 없이 누구나 재현할 수 있도록 로컬 Docker로 구성합니다. 대신 S3 호환 저장소로 이전 가능성을 열어 둡니다.</span><span class="later">MinIO → S3, PostgreSQL → RDS로 이전 가능</span></div>
-    <div><span class="no-use">사용 안 함</span><b>머신러닝 모델</b><span>이 포트폴리오의 초점은 예측이 아니라 '믿을 수 있는 데이터를 매월 만드는 것'입니다. Stress는 규칙 기반 지표입니다.</span><span class="later">마트가 완성된 뒤 확장 주제로 가능</span></div>
-  </div>
-</div>
-
-<!-- 보여줄 역량 -->
-<div class="section">
-  <div class="section-label"><span class="num">3</span><span class="title">이 포트폴리오로 보여줄 역량</span><span class="desc">금융권 DE 채용에서 자주 요구하는 역량 ↔ 이 프로젝트의 증거</span></div>
-  <div class="card pad">
-    <table class="skills">
-      <tr><th>요구 역량</th><th>이 프로젝트에서의 증거</th><th>단계</th></tr>
-      <tr><td>데이터 정합성 · 검증</td><td>발표 수치 6/6 자동 비교(--compare), 메달리온 계층 사이 건수 · 금액 대사 10개, dbt tests</td><td><span class="tag t-green">Phase 1 완료</span> <span class="tag t-violet">Phase 3</span></td></tr>
-      <tr><td>배치 파이프라인 설계 · 운영</td><td>월 단위 DAG, backfill, 실패 재시도 · 알림, 멱등한 수집</td><td><span class="tag t-primary">Phase 2</span> <span class="tag t-amber">Phase 4</span></td></tr>
-      <tr><td>SQL · 데이터 모델링</td><td>Bronze → Silver → Gold 계층, 기준표(dim_region · dim_age_group), ERD</td><td><span class="tag t-violet">Phase 3</span></td></tr>
-      <tr><td>개인정보 보호 · 보안</td><td>원본 비공개, 합성 데이터, 인증정보 분리, 집계 셀 마스킹</td><td><span class="tag t-green">진행 중</span> <span class="tag t-primary">Phase 2</span></td></tr>
-      <tr><td>코드 품질 · 협업</td><td>역할별 모듈, 이유 주석, 테스트 38개, CI</td><td><span class="tag t-green">Phase 1 완료</span> <span class="tag t-amber">Phase 4</span></td></tr>
-      <tr><td>도메인 이해 (카드 · 소비)</td><td>카드 결제 데이터로 상권 위험 지표 설계, 통계 검증, 외부유입 보정</td><td><span class="tag t-green">Phase 0 완료</span></td></tr>
-      <tr><td>문서화 · 설명</td><td>흐름도 시리즈, 리팩토링 노트, 운영 매뉴얼(runbook)</td><td><span class="tag t-green">진행 중</span> <span class="tag t-amber">Phase 4</span></td></tr>
-    </table>
+    <div><span class="no-use">안 씀</span><b>Kafka, 실시간 처리</b><span>데이터가 한 달 단위 집계라 실시간으로 받을 일이 없습니다. 월 배치면 충분합니다.</span><span class="later">결제 이상거래 탐지 같은 주제였다면 썼을 기술</span></div>
+    <div><span class="no-use">안 씀</span><b>Spark</b><span>24만 행은 pandas와 PostgreSQL로 충분합니다. 넣으면 관리할 것만 늘어납니다.</span><span class="later">수천만 행짜리 거래 원장이었다면 썼을 기술</span></div>
+    <div><span class="no-use">안 씀</span><b>클라우드 관리형 서비스</b><span>누구나 비용 없이 돌려 볼 수 있게 로컬 Docker로 만듭니다. S3와 같은 방식이라 나중에 옮기기는 쉽습니다.</span><span class="later">MinIO → S3, PostgreSQL → RDS로 이전 가능</span></div>
+    <div><span class="no-use">안 씀</span><b>머신러닝</b><span>이번에는 예측보다 '매달 믿을 수 있는 데이터를 만드는 것'에 집중합니다. Stress도 규칙으로 계산하는 지표입니다.</span><span class="later">마트를 완성한 뒤 다음 주제로</span></div>
   </div>
 </div>
 

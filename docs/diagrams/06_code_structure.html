@@ -47,118 +47,118 @@
 
 <div class="header">
   <div>
-    <div class="eyebrow"><span class="no">06</span>코드 구조 · Phase 1 리팩토링 결과</div>
-    <h1>노트북 555개 셀을 역할별 모듈 14개로</h1>
-    <p class="lede">원래 로직과 결과는 그대로 두고, 읽고 설명하기 쉬운 구조로 다시 정리했습니다.<br>모든 모듈 첫머리에 역할 · 필요한 이유 · 원래 노트북 위치를 주석으로 남겼습니다.</p>
+    <div class="eyebrow"><span class="no">06</span>코드 구조 · Phase 1</div>
+    <h1>노트북 셀 555개를 모듈 14개로 다시 정리했습니다</h1>
+    <p class="lede">계산 방식과 결과는 그대로 두고, 제가 다시 읽어도 바로 이해할 수 있게 구조를 바꿨습니다.<br>모듈마다 맨 위에 무슨 일을 하는지, 왜 필요한지, 원래 노트북 몇 번째 셀에 있었는지 적어 두었습니다.</p>
   </div>
-  <div class="version"><b>src/future_stress</b><br>2026-10-21 · 메달리온 계층 추가</div>
+  <div class="version"><b>src/future_stress</b><br>2026-10-21 메달리온 층 추가</div>
 </div>
 
 <!-- 1 -->
-<div class="section">
-  <div class="section-label"><span class="num">1</span><span class="title">무엇이 달라졌나</span></div>
+<div data-part="1" class="section">
+  <div class="section-label"><span class="num">1</span><span class="title">무엇이 바뀌었나</span></div>
   <div class="ba">
     <div class="side before">
-      <span class="label">리팩토링 전 · 노트북</span>
-      <div class="nums"><div><b>3개</b><span>노트북</span></div><div><b>555개</b><span>코드 셀 · 마크다운 0</span></div><div><b>0개</b><span>테스트</span></div></div>
+      <span class="label">공모전 때 · 노트북</span>
+      <div class="nums"><div><b>3개</b><span>노트북</span></div><div><b>555개</b><span>코드 셀 (설명 셀 0개)</span></div><div><b>0개</b><span>테스트</span></div></div>
       <ul>
-        <li>같은 계산을 셀마다 복사 (성장 판정 조건 10번 이상, Stress 계산 7번)</li>
-        <li>지역마다 비슷한 함수 따로 정의 (연령 변환 3개, 요약 함수 3개)</li>
-        <li>최종 결과표의 숫자(p-value, 성장 vs 비성장, 3개 지역 검증)를 손으로 입력</li>
-        <li>중간 CSV 30여 개 · '../data' 상대경로 · 셀 실행 순서에 의존</li>
+        <li>같은 계산을 셀마다 복사해서 썼습니다 (성장 판정 조건은 10번 넘게, Stress 계산은 7번)</li>
+        <li>지역마다 비슷한 함수를 따로 만들었습니다 (연령 변환 3개, 요약 함수 3개)</li>
+        <li>최종 결과표 숫자는 손으로 옮겨 적었습니다</li>
+        <li>중간 CSV가 30개 넘게 쌓였고, 셀을 순서대로 눌러야만 돌아갔습니다</li>
       </ul>
     </div>
     <div class="arrow-r"><svg viewBox="0 0 26 26"><path d="M5 13h15M14 6.5l6.5 6.5-6.5 6.5" fill="none" stroke="#AEB6C4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     <div class="side after">
-      <span class="label">리팩토링 후 · 파이썬 패키지</span>
-      <div class="nums"><div><b>14개</b><span>모듈 · 약 2,590줄</span></div><div><b>42개</b><span>테스트 · 모두 통과</span></div><div><b>6/6</b><span>발표 결과 재현</span></div></div>
+      <span class="label">지금 · 파이썬 패키지</span>
+      <div class="nums"><div><b>14개</b><span>모듈, 약 2,590줄</span></div><div><b>42개</b><span>테스트 모두 통과</span></div><div><b>6/6</b><span>발표 결과 그대로</span></div></div>
       <ul>
-        <li>계산마다 함수 하나, 하는 일이 드러나는 이름 (bc_age → build_age_spending_structure)</li>
-        <li>연령 · 지역 기준표를 한 파일에서 관리 (age_groups.py · regions.py)</li>
-        <li>결과표를 데이터에서 계산하고 발표 수치와 자동 비교 (--compare)</li>
-        <li>명령 한 번으로 Bronze → Silver → Gold → 결과 CSV (약 14초), 계층 사이 대사 10개</li>
+        <li>계산 하나에 함수 하나, 이름만 봐도 무슨 일인지 알 수 있게 바꿨습니다 (bc_age → build_age_spending_structure)</li>
+        <li>연령 · 지역 이름은 파일 하나에서만 관리합니다 (age_groups.py, regions.py)</li>
+        <li>결과표는 데이터에서 바로 계산하고, 발표 숫자와 자동으로 비교합니다 (--compare)</li>
+        <li>명령 한 번이면 Bronze → Silver → Gold → 결과 CSV까지 14초 정도 걸립니다</li>
       </ul>
     </div>
   </div>
 </div>
 
 <!-- 2 -->
-<div class="section">
-  <div class="section-label"><span class="num">2</span><span class="title">모듈 지도</span><span class="desc">위에서 아래로 데이터가 흐릅니다 · 오른쪽 숫자는 줄 수 (주석 포함)</span></div>
+<div data-part="2" class="section">
+  <div class="section-label"><span class="num">2</span><span class="title">모듈 지도</span><span class="desc">위에서 아래로 데이터가 흘러갑니다 · 오른쪽 숫자는 주석까지 포함한 줄 수</span></div>
   <div class="layers">
 
     <div class="layer">
-      <div class="l-name" style="background:#EEF1F6;color:var(--ink)"><b>기반</b><span>모두가 가져다 쓰는 기준</span></div>
+      <div class="l-name" style="background:#EEF1F6;color:var(--ink)"><b>기본</b><span>다른 모듈이 다 가져다 씀</span></div>
       <div class="mods" style="grid-template-columns: repeat(4, 1fr);">
-        <div class="mod"><div class="m-head"><b>config.py</b><span>59</span></div><p>경로 · 분석 기간 · 판정 기준값(상위 25%, 3개월 등)</p></div>
-        <div class="mod"><div class="m-head"><b>io_utils.py</b><span>61</span></div><p>인코딩 자동 판별 읽기, 쉼표 숫자 변환</p><div class="fns"><code>read_csv_with_encoding_fallback</code></div></div>
-        <div class="mod"><div class="m-head"><b>age_groups.py</b><span>94</span></div><p>모든 연령 표기 → 6개 연령대</p><div class="fns"><code>age_group_from_label</code></div></div>
-        <div class="mod"><div class="m-head"><b>regions.py</b><span>41</span></div><p>일반구 → 시, 자치구 코드 → 이름</p><div class="fns"><code>to_parent_city</code></div></div>
+        <div class="mod"><div class="m-head"><b>config.py</b><span>59</span></div><p>폴더 경로, 분석 기간, 상위 25%나 3개월 같은 기준값</p></div>
+        <div class="mod"><div class="m-head"><b>io_utils.py</b><span>61</span></div><p>인코딩을 바꿔 가며 CSV 읽기, Parquet 저장</p><div class="fns"><code>read_csv_with_encoding_fallback</code></div></div>
+        <div class="mod"><div class="m-head"><b>age_groups.py</b><span>94</span></div><p>제각각인 연령 표기를 연령대 6개로</p><div class="fns"><code>age_group_from_label</code></div></div>
+        <div class="mod"><div class="m-head"><b>regions.py</b><span>41</span></div><p>구를 시로 합치기, 자치구 코드를 이름으로</p><div class="fns"><code>to_parent_city</code></div></div>
       </div>
     </div>
     <div class="down">▼</div>
 
     <div class="layer">
-      <div class="l-name" style="background:var(--teal-soft);color:var(--teal)"><b>읽기 · 정제</b><span>STEP 1 · 02 데이터</span></div>
+      <div class="l-name" style="background:var(--teal-soft);color:var(--teal)"><b>읽고 정리</b><span>STEP 1 · 02번 그림</span></div>
       <div class="mods" style="grid-template-columns: repeat(3, 1fr);">
-        <div class="mod"><div class="m-head"><b>card_spending.py</b><span>200</span></div><p>BC카드 정제, 연령별 소비구조, 핵심 고객 · HHI, 월별 성장 지표</p><div class="fns"><code>clean_card_spending</code><code>build_age_spending_structure</code><code>calculate_monthly_growth</code></div></div>
-        <div class="mod"><div class="m-head"><b>population.py</b><span>334</span></div><p>장래인구 · 주민등록인구 · 생활/유동인구를 같은 모양의 표로</p><div class="fns"><code>load_seoul_future_population</code><code>load_kosis_future_population</code><code>load_resident_population</code></div></div>
-        <div class="mod"><div class="m-head"><b>naver_datalab.py</b><span>222</span></div><p>NAVER API 클라이언트(재시도 포함), 관심 순위 · 메뉴 유형</p><div class="fns"><code>NaverDataLabClient</code><code>classify_menu_by_generation</code></div></div>
+        <div class="mod"><div class="m-head"><b>card_spending.py</b><span>200</span></div><p>BC카드 정리, 연령별 비중, 단골 연령대와 쏠림, 월별 성장</p><div class="fns"><code>clean_card_spending</code><code>build_age_spending_structure</code><code>calculate_monthly_growth</code></div></div>
+        <div class="mod"><div class="m-head"><b>population.py</b><span>334</span></div><p>장래인구, 주민등록인구, 생활 · 유동인구를 같은 모양의 표로</p><div class="fns"><code>load_seoul_future_population</code><code>load_kosis_future_population</code><code>load_resident_population</code></div></div>
+        <div class="mod"><div class="m-head"><b>naver_datalab.py</b><span>222</span></div><p>NAVER API 호출(실패하면 다시 시도), 관심 순위와 메뉴 성격</p><div class="fns"><code>NaverDataLabClient</code><code>classify_menu_by_generation</code></div></div>
       </div>
     </div>
     <div class="down">▼</div>
 
     <div class="layer">
-      <div class="l-name" style="background:var(--primary-soft);color:var(--primary)"><b>계산 · 진단</b><span>STEP 2 ~ 5 · 03 파이프라인</span></div>
+      <div class="l-name" style="background:var(--primary-soft);color:var(--primary)"><b>계산 · 진단</b><span>STEP 2~5 · 03번 그림</span></div>
       <div class="mods" style="grid-template-columns: repeat(2, 1fr);">
-        <div class="mod" style="border:2px solid var(--primary)"><div class="m-head"><b>stress.py</b><span>87</span></div><p>핵심 지표 Future Stress = Σ 비중 × 인구증감률</p><div class="fns"><code>build_region_result</code><code>add_age_stress_contributions</code><code>sum_stress_by_case</code></div></div>
-        <div class="mod"><div class="m-head"><b>diagnosis.py</b><span>83</span></div><p>분석 대상 선정, 현재 성장 판정, 4유형 분류</p><div class="fns"><code>select_analysis_targets</code><code>is_strictly_growing</code><code>classify_market_type</code></div></div>
+        <div class="mod" style="border:2px solid var(--primary)"><div class="m-head"><b>stress.py</b><span>87</span></div><p>Future Stress = Σ 비중 × 인구증감률</p><div class="fns"><code>build_region_result</code><code>add_age_stress_contributions</code><code>sum_stress_by_case</code></div></div>
+        <div class="mod"><div class="m-head"><b>diagnosis.py</b><span>83</span></div><p>분석할 곳 고르기, 성장 판단, 4유형 나누기</p><div class="fns"><code>select_analysis_targets</code><code>is_strictly_growing</code><code>classify_market_type</code></div></div>
       </div>
     </div>
     <div class="down">▼</div>
 
     <div class="layer">
-      <div class="l-name" style="background:var(--green-soft);color:var(--green)"><b>검증 · 전략</b><span>04 검증 · 05 전략</span></div>
+      <div class="l-name" style="background:var(--green-soft);color:var(--green)"><b>검증 · 전략</b><span>04번 · 05번 그림</span></div>
       <div class="mods" style="grid-template-columns: repeat(3, 1fr);">
-        <div class="mod"><div class="m-head"><b>validation.py</b><span>192</span></div><p>성장 vs 비성장, Fisher · Mann-Whitney, 규모 민감도, 지역별 검증</p><div class="fns"><code>run_statistical_tests</code><code>run_size_sensitivity</code><code>validate_region</code></div></div>
-        <div class="mod"><div class="m-head"><b>robustness.py</b><span>162</span></div><p>생활 · 유동인구 보정 (재가중 / 거주노출), 일치율 · Spearman</p><div class="fns"><code>reweight_stress_by_external_population</code><code>summarize_robustness</code></div></div>
-        <div class="mod"><div class="m-head"><b>strategy.py</b><span>392</span></div><p>방어형 고객, 대표 사례, 고객 구성 최적화(linprog · SLSQP)</p><div class="fns"><code>build_defense_strategy</code><code>optimize_mix_for_max_mitigation</code></div></div>
+        <div class="mod"><div class="m-head"><b>validation.py</b><span>192</span></div><p>성장 vs 비성장 비교, 통계 검정, 기준 바꿔 보기, 지역별 확인</p><div class="fns"><code>run_statistical_tests</code><code>run_size_sensitivity</code><code>validate_region</code></div></div>
+        <div class="mod"><div class="m-head"><b>robustness.py</b><span>162</span></div><p>방문객 보정 두 가지 방법, 판정 유지율과 순위 상관</p><div class="fns"><code>reweight_stress_by_external_population</code><code>summarize_robustness</code></div></div>
+        <div class="mod"><div class="m-head"><b>strategy.py</b><span>392</span></div><p>방어형 고객 찾기, 대표 사례, 손님 구성 최적화</p><div class="fns"><code>build_defense_strategy</code><code>optimize_mix_for_max_mitigation</code></div></div>
       </div>
     </div>
     <div class="down">▼</div>
 
     <div class="layer">
-      <div class="l-name" style="background:var(--ink);color:#fff"><b>실행</b><span>메달리온 계층 순서로</span></div>
+      <div class="l-name" style="background:var(--ink);color:#fff"><b>실행</b><span>메달리온 순서대로</span></div>
       <div class="mods" style="grid-template-columns: 1.4fr 1fr;">
-        <div class="mod" style="border:2px solid #B7860B"><div class="m-head"><b>medallion.py</b><span>476</span></div><p>Bronze(원본 + 적재 영수증) → Silver(정제 Parquet) → Gold(분석 Parquet), 계층 사이 건수 · 금액 대사 10개. 함수 안의 주석 [STEP 1] ~ [전략]이 흐름도 단계 이름과 같습니다.</p><div class="fns"><code>build_bronze</code><code>build_silver</code><code>build_gold</code><code>run_quality_checks</code></div></div>
-        <div class="mod"><div class="m-head"><b>pipeline.py</b><span>139</span></div><p>세 계층 + 대사를 순서대로 실행하고, 대사가 실패하면 멈춤. 발표 결과(results/)와 표별 비교.</p><div class="fns"><code>run_pipeline</code><code>compare_with_published</code><code>main (CLI)</code></div></div>
+        <div class="mod" style="border:2px solid #B7860B"><div class="m-head"><b>medallion.py</b><span>476</span></div><p>원본 보관(Bronze) → 정리(Silver) → 분석 결과(Gold), 그리고 층 사이에서 건수와 금액이 맞는지 10가지를 확인합니다. 함수 안 주석 [STEP 1]~[전략]이 흐름도 단계와 같습니다.</p><div class="fns"><code>build_bronze</code><code>build_silver</code><code>build_gold</code><code>run_quality_checks</code></div></div>
+        <div class="mod"><div class="m-head"><b>pipeline.py</b><span>139</span></div><p>세 층과 확인 작업을 순서대로 돌리고, 숫자가 안 맞으면 멈춥니다. 발표 결과와 표별로 비교합니다.</p><div class="fns"><code>run_pipeline</code><code>compare_with_published</code><code>main (CLI)</code></div></div>
       </div>
     </div>
   </div>
 </div>
 
 <!-- 3 -->
-<div class="section">
+<div data-part="3" class="section">
   <div class="grid" style="grid-template-columns: 1.15fr 1fr;">
     <div class="card pad stack" style="gap:12px">
-      <div class="section-label" style="margin-bottom:2px"><span class="num">3</span><span class="title">테스트 42개</span><span class="desc">tests/ · pytest</span></div>
+      <div class="section-label" style="margin-bottom:2px"><span class="num">3</span><span class="title">테스트 42개</span><span class="desc">tests/ 폴더, pytest</span></div>
       <table>
-        <tr><th>파일</th><th>무엇을 확인하나</th><th class="num">개수</th></tr>
-        <tr><td><code>test_standardization</code></td><td>연령 표기 9가지 · 지역명이 표준 이름으로 바뀌는지</td><td class="num">16</td></tr>
-        <tr><td><code>test_card_spending_and_stress</code></td><td>정제 · 비중 · 성장 지표 · Stress를 손계산 값과 비교</td><td class="num">5</td></tr>
-        <tr><td><code>test_diagnosis_and_validation</code></td><td>성장 3조건 · 4유형 · 데이터로 만든 Fisher p = 0.0206</td><td class="num">4</td></tr>
-        <tr><td><code>test_robustness_and_strategy</code></td><td>보정계수 1이면 Stress 불변 · 최적화 제약 준수</td><td class="num">7</td></tr>
-        <tr><td><code>test_naver_datalab</code></td><td>API 응답 해석(실제 호출 없이) · 메뉴 유형 분류</td><td class="num">4</td></tr>
-        <tr><td><code>test_pipeline_smoke</code></td><td>가짜 원본으로 Bronze → Silver → Gold 전체 실행 · 대사 · 멱등성 · 손실 탐지</td><td class="num">6</td></tr>
+        <tr><th>파일</th><th>확인하는 것</th><th class="num">개수</th></tr>
+        <tr><td><code>test_standardization</code></td><td>연령 표기 9가지와 지역명이 표준 이름으로 바뀌는지</td><td class="num">16</td></tr>
+        <tr><td><code>test_card_spending_and_stress</code></td><td>정리, 비중, 성장 지표, Stress가 손으로 계산한 값과 같은지</td><td class="num">5</td></tr>
+        <tr><td><code>test_diagnosis_and_validation</code></td><td>성장 3조건, 4유형, 데이터로 다시 만든 Fisher p = 0.0206</td><td class="num">4</td></tr>
+        <tr><td><code>test_robustness_and_strategy</code></td><td>보정계수가 1이면 Stress가 그대로인지, 최적화가 조건을 지키는지</td><td class="num">7</td></tr>
+        <tr><td><code>test_naver_datalab</code></td><td>API를 실제로 부르지 않고 응답 해석과 메뉴 분류 확인</td><td class="num">4</td></tr>
+        <tr><td><code>test_pipeline_smoke</code></td><td>가짜 원본으로 처음부터 끝까지, 숫자 맞추기, 두 번 돌려도 같은지, 데이터가 빠지면 잡아내는지</td><td class="num">6</td></tr>
       </table>
     </div>
     <div class="stack" style="gap:16px">
       <div class="card pad stack" style="gap:12px">
-        <div class="section-label" style="margin-bottom:2px"><span class="num">4</span><span class="title">실행 방법</span><span class="desc">Windows PowerShell · 저장소 폴더에서</span></div>
-        <div class="cmd"><span class="c"># 테스트</span><br>.venv\Scripts\python -m pytest<br><span class="c"># 전체 분석 + 발표 수치와 비교 (data/raw 필요)</span><br>.venv\Scripts\python -m future_stress.pipeline --compare<br><span class="c"># 흐름도 PNG 다시 만들기</span><br>.venv\Scripts\python docs\diagrams\render.py</div>
+        <div class="section-label" style="margin-bottom:2px"><span class="num">4</span><span class="title">돌려 보는 방법</span><span class="desc">Windows PowerShell, 저장소 폴더에서</span></div>
+        <div class="cmd"><span class="c"># 테스트</span><br>.venv\Scripts\python -m pytest<br><span class="c"># 전체 분석 + 발표 숫자와 비교 (data/raw 필요)</span><br>.venv\Scripts\python -m future_stress.pipeline --compare<br><span class="c"># 흐름도 PNG 다시 만들기</span><br>.venv\Scripts\python docs\diagrams\render.py</div>
       </div>
       <div class="card pad stack" style="gap:12px">
-        <div class="section-label" style="margin-bottom:2px"><span class="num">5</span><span class="title">코드 읽는 순서 추천</span></div>
+        <div class="section-label" style="margin-bottom:2px"><span class="num">5</span><span class="title">코드는 이 순서로 읽으면 편합니다</span></div>
         <div class="read-order">
           <span class="ro"><i>1</i>config</span><span class="sep">→</span>
           <span class="ro"><i>2</i>card_spending</span><span class="sep">→</span>
@@ -168,7 +168,7 @@
           <span class="ro"><i>6</i>medallion</span><span class="sep">→</span>
           <span class="ro"><i>7</i>pipeline</span>
         </div>
-        <p class="small">핵심 흐름(정제 → Stress → 진단 → 검증)을 먼저 익히고, population · robustness · strategy는 필요할 때 읽으면 됩니다. 노트북 변수 → 함수 대응표는 docs/refactoring_notes.md에 있습니다.</p>
+        <p class="small">정리 → Stress → 진단 → 검증 흐름을 먼저 보고, population, robustness, strategy는 필요할 때 보시면 됩니다. 노트북 변수와 함수의 대응표는 docs/refactoring_notes.md에 있습니다.</p>
       </div>
     </div>
   </div>
