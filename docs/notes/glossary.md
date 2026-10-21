@@ -85,6 +85,10 @@
 | **러너 (runner)** | 워크플로를 실제로 돌리는 서버. 실행마다 깨끗한 새 서버를 받음. | `ubuntu-latest` |
 | **PR (Pull Request)** | 브랜치의 변경을 main에 합쳐 달라는 요청. 여기서 CI 결과와 바뀐 내용을 함께 봄. | PR #2 |
 | **종료 코드** | 명령이 끝날 때 남기는 숫자. 0이면 성공, 그 밖은 실패. CI는 이것으로 판단. | `compare-gold` |
+| **운영 매뉴얼 (runbook)** | 띄우기 · 매달 할 일 · 실패했을 때 할 일을 순서대로 적은 문서. 명령은 실제로 돌려 본 것만. | `docs/operations.md`, [20](20_operations.md) |
+| **상태 점검 (health check)** | 서비스와 데이터가 지금 정상인지 한 번에 확인하는 것. 실패가 있으면 종료 코드 1. | `python -m future_stress.health` |
+| **종료 코드** | 프로그램이 끝날 때 남기는 숫자. 0이면 성공, 0이 아니면 실패. CI · 스크립트가 이 값으로 다음 단계를 정함. | `health`, `compare-gold` |
+| **업스트림 실패** | 앞 단계가 실패해서 이 단계는 시작도 하지 않은 상태 (Airflow). 앞 단계를 고치면 함께 다시 돎. | Airflow 화면 |
 | **Streamlit** | 파이썬 코드만으로 웹 화면(표 · 그래프 · 선택 상자)을 만드는 도구. 값을 바꿀 때마다 코드 전체를 다시 실행해 화면을 다시 그림. | `dashboard/app.py`, [19](19_dashboard.md) |
 | **읽기 전용 트랜잭션** | `BEGIN READ ONLY`로 연 연결. 이 연결로는 INSERT · UPDATE · CREATE가 거절됨. | `GoldReader._query()` |
 | **캐시 (cache_data)** | 한 번 읽은 결과를 잠깐 저장해 두고 다시 쓰는 것. 화면을 누를 때마다 DB를 읽지 않게. | `st.cache_data(ttl=300)` |

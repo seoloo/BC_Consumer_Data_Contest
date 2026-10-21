@@ -56,7 +56,7 @@
 | Phase 1.5 | 메달리온 아키텍처 로컬 세팅: Bronze → Silver → Gold, 계층 사이 대사 10개 | 완료 |
 | Phase 2 | 합성 데이터 생성기 · KOSIS 수집기(파일과 값 일치 확인) · SeaweedFS Bronze 저장소 · Docker Compose | 완료 |
 | Phase 3 | PostgreSQL + dbt 데이터 마트 · 품질 검사 · 데이터 사전 · ERD · 출처 문서 | 완료 |
-| Phase 4 | CI(첫 실행은 11월) · Airflow 월 배치 · Streamlit 대시보드 완료, 운영 매뉴얼 남음 | 진행 중 |
+| Phase 4 | Airflow 월 배치 · Streamlit 대시보드 · [운영 매뉴얼](docs/operations.md) · CI 설정 | 완료 (CI 첫 실행만 11월에 확인) |
 
 ## 분석 질문
 
@@ -121,6 +121,7 @@ Future Stress가 음수이면 현재 소비구조가 미래 인구감소에 더 
 | 자동 검사 | GitHub Actions (PR · main마다 합성 데이터로 전체 실행) | 사용 중 |
 | 스케줄링 | Airflow 3.1 (월 배치 DAG, backfill) | 사용 중 |
 | 조회 화면 | Streamlit (gold만 읽기 전용으로) | 사용 중 |
+| 운영 | 상태 점검 명령(`future_stress.health`), [운영 매뉴얼](docs/operations.md) | 사용 중 |
 
 ## 실행 방법
 
@@ -222,6 +223,12 @@ docker compose exec airflow airflow dags test future_stress_monthly -c '{\"batch
 
 캡처는 원본 숫자가 드러나지 않게 합성 데이터로 찍었습니다. 합성 데이터는 숫자에 뜻이 없습니다.
 
+서비스와 데이터가 지금 정상인지는 한 번에 볼 수 있습니다. 매달 할 일, 지난달 다시 돌리기, 실패했을 때 할 일은 [운영 매뉴얼](docs/operations.md)에 있습니다.
+
+```powershell
+.venv\Scripts\python -m future_stress.health
+```
+
 GitHub에서는 PR과 main에 올릴 때마다 [CI](.github/workflows/ci.yml)가 합성 데이터로 위 과정(테스트 → 파이프라인 → dbt → 파이썬 비교)을 처음부터 자동으로 돌립니다.
 
 ## 저장소 구성
@@ -236,7 +243,7 @@ docker-compose.yml  로컬 서비스: 객체 저장소(SeaweedFS) · PostgreSQL 
 tests/        단위 테스트와 전체 실행 테스트
 notebooks/    실행 출력과 인증정보를 제거한 원래 분석 노트북 (보존용)
 assets/       발표에 쓴 결과 이미지
-docs/         최종 발표자료, 흐름도 시리즈(diagrams/), 리팩토링 노트, 기술 · 설계 기록(notes/),
+docs/         최종 발표자료, 흐름도 시리즈(diagrams/), 리팩토링 노트, 기술 · 설계 기록(notes/), 운영 매뉴얼(operations.md),
               데이터 출처(data_sources.md), 데이터 사전 · ERD(warehouse/, 자동 생성)
 data/         데이터 비공개 사유와 재현 안내 (실행하면 raw · bronze · silver · gold · synthetic이 생기며 모두 git 제외)
 results/      발표자료에 사용한 소규모 집계 결과 CSV

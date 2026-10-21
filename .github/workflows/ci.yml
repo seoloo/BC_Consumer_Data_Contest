@@ -68,6 +68,10 @@ jobs:
         # 앞의 pytest 때는 합성 gold가 아직 없어 건너뛴 통합 테스트를, dbt build 뒤에 다시 돌림
         run: python -m pytest -q tests/test_dashboard.py -m integration
 
+      - name: 운영 상태 점검 (합성)
+        # 저장소 · raw · gold가 모두 있는지 마지막으로 한 번에 확인. 실패가 있으면 종료 코드 1 (docs/operations.md)
+        run: python -m future_stress.health --synthetic
+
       - name: 실패하면 컨테이너 기록 남기기
         if: failure()
         run: docker compose logs --tail 200
