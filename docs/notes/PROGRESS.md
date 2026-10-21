@@ -3,6 +3,14 @@
 날짜별로 무엇을, 왜(사용자 말), 어떻게 했고, 숫자로 무엇을 확인했는지 적습니다. 최신이 위입니다.
 기술마다 정리한 내용은 [README 목차](README.md)의 주제 문서에 있습니다.
 
+## 2026-10-21 — Streamlit 대시보드 (Phase 4-3)
+
+- 사용자 "응 4-3 진행해줘". PR #3(Airflow)은 이 PC 확인으로 합친 뒤 시작.
+- `dashboard_data.py`(gold만 읽기 전용으로 읽고 고르는 함수) + `dashboard/app.py`(탭 4개: 개요 · 지역 · 업종 순위 · 4유형 지도 · 한 건 자세히). 원본 / 합성을 옆 메뉴에서 고름.
+- 화면 안에서 맞춰 보기 2가지: 4유형 건수 = `gold_market_type_counts`, 연령대 기여도 합 = Future Stress. 원본 176건 · 합성 792건 모두 맞음.
+- 테스트 9개(고르는 함수 5, Streamlit AppTest 3, 실제 DB 1). 실제 DB 테스트에서 쓰기 시도가 `ReadOnlySqlTransaction`으로 막히는 것까지 확인. CI에는 dbt build 뒤에 이 통합 테스트를 다시 돌리는 단계 추가.
+- 캡처: Chrome `--screenshot`은 빈 화면(웹소켓으로 그리기 전에 찍음) → Playwright(이 PC Chrome)로 합성 데이터 화면 4장(`docs/dashboard/`).
+
 ## 2026-10-21 — Airflow 월 배치 (Phase 4-2)
 
 - 사용자가 다음 작업으로 '4-2 Airflow'를 고름. PR #2는 '지금 main에 합치기'.

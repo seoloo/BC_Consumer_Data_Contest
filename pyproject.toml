@@ -21,6 +21,8 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest"]
+# 조회 화면 (dashboard/app.py). 화면 캡처(dashboard/capture.py)만 playwright가 더 필요함
+dashboard = ["streamlit"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

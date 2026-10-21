@@ -85,6 +85,10 @@
 | **러너 (runner)** | 워크플로를 실제로 돌리는 서버. 실행마다 깨끗한 새 서버를 받음. | `ubuntu-latest` |
 | **PR (Pull Request)** | 브랜치의 변경을 main에 합쳐 달라는 요청. 여기서 CI 결과와 바뀐 내용을 함께 봄. | PR #2 |
 | **종료 코드** | 명령이 끝날 때 남기는 숫자. 0이면 성공, 그 밖은 실패. CI는 이것으로 판단. | `compare-gold` |
+| **Streamlit** | 파이썬 코드만으로 웹 화면(표 · 그래프 · 선택 상자)을 만드는 도구. 값을 바꿀 때마다 코드 전체를 다시 실행해 화면을 다시 그림. | `dashboard/app.py`, [19](19_dashboard.md) |
+| **읽기 전용 트랜잭션** | `BEGIN READ ONLY`로 연 연결. 이 연결로는 INSERT · UPDATE · CREATE가 거절됨. | `GoldReader._query()` |
+| **캐시 (cache_data)** | 한 번 읽은 결과를 잠깐 저장해 두고 다시 쓰는 것. 화면을 누를 때마다 DB를 읽지 않게. | `st.cache_data(ttl=300)` |
+| **AppTest** | 브라우저 없이 Streamlit 앱을 실행해 화면 요소(탭 · 숫자 · 오류)를 확인하는 테스트 도구. | `tests/test_dashboard.py` |
 | **Airflow · DAG** | 작업 흐름을 정해 진 시각에 순서대로 돌리는 도구 · 그 흐름(단계와 순서)을 적은 것. | `airflow/dags/`, [18](18_airflow.md) |
 | **task (단계)** | DAG 안의 일 하나. 따로 성공 · 실패 · 재시도 · 건너뜀 상태를 가짐. | `build_bronze` 등 8개 |
 | **short_circuit** | False를 돌려주면 뒤 단계를 '건너뜀'으로 두는 단계. 실패가 아님. | `has_new_batch` |
