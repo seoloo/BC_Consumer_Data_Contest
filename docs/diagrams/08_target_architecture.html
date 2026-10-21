@@ -44,7 +44,7 @@
   <div>
     <div class="eyebrow"><span class="no">08</span>목표 아키텍처</div>
     <h1>매달 알아서 돌아가는 카드 소비 데이터 마트<span class="plan-badge">계획 · Phase 2~4</span></h1>
-    <p class="lede">지금 내 컴퓨터 폴더에 만들어 둔 Bronze → Silver → Gold 구조를 MinIO, PostgreSQL, dbt, Airflow 위로 옮기려고 합니다.<br>최종적으로는 Docker Compose 명령 하나로 전체가 뜨게 만드는 게 목표입니다.</p>
+    <p class="lede">지금 내 컴퓨터 폴더에 만들어 둔 Bronze → Silver → Gold 구조를 SeaweedFS(S3 호환), PostgreSQL, dbt, Airflow 위로 옮기려고 합니다.<br>최종적으로는 Docker Compose 명령 하나로 전체가 뜨게 만드는 게 목표입니다.</p>
   </div>
   <div class="version"><b>아직 만들기 전</b><br>진행하면서 이 그림을 계속 고칩니다</div>
 </div>
@@ -63,12 +63,12 @@
         <div class="techs"><span class="tech main">Python</span><span class="tech">requests</span></div></div>
       <div class="arrow-r"><svg viewBox="0 0 26 26"><path d="M5 13h15M14 6.5l6.5 6.5-6.5 6.5" fill="none" stroke="#AEB6C4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <div class="node"><span class="n-step">Bronze</span><h4>원본 보관</h4>
-        <p>받은 파일을 그대로 달별 폴더에 둡니다<br><code style="font-size:11px">bronze/card_spending/yyyymm=202601/</code></p>
-        <div class="techs"><span class="tech main">MinIO</span><span class="tech">S3 호환</span></div></div>
+        <p>받은 파일을 그대로 배치 월 폴더에 둡니다<br><code style="font-size:11px">bronze/batch_month=202606/</code></p>
+        <div class="techs"><span class="tech main">SeaweedFS</span><span class="tech">S3 호환</span></div></div>
       <div class="arrow-r"><svg viewBox="0 0 26 26"><path d="M5 13h15M14 6.5l6.5 6.5-6.5 6.5" fill="none" stroke="#AEB6C4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <div class="node"><span class="n-step">변환</span><h4>데이터 웨어하우스</h4>
         <div class="wh">
-          <div style="background:#FBEFE6;color:#A0522D"><b>bronze</b><span>MinIO 원본을 그대로 불러옴</span><code>bronze.card_spending</code></div>
+          <div style="background:#FBEFE6;color:#A0522D"><b>bronze</b><span>저장소 원본을 그대로 불러옴</span><code>bronze.card_spending</code></div>
           <div style="background:#EEF1F5;color:#5F6B7A"><b>silver</b><span>코드, 이름, 단위 정리</span><code>stg_card_spending</code></div>
           <div style="background:#B7860B;color:#fff"><b>gold</b><span style="color:#FFF3CF">Stress, 4유형, 상권 정보</span><code style="color:#9A6F00">mart_future_stress</code></div>
         </div>
@@ -109,7 +109,7 @@
       <div class="section-label" style="margin-bottom:0"><span class="num">3</span><span class="title">매달 도는 작업 순서</span><span class="desc">기준월(STRD_YYMM) 단위</span></div>
       <div class="dag">
         <div class="task"><b>collect_sources</b><span>데이터 받기</span></div><span class="to">→</span>
-        <div class="task"><b>land_bronze_files</b><span>MinIO에 보관</span></div><span class="to">→</span>
+        <div class="task"><b>land_bronze_files</b><span>SeaweedFS에 보관</span></div><span class="to">→</span>
         <div class="task"><b>load_bronze_tables</b><span>DB로 불러오기</span></div>
       </div>
       <div class="dag">

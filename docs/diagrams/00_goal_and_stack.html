@@ -108,7 +108,7 @@
       </tr>
       <tr>
         <td class="layer-cell"><span class="lname">테스트</span><br><span class="lphase t-green">Phase 1 · 사용 중</span></td>
-        <td class="tech-cell"><span class="tname">pytest</span><span class="tsub">42개</span></td>
+        <td class="tech-cell"><span class="tname">pytest</span><span class="tsub">59개</span></td>
         <td class="why-cell">손으로 계산한 값과 맞는지, 코드를 고친 뒤에도 결과가 그대로인지 매번 확인합니다.</td>
         <td class="alt-cell"><b>unittest</b> · 같은 검사를 입력만 바꿔 여러 번 돌리기는 pytest가 더 편했습니다.</td>
       </tr>
@@ -140,10 +140,10 @@
         <td class="alt-cell"><b>수동 다운로드</b> · 매달 반복하기 어렵고, 어떤 파일을 썼는지 기록이 남지 않았습니다.</td>
       </tr>
       <tr>
-        <td class="layer-cell"><span class="lname">원본 보관</span><br><span class="lphase t-primary">Phase 2</span></td>
-        <td class="tech-cell"><span class="tname">MinIO</span><span class="tsub">Bronze 저장소, S3 호환</span></td>
-        <td class="why-cell">받은 원본을 손대지 않고 <b>달별 폴더</b>에 둡니다. 한 달 데이터에 문제가 생기면 그 달만 다시 돌리면 됩니다.</td>
-        <td class="alt-cell"><b>로컬 폴더</b> · 클라우드로 옮길 때 코드를 다 바꿔야 합니다. <b>AWS S3</b> · 개인 프로젝트라 비용이 부담됩니다.</td>
+        <td class="layer-cell"><span class="lname">원본 보관</span><br><span class="lphase t-green">Phase 2 · 사용 중</span></td>
+        <td class="tech-cell"><span class="tname">SeaweedFS</span><span class="tsub">Bronze 저장소, S3 호환 · boto3</span></td>
+        <td class="why-cell">원본을 손대지 않고 <b>배치 월 폴더</b>에 올리고, 받을 때 지문을 다시 맞춰 봅니다. 같은 파일은 다시 올리지 않아서 두 번째 실행부터는 저장소를 거쳐도 <b>1초</b> 정도만 더 걸립니다.</td>
+        <td class="alt-cell"><b>MinIO</b> · 처음 계획이었지만 무료판 이미지가 Docker Hub에서 지워졌습니다. <b>AWS S3</b> · 비용과 계정이 필요합니다.</td>
       </tr>
 
     </table>
@@ -184,9 +184,9 @@
         <td class="alt-cell"><b>cron</b> · 작업 순서를 정하거나 실패한 지점부터 다시 돌리기가 어렵습니다.</td>
       </tr>
       <tr>
-        <td class="layer-cell"><span class="lname">실행 환경</span><br><span class="lphase t-amber">Phase 2~4</span></td>
+        <td class="layer-cell"><span class="lname">실행 환경</span><br><span class="lphase t-green">Phase 2 · 사용 중</span></td>
         <td class="tech-cell"><span class="tname">Docker Compose</span></td>
-        <td class="why-cell">DB, 저장소, Airflow, 대시보드를 <b>명령 하나로</b> 똑같이 띄웁니다.</td>
+        <td class="why-cell">DB, 저장소, Airflow, 대시보드를 <b>명령 하나로</b> 똑같이 띄웁니다. 지금은 객체 저장소 하나로 시작했고 단계마다 늘려 갑니다.</td>
         <td class="alt-cell"><b>하나씩 설치</b> · 버전이 조금만 달라도 "내 컴퓨터에선 되는데"가 생깁니다.</td>
       </tr>
       <tr>
@@ -217,7 +217,7 @@
   <div class="notuse">
     <div><span class="no-use">안 씀</span><b>Kafka, 실시간 처리</b><span>데이터가 한 달 단위 집계라 실시간으로 받을 일이 없습니다. 월 배치면 충분합니다.</span><span class="later">결제 이상거래 탐지 같은 주제였다면 썼을 기술</span></div>
     <div><span class="no-use">안 씀</span><b>Spark</b><span>24만 행은 pandas와 PostgreSQL로 충분합니다. 넣으면 관리할 것만 늘어납니다.</span><span class="later">수천만 행짜리 거래 원장이었다면 썼을 기술</span></div>
-    <div><span class="no-use">안 씀</span><b>클라우드 관리형 서비스</b><span>누구나 비용 없이 돌려 볼 수 있게 로컬 Docker로 만듭니다. S3와 같은 방식이라 나중에 옮기기는 쉽습니다.</span><span class="later">MinIO → S3, PostgreSQL → RDS로 이전 가능</span></div>
+    <div><span class="no-use">안 씀</span><b>클라우드 관리형 서비스</b><span>누구나 비용 없이 돌려 볼 수 있게 로컬 Docker로 만듭니다. S3와 같은 방식이라 나중에 옮기기는 쉽습니다.</span><span class="later">SeaweedFS → S3, PostgreSQL → RDS로 이전 가능</span></div>
     <div><span class="no-use">안 씀</span><b>머신러닝</b><span>이번에는 예측보다 '매달 믿을 수 있는 데이터를 만드는 것'에 집중합니다. Stress도 규칙으로 계산하는 지표입니다.</span><span class="later">마트를 완성한 뒤 다음 주제로</span></div>
   </div>
 </div>

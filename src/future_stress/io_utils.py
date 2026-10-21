@@ -6,6 +6,7 @@
     바꿔 다시 읽는 셀이 여러 번 반복됐습니다. 그 시행착오를 함수 하나로 정리합니다.
 """
 
+import os
 from pathlib import Path
 
 import pandas as pd
@@ -81,3 +82,33 @@ def to_number(series):
     """
     cleaned = series.astype(str).str.replace(",", "", regex=False).str.strip()
     return pd.to_numeric(cleaned, errors="coerce")
+
+
+def read_env_value(name, env_file=None):
+    """설정값(인증키 · 계정 키)을 환경변수 → .env 파일 순서로 찾습니다.
+
+    왜 코드에 직접 쓰지 않나요?
+        키를 코드에 쓰면 git 기록에 남아 저장소를 공개하는 순간 노출됩니다.
+        .env는 .gitignore에 들어 있어 이 PC에만 있고, 저장소에는 이름만 적은 .env.example이 올라갑니다.
+
+    못 찾으면 ValueError로 '왜 못 찾았는지'(파일 없음 · 줄 없음 · 값 비어 있음)를 알려 줍니다.
+    값 자체는 메시지에 넣지 않습니다.
+    """
+    if os.getenv(name):
+        return os.getenv(name)
+    env_file = Path(env_file or Path(__file__).resolve().parents[2] / ".env")
+    if not env_file.exists():
+        raise ValueError(f"{name}이(가) 없습니다. 환경변수 {name}도 없고 {env_file} 파일도 없습니다.")
+    found_empty_line = False
+    # utf-8-sig: 메모장으로 저장한 .env는 맨 앞에 BOM이 붙어 첫 줄 이름이 달라지기 때문입니다.
+    for line in env_file.read_text(encoding="utf-8-sig").splitlines():
+        key, _, value = line.partition("=")
+        key = key.strip().removeprefix("export ").strip()          # 'export NAME=...' 형식도 허용
+        if key != name:
+            continue
+        value = value.split(" #")[0].strip().strip('"').strip("'")  # 줄 끝 주석 · 따옴표 제거
+        if value:
+            return value
+        found_empty_line = True
+    reason = f"{name} 줄은 있지만 값이 비어 있습니다" if found_empty_line else f"{name} 줄이 없습니다"
+    raise ValueError(f"{name}을(를) 읽지 못했습니다: {env_file}에 {reason}.")

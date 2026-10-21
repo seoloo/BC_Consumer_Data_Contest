@@ -32,7 +32,6 @@ import argparse
 import csv
 import hashlib
 import json
-import os
 import re
 import time
 from dataclasses import dataclass
@@ -43,6 +42,7 @@ import pandas as pd
 import requests
 
 from . import config
+from .io_utils import read_env_value
 from .population import POPULATION_YEARS
 
 API_URL = "https://kosis.kr/openapi/Param/statisticsParameterData.do"
@@ -91,29 +91,8 @@ class KosisApiError(RuntimeError):
 
 
 def read_api_key(env_file=None):
-    """KOSIS 인증키를 환경변수 → .env 파일 순서로 찾습니다.
-
-    키를 못 찾으면 ValueError로 '왜 못 찾았는지'(파일 없음 · 줄 없음 · 값 비어 있음)를 알려 줍니다.
-    키 값 자체는 메시지에 넣지 않습니다.
-    """
-    if os.getenv("KOSIS_API_KEY"):
-        return os.getenv("KOSIS_API_KEY")
-    env_file = Path(env_file or config.PROJECT_ROOT / ".env")
-    if not env_file.exists():
-        raise ValueError(f"KOSIS 인증키가 없습니다. 환경변수 KOSIS_API_KEY도 없고 {env_file} 파일도 없습니다.")
-    found_empty_line = False
-    # utf-8-sig: 메모장으로 저장한 .env는 맨 앞에 BOM이 붙어 첫 줄 이름이 달라지기 때문입니다.
-    for line in env_file.read_text(encoding="utf-8-sig").splitlines():
-        name, _, value = line.partition("=")
-        name = name.strip().removeprefix("export ").strip()      # 'export KOSIS_API_KEY=...' 형식도 허용
-        if name != "KOSIS_API_KEY":
-            continue
-        value = value.split(" #")[0].strip().strip('"').strip("'")  # 줄 끝 주석 · 따옴표 제거
-        if value:
-            return value
-        found_empty_line = True
-    reason = "KOSIS_API_KEY 줄은 있지만 값이 비어 있습니다" if found_empty_line else "KOSIS_API_KEY 줄이 없습니다"
-    raise ValueError(f"KOSIS 인증키를 읽지 못했습니다: {env_file}에 {reason}.")
+    """KOSIS 인증키를 환경변수 → .env 파일 순서로 찾습니다 (io_utils.read_env_value 참고)."""
+    return read_env_value("KOSIS_API_KEY", env_file)
 
 
 class KosisClient:

@@ -21,6 +21,9 @@
 | 데이터가 틀린 것 | 층 사이 행 수 · 금액 불일치 | 결과를 내보내지 않고 멈춤 | `DataQualityError` (04 참고) |
 | 데이터가 아쉬운 것 | 장래인구 매칭 누락 | 경고로 기록하고 계속 | `check_row(blocking=False)` |
 | 라이브러리 판단이 보수적인 것 | SLSQP가 답을 찾고도 `success=False` | `success`를 믿지 않고 **제약을 직접 확인**해서 만족하면 사용 | `strategy.optimize_mix_for_min_change()` |
+| 저장소가 안 떠 있는 것 | Docker를 켜지 않고 `--object-store` 실행 | "`docker compose up -d`로 띄운 뒤 다시 실행" 한 줄 안내 | `object_store.main()` → `EndpointConnectionError` |
+| 받은 파일이 영수증과 다른 것 | 버킷의 파일이 바뀌었거나 덮어써짐 | 그 파일 이름을 모두 적어 멈춤 | `download_bronze()` → `DataQualityError` |
+| '없음'이 정상인 것 | 처음 올리는 객체 · 아직 없는 버킷 (S3 404) | 오류가 아니라 '새로 만들기'로 처리. 다른 S3 오류는 그대로 올림 | `object_store.is_not_found()` |
 | 인코딩이 다른 것 | utf-8로 못 읽는 CSV | 다음 후보(cp949)로 다시 시도. 모두 실패하면 마지막 오류를 그대로 올림 | `io_utils.read_csv_with_encoding_fallback()` |
 
 ## 지킨 원칙
