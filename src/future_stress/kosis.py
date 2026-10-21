@@ -43,6 +43,7 @@ import requests
 
 from . import config
 from .io_utils import read_env_value
+from .medallion import REGION_LABELS
 from .population import POPULATION_YEARS
 
 API_URL = "https://kosis.kr/openapi/Param/statisticsParameterData.do"
@@ -263,37 +264,45 @@ def find_dimension_columns(api_rows):
     return found
 
 
+# 시도 합계 행은 원본마다 이름이 달라서(API '서울' · '경기', 서울 CSV '합계', 경기 엑셀 '경기도') 한 이름으로 맞춥니다.
+# 빼지 않고 맞추는 이유: 시도 합계 값까지 API와 파일이 같은지 비교하기 위해서입니다.
+PROVINCE_TOTAL = "(시도 합계)"
+
+
+def label_province_total(regions, province):
+    """지역 이름 중 시도 합계 행(예: 서울특별시 · 서울 · 합계)을 PROVINCE_TOTAL로 바꿉니다."""
+    names = regions.astype(str).str.strip()
+    total_names = {province, REGION_LABELS.get(province, province), "합계", "계"}
+    return names.where(~names.isin(total_names), PROVINCE_TOTAL)
+
+
 def five_year_population_from_api(api_rows, province):
-    """API 응답 → 시군구 | 연령구간 | 연도 | 인구 (남녀 합계, 5세 구간, 시도 합계 행 제외)"""
+    """API 응답 → 시군구 | 연령구간 | 연도 | 인구 (남녀 합계, 5세 구간, 시도 합계는 '(시도 합계)')"""
     frame = pd.DataFrame(api_rows)
     items = frame["ITM_NM"].unique() if "ITM_NM" in frame else []
     if len(items) > 1:
         raise ValueError(f"항목이 여러 개입니다. 어떤 항목을 쓸지 정해야 합니다: {list(items)}")
     columns = find_dimension_columns(api_rows)
-    keep = (
-        (frame[columns["성별"]] == "계")
-        & frame[columns["연령"]].map(is_five_year_label)
-        & ~frame[columns["지역"]].isin([province, "합계", "계"])
-    )
+    keep = (frame[columns["성별"]] == "계") & frame[columns["연령"]].map(is_five_year_label)
     selected = frame[keep]
     return pd.DataFrame({
-        "시군구": selected[columns["지역"]].str.strip(),
+        "시군구": label_province_total(selected[columns["지역"]], province),
         "연령구간": selected[columns["연령"]].map(normalize_age_label),
         "연도": selected["PRD_DE"].astype(int),
         "인구": pd.to_numeric(selected["DT"], errors="coerce"),
     }).reset_index(drop=True)
 
 
-def five_year_population_from_seoul_file(path, years):
+def five_year_population_from_seoul_file(path, years, province="서울특별시"):
     """예전에 내려받은 서울 CSV → 같은 모양의 표. (닫히지 않은 따옴표 때문에 csv 모듈로 읽음, population.py 참고)"""
     with open(path, "r", encoding="utf-8-sig", newline="") as file:
         rows = list(csv.reader(file))
     raw = pd.DataFrame(rows[1:], columns=[name.strip() for name in rows[0]])
-    selected = raw[(raw["성별"] == "계") & raw["연령별"].map(is_five_year_label) & (raw["자치구별"] != "합계")]
+    selected = raw[(raw["성별"] == "계") & raw["연령별"].map(is_five_year_label)]
     long = selected.melt(id_vars=["자치구별", "연령별"], value_vars=[f"{y} 년" for y in years],
                          var_name="연도", value_name="인구")
     return pd.DataFrame({
-        "시군구": long["자치구별"].str.strip(),
+        "시군구": label_province_total(long["자치구별"], province),
         "연령구간": long["연령별"].map(normalize_age_label),
         "연도": long["연도"].str.replace(" 년", "", regex=False).astype(int),
         "인구": pd.to_numeric(long["인구"], errors="coerce"),
@@ -305,10 +314,10 @@ def five_year_population_from_kosis_excel(path, province, years):
     raw = pd.read_excel(path, sheet_name=0, header=0)
     raw[["시군구별", "성별"]] = raw[["시군구별", "성별"]].ffill()
     selected = raw[(raw["성별"] == "계") & (raw["연령별(2)"] == "소계")
-                   & raw["연령별(1)"].map(is_five_year_label) & (raw["시군구별"] != province)]
+                   & raw["연령별(1)"].map(is_five_year_label)]
     long = selected.melt(id_vars=["시군구별", "연령별(1)"], value_vars=years, var_name="연도", value_name="인구")
     return pd.DataFrame({
-        "시군구": long["시군구별"].str.strip(),
+        "시군구": label_province_total(long["시군구별"], province),
         "연령구간": long["연령별(1)"].map(normalize_age_label),
         "연도": long["연도"].astype(int),
         "인구": pd.to_numeric(long["인구"], errors="coerce"),
@@ -359,7 +368,7 @@ def compare_with_files(kosis_dir=None, raw_dir=None, years=None):
         api_table = five_year_population_from_api(read_landing_rows(kosis_dir, table, years), table.province)
         file_path = raw_dir / table.file_name
         if file_path.suffix == ".csv":
-            file_table = five_year_population_from_seoul_file(file_path, years)
+            file_table = five_year_population_from_seoul_file(file_path, years, table.province)
         else:
             file_table = five_year_population_from_kosis_excel(file_path, table.province, years)
         summary, _ = compare_population(api_table, file_table)

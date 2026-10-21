@@ -51,8 +51,8 @@
 | Phase 0 | 공모전 분석 (노트북) | 완료 |
 | Phase 1 | 리팩토링: 노트북 → `src/future_stress` 모듈 + 테스트, 발표 결과 6/6 재현 ([리팩토링 노트](docs/refactoring_notes.md)) | 완료 |
 | Phase 1.5 | 메달리온 아키텍처 로컬 세팅: Bronze → Silver → Gold, 계층 사이 대사 10개 | 완료 |
-| Phase 2 | 합성 데이터 생성기 · SeaweedFS Bronze 저장소 · Docker Compose (완료), KOSIS 수집기 (코드 완료, 실제 호출 확인 전) | 진행 중 |
-| Phase 3 | PostgreSQL + dbt 데이터 마트 · 품질 검사 | 예정 |
+| Phase 2 | 합성 데이터 생성기 · KOSIS 수집기(파일과 값 일치 확인) · SeaweedFS Bronze 저장소 · Docker Compose | 완료 |
+| Phase 3 | PostgreSQL + dbt 데이터 마트 · 품질 검사 | 다음 |
 | Phase 4 | Airflow 배치 · CI · 대시보드 | 예정 |
 
 ## 분석 질문
@@ -112,7 +112,7 @@ Future Stress가 음수이면 현재 소비구조가 미래 인구감소에 더 
 | 데이터 구조 · 저장 | 메달리온 아키텍처 (Bronze · Silver · Gold), Parquet (pyarrow) | 사용 중 |
 | 테스트 | pytest | 사용 중 |
 | 합성 데이터 | NumPy 생성기 (원본 8종과 같은 형식, 시드 고정) | 사용 중 |
-| 수집 | requests (KOSIS 장래인구 수집기 · NAVER API) | 코드 완료, KOSIS 실제 호출 확인 전 |
+| 수집 | requests (KOSIS 장래인구 수집기 · NAVER API) | 사용 중 |
 | 원본 보관 | SeaweedFS (S3 호환, boto3), Docker Compose | 사용 중 |
 | 저장 · 변환 · 품질 | PostgreSQL, dbt, dbt tests | Phase 3 |
 | 운영 · 제공 | Airflow, GitHub Actions, Streamlit | Phase 4 |
