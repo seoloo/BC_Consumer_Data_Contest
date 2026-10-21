@@ -1,0 +1,63 @@
+version: 2
+
+# Gold 모델 설명과 테스트. 파이썬 medallion.run_quality_checks()의 5 ~ 9번이 여기와 tests/로 옮겨졌습니다.
+models:
+  - name: gold_age_spending_structure
+    description: 전국 시군구 × 업종 × 연령대 이용금액과 비중(%) (파이썬 Gold age_spending_structure)
+    data_tests:
+      - unique_combination: {columns: [province, district, industry_code, industry_name, age_group]}
+    columns:
+      - name: amount_share
+        data_tests: [not_null]
+
+  - name: gold_gyeonggi_city_age_spending_structure
+    description: 경기 시 × 업종 × 연령대 이용금액과 비중(%) (일반구를 시로 합친 뒤)
+    data_tests:
+      - unique_combination: {columns: [province, district, industry_code, industry_name, age_group]}
+
+  - name: gold_region_industry_profile
+    description: 전국 지역 × 업종 한 건에 한 줄 · 핵심 연령대, 연령 집중도, 현재 성장 지표
+    data_tests:
+      - unique_combination: {columns: [province, district, industry_code, industry_name]}
+    columns:
+      - name: main_age_group
+        data_tests:
+          - relationships: {to: ref('age_groups'), field: age_group}
+
+  - name: gold_gyeonggi_city_region_industry_profile
+    description: 경기 시 × 업종 한 건에 한 줄
+    data_tests:
+      - unique_combination: {columns: [province, district, industry_code, industry_name]}
+
+  - name: gold_age_stress
+    description: 연령대별 Stress 기여도 (서울 · 부산 시군구, 경기 시)
+    columns:
+      - name: change_rate_2040
+        description: 장래인구가 없는 시군구 · 연령대는 비어 Stress에서 빠짐
+        data_tests:
+          # 파이썬 대사 7 ~ 9번 '장래인구 매칭'과 같은 '경고'. 분석은 할 수 있어서 멈추지 않고 알리기만 합니다.
+          - not_null: {config: {severity: warn}}
+
+  - name: gold_future_stress
+    description: 지역 × 업종 Future Stress (2035 · 2040)
+    data_tests:
+      - unique_combination: {columns: [province, district, industry_code, industry_name]}
+    columns:
+      - name: stress_2040
+        data_tests: [not_null]
+
+  - name: gold_market_type
+    description: 지역 안 상위 25% 분석 대상과 4유형
+    columns:
+      - name: market_type
+        data_tests:
+          - relationships: {to: ref('market_types'), field: market_type}
+
+  - name: gold_market_type_counts
+    description: 지역별 4유형 건수
+    columns:
+      - name: market_type
+        data_tests: [unique, not_null]
+
+  - name: gold_seoul_analysis_targets
+    description: 발표 기준(전국 상위 25%) 서울 분석 대상과 성장 판정. 통계 검정은 파이썬이 이 대상으로 계산

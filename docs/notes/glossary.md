@@ -65,6 +65,10 @@
 | **seed** | 저장소의 작은 CSV를 표로 올린 것. 여기서는 코드 → 이름 기준표. | `dbt/seeds/*.csv` |
 | **dbt test** | '문제가 되는 행'을 찾는 SELECT. 0행이면 통과. 기본 제공(not_null 등)과 직접 만든 것이 있음. | `schema.yml`, `dbt/tests/` |
 | **lineage (계보)** | 어떤 표가 어떤 표에서 만들어졌는지의 연결. dbt가 ref로 알아냄. | `dbt docs` |
+| **ephemeral** | 표로 저장하지 않고, 그 모델을 쓰는 곳에 SQL로 끼워 넣는 dbt 방식. 중간 단계에 씀. | `int_gyeonggi_city_card_spending` |
+| **percentile_cont** | 정렬한 값 사이를 선형으로 이어 분위수를 구하는 SQL 함수. 파이썬 `quantile`과 같은 방식. | 상위 25% 기준 |
+| **짝수 쪽 반올림 (banker's rounding)** | 정확히 .5일 때 짝수 쪽으로 반올림 (2.5 → 2, 12.25 → 12.2). 파이썬 numpy의 방식. | `round_half_even` 매크로 |
+| **collate "C"** | 글자를 문자 코드 순서로 비교하라는 SQL 지정. 언어 규칙 정렬과 달리 파이썬 문자열 정렬과 같음. | 핵심 연령대 동점 처리 |
 | **매크로 (macro)** | SQL 안에서 되풀이해 쓰는 조각을 함수처럼 만든 것. | `dbt/macros/` |
 | **boto3** | 파이썬에서 S3 API를 쓰는 표준 라이브러리. | `object_store.py` |
 | **pytest · fixture** | 파이썬 테스트 도구 · 여러 테스트가 함께 쓰는 준비물(예: 합성 원본 폴더). | `tests/`, `conftest.py` |

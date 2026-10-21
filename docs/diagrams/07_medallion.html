@@ -195,7 +195,7 @@
       <tr><th>층</th><th>지금 (Phase 1.5)</th><th>앞으로</th><th>언제</th></tr>
       <tr><td><b style="color:var(--bronze)">Bronze</b></td><td><code>data/bronze/</code> 폴더 + <code>_manifest.json</code></td><td>SeaweedFS 버킷에 배치 월별로 <code>bronze/batch_month=202606/card_spending/</code> (옮김)</td><td><span class="tag t-green">Phase 2 완료</span></td></tr>
       <tr><td><b style="color:var(--silver)">Silver</b></td><td><code>data/silver/*.parquet</code>, 파이썬 정리 함수</td><td>PostgreSQL <code>silver</code> 스키마, dbt 모델 (<code>silver_card_spending</code> 등) · 파이썬과 같음 확인</td><td><span class="tag t-green">Phase 3 완료</span></td></tr>
-      <tr><td><b style="color:var(--gold)">Gold</b></td><td><code>data/gold/*.parquet</code>, 파이썬 분석 함수</td><td>PostgreSQL <code>gold</code> 스키마, dbt 모델 (<code>mart_future_stress</code> 등)</td><td><span class="tag t-violet">Phase 3</span></td></tr>
+      <tr><td><b style="color:var(--gold)">Gold</b></td><td><code>data/gold/*.parquet</code>, 파이썬 분석 함수</td><td>PostgreSQL <code>gold</code> 스키마, dbt 모델 (<code>gold_future_stress</code> 등) · 파이썬과 같음 확인. 통계 검정은 파이썬</td><td><span class="tag t-green">Phase 3 완료</span></td></tr>
       <tr><td><b>숫자 확인</b></td><td><code>run_quality_checks()</code> 10개</td><td>dbt tests와 확인용 SQL을 Airflow에서 층마다 실행</td><td><span class="tag t-violet">Phase 3</span> <span class="tag t-amber">Phase 4</span></td></tr>
     </table>
     <p class="small" style="margin-top:10px">지금 파이썬으로 만든 Silver, Gold 결과는 SQL로 옮긴 뒤에도 값이 같은지 비교하는 기준으로 계속 씁니다.</p>

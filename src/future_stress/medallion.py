@@ -40,7 +40,7 @@ from .card_spending import (
     load_card_spending,
     merge_gyeonggi_districts_into_cities,
 )
-from .diagnosis import add_market_type, select_analysis_targets, size_cutoff
+from .diagnosis import MARKET_TYPE_STRATEGY, add_market_type, select_analysis_targets, size_cutoff
 from .io_utils import read_csv_with_encoding_fallback, read_parquet, save_parquet
 from .population import (
     POPULATION_YEARS,
@@ -311,9 +311,11 @@ def build_gold(silver_dir=None, gold_dir=None):
         local_targets[province] = add_market_type(targets)
     gold["region_validation"] = pd.DataFrame(region_summaries)
     gold["market_type"] = pd.concat(local_targets.values(), ignore_index=True)
+    # 4유형을 항상 같은 순서로 모두 보여 줍니다. 한 건도 없는 유형도 0으로 남겨야 '없음'이 결과로 보입니다
+    # (예전에는 나온 유형만 줄로 만들어, 합성 데이터처럼 지속성장형이 없으면 줄이 사라졌습니다. dbt 모델과 같게 맞춤).
     gold["market_type_counts"] = (
         pd.DataFrame({REGION_LABELS[p]: t["유형"].value_counts() for p, t in local_targets.items()})
-        .fillna(0).astype(int).rename_axis("유형").reset_index()
+        .reindex(list(MARKET_TYPE_STRATEGY)).fillna(0).astype(int).rename_axis("유형").reset_index()
     )
 
     # [전략] 서울 착시성장 사례의 방어형 고객 + 대표 사례

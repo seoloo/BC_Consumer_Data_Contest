@@ -40,10 +40,10 @@
 | 10 | [인증정보 · 비공개 데이터](10_secrets_and_privacy.md) | .env, 환경변수, 키 노출 막기, 원본 비공개 | 사용 중 |
 | 11 | [합성 데이터](11_synthetic_data.md) | 원본 형식 재현, 시드 고정, 바이트까지 같은 파일 | 사용 중 |
 | 12 | [문서 자동화 · Git 작업 방식](12_docs_and_git.md) | 흐름도 자동 캡처, 브랜치 · PR, 커밋 단위 | 사용 중 |
-| 13 | [앞으로 쓸 기술](13_planned.md) | Airflow, GitHub Actions, Streamlit (dbt Gold는 3-3) | 계획 |
+| 13 | [앞으로 쓸 기술](13_planned.md) | Airflow, GitHub Actions, Streamlit | 계획 |
 | 14 | [객체 저장소 SeaweedFS](14_object_storage.md) | S3 API, 버킷, 배치 월 폴더, 왕복 지문, MinIO를 고르지 않은 이유 | 사용 중 |
 | 15 | [데이터 웨어하우스 PostgreSQL](15_postgresql.md) | raw 스키마, COPY, 트랜잭션 되돌리기, 파이썬과 dbt의 역할 나누기 | 사용 중 (raw) |
-| 16 | [dbt](16_dbt.md) | SQL 모델, seed 기준표, dbt tests, 파이썬 Silver와 한 칸씩 비교 | 사용 중 (Silver) |
+| 16 | [dbt](16_dbt.md) | SQL 모델, seed 기준표, dbt tests, 파이썬과 한 칸씩 비교, 반올림 · 정렬 맞추기 | 사용 중 (Silver · Gold) |
 
 ## 한눈에 보는 흐름
 
@@ -54,7 +54,7 @@
 Bronze   원본 그대로 + 지문(SHA-256) 영수증         ← 03 메달리온, 05 멱등성
          SeaweedFS 버킷에 올리고 받아 지문 확인       ← 14 객체 저장소
          PostgreSQL raw 스키마에 표기 그대로 적재      ← 15 PostgreSQL
-         dbt가 raw → silver 스키마 (SQL 모델 · 테스트) ← 16 dbt
+         dbt가 raw → silver → gold 스키마 (SQL 모델 · 테스트) ← 16 dbt
    │
    ▼
 Silver   정제 · 표준화한 표 (Parquet 6개)           ← 06 Parquet, 07 원본 다루기
@@ -74,6 +74,7 @@ output/  발표 결과와 같은 형식의 CSV (6/6 일치)      ← 02 테스�
 | 날짜 | 바뀐 내용 |
 |---|---|
 | 2026-10-21 | 처음 작성 (01 ~ 13). Phase 1 리팩토링, 메달리온, 합성 데이터, KOSIS 수집기까지의 내용 |
+| 2026-10-21 | 16 dbt에 Gold 추가 (Phase 3-3). 03 · 04 · 13 · 용어 사전 갱신 |
 | 2026-10-21 | 16 dbt 추가 (Phase 3-2). 04 · 12(작업 방식 바뀜) · 13 · 용어 사전 갱신 |
 | 2026-10-21 | 15 PostgreSQL 추가 (Phase 3-1). 용어 사전 · 05 · 08 · 10 · 13 갱신 |
 | 2026-10-21 | 09에 KOSIS 실제 호출 결과 추가 (서울 · 경기 파일과 모두 일치) |

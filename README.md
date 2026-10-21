@@ -52,7 +52,7 @@
 | Phase 1 | 리팩토링: 노트북 → `src/future_stress` 모듈 + 테스트, 발표 결과 6/6 재현 ([리팩토링 노트](docs/refactoring_notes.md)) | 완료 |
 | Phase 1.5 | 메달리온 아키텍처 로컬 세팅: Bronze → Silver → Gold, 계층 사이 대사 10개 | 완료 |
 | Phase 2 | 합성 데이터 생성기 · KOSIS 수집기(파일과 값 일치 확인) · SeaweedFS Bronze 저장소 · Docker Compose | 완료 |
-| Phase 3 | PostgreSQL + dbt 데이터 마트 · 품질 검사 (raw 적재 · dbt Silver 완료, dbt Gold 다음) | 진행 중 |
+| Phase 3 | PostgreSQL + dbt 데이터 마트 · 품질 검사 (raw · Silver · Gold 완료, 문서 · ERD 다음) | 진행 중 |
 | Phase 4 | Airflow 배치 · CI · 대시보드 | 예정 |
 
 ## 분석 질문
@@ -114,7 +114,7 @@ Future Stress가 음수이면 현재 소비구조가 미래 인구감소에 더 
 | 합성 데이터 | NumPy 생성기 (원본 8종과 같은 형식, 시드 고정) | 사용 중 |
 | 수집 | requests (KOSIS 장래인구 수집기 · NAVER API) | 사용 중 |
 | 원본 보관 | SeaweedFS (S3 호환, boto3), Docker Compose | 사용 중 |
-| 저장 · 변환 · 품질 | PostgreSQL (raw · silver 스키마), dbt (Docker), dbt tests | 사용 중 (Silver까지) |
+| 저장 · 변환 · 품질 | PostgreSQL (raw · silver · gold 스키마), dbt (Docker), dbt tests | 사용 중 |
 | 운영 · 제공 | Airflow, GitHub Actions, Streamlit | Phase 4 |
 
 ## 실행 방법
@@ -163,7 +163,7 @@ docker compose up -d
 .venv\Scripts\python -m future_stress.pipeline --object-store --warehouse
 ```
 
-raw 스키마에 원본이 들어가면 dbt로 Silver를 만들고 테스트합니다. dbt도 Docker로 돌아서 따로 설치할 것이 없습니다. 두 번째 명령은 dbt 결과가 파이썬 Silver와 같은지 한 칸씩 비교합니다.
+raw 스키마에 원본이 들어가면 dbt로 Silver · Gold를 만들고 테스트합니다. dbt도 Docker로 돌아서 따로 설치할 것이 없습니다. 아래 두 명령은 dbt 결과가 파이썬 Silver · Gold와 같은지 한 칸씩 비교합니다.
 
 ```powershell
 docker compose run --rm dbt build
@@ -171,6 +171,10 @@ docker compose run --rm dbt build
 
 ```powershell
 .venv\Scripts\python -m future_stress.warehouse compare-silver
+```
+
+```powershell
+.venv\Scripts\python -m future_stress.warehouse compare-gold
 ```
 
 `--object-store`는 Bronze를 SeaweedFS에 올리고 거기서 다시 받아 실행하고, `--warehouse`는 원본을 PostgreSQL `raw` 스키마에도 적재합니다(둘 중 하나만 써도 됩니다). 원본이 없으면 `--synthetic`을 함께 붙이면 됩니다. 원본이 있으면 `--compare`를 붙여 발표 수치와 비교할 수 있습니다.

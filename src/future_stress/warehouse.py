@@ -329,21 +329,75 @@ def compare_table(dbt_table, python_table, keys, values):
     }
 
 
-def compare_silver(warehouse, silver_dir=None, silver_schema="silver"):
-    """dbt가 만든 Silver(PostgreSQL)와 파이썬이 만든 Silver(Parquet)가 같은지 확인합니다.
+# Gold: 파이썬 Gold 표 → dbt Gold 모델. 열쇠 열이 같아야 같은 줄로 보고, 값 열은 숫자로 한 칸씩 비교합니다.
+# 글자 값(핵심 연령대, 유형)은 열쇠에 넣어, 다르면 '한쪽에만'으로 드러나게 합니다.
+_CASE_KEYS = {"시도": "province", "시군구": "district", "업종코드": "industry_code", "업종명": "industry_name"}
+_STRUCTURE_VALUES = {"이용금액": "amount", "이용건수": "payment_count", "업종총이용금액": "industry_total_amount",
+                     "이용금액비중": "amount_share"}
+_PROFILE_VALUES = {"이용금액비중": "main_age_share", "업종총이용금액": "industry_total_amount",
+                   "연령집중도": "age_concentration", "데이터보유개월수": "months_with_data",
+                   "6개월완전": "is_complete_6_months", "월평균증감률": "avg_monthly_change",
+                   "1월대비6월증감률": "change_first_to_last_month", "상승개월수": "rising_months"}
+_STRESS_VALUES = {f"{year} 순인구효과": f"stress_{year}" for year in config.STRESS_YEARS}
 
-    같다면 Silver 규칙을 dbt로 옮겨도 결과가 바뀌지 않았다는 뜻입니다. (리팩토링 때 발표 결과 6/6과 같은 역할)
-    """
-    silver_dir = Path(silver_dir or config.SILVER_DIR)
+GOLD_COLUMN_MAPS = {
+    "age_spending_structure": {
+        "dbt_table": "gold_age_spending_structure",
+        "keys": {**_CASE_KEYS, "연령대": "age_group"}, "values": _STRUCTURE_VALUES,
+    },
+    "gyeonggi_city_age_spending_structure": {
+        "dbt_table": "gold_gyeonggi_city_age_spending_structure",
+        "keys": {**_CASE_KEYS, "연령대": "age_group"}, "values": _STRUCTURE_VALUES,
+    },
+    "region_industry_profile": {
+        "dbt_table": "gold_region_industry_profile",
+        "keys": {**_CASE_KEYS, "연령대": "main_age_group"}, "values": _PROFILE_VALUES,
+    },
+    "age_stress": {
+        "dbt_table": "gold_age_stress",
+        "keys": {**_CASE_KEYS, "연령대": "age_group"},
+        "values": {**_STRUCTURE_VALUES,
+                   **{f"{year} 증감률": f"change_rate_{year}" for year in config.POPULATION_TARGET_YEARS},
+                   **_STRESS_VALUES},
+    },
+    "future_stress": {
+        "dbt_table": "gold_future_stress",
+        "keys": {**_CASE_KEYS, "연령대": "main_age_group"}, "values": {**_PROFILE_VALUES, **_STRESS_VALUES},
+    },
+    "market_type": {
+        "dbt_table": "gold_market_type",
+        "keys": {**_CASE_KEYS, "연령대": "main_age_group", "유형": "market_type"},
+        "values": {**_PROFILE_VALUES, **_STRESS_VALUES},
+    },
+    "market_type_counts": {
+        "dbt_table": "gold_market_type_counts",
+        "keys": {"유형": "market_type"}, "values": {"서울": "seoul", "부산": "busan", "경기": "gyeonggi"},
+    },
+}
+
+
+def compare_layer(warehouse, python_dir, schema, column_maps):
+    """dbt가 만든 표(PostgreSQL)와 파이썬이 만든 표(Parquet)를 표마다 비교합니다."""
     rows = []
-    for python_name, mapping in SILVER_COLUMN_MAPS.items():
-        python_table = read_parquet(silver_dir / f"{python_name}.parquet")
+    for python_name, mapping in column_maps.items():
+        python_table = read_parquet(Path(python_dir) / f"{python_name}.parquet")
         python_table = python_table.rename(columns={**mapping["keys"], **mapping["values"]})
-        dbt_table = read_table(warehouse, f"{silver_schema}.{mapping['dbt_table']}")
-        rows.append({"표": f"{silver_schema}.{mapping['dbt_table']}",
+        dbt_table = read_table(warehouse, f"{schema}.{mapping['dbt_table']}")
+        rows.append({"표": f"{schema}.{mapping['dbt_table']}",
                      **compare_table(dbt_table, python_table, list(mapping["keys"].values()),
                                      list(mapping["values"].values()))})
     return pd.DataFrame(rows)
+
+
+def compare_silver(warehouse, silver_dir=None, silver_schema="silver"):
+    """dbt Silver와 파이썬 Silver가 같은지. 같다면 Silver 규칙을 dbt로 옮겨도 결과가 바뀌지 않았다는 뜻입니다."""
+    return compare_layer(warehouse, silver_dir or config.SILVER_DIR, silver_schema, SILVER_COLUMN_MAPS)
+
+
+def compare_gold(warehouse, gold_dir=None, gold_schema="gold"):
+    """dbt Gold와 파이썬 Gold가 같은지. 발표 결과(통계 검정 등)는 이 Gold 표들로 계산하므로,
+    모두 같다면 Gold 계산을 SQL로 옮겨도 발표 결과가 바뀌지 않는다는 뜻입니다."""
+    return compare_layer(warehouse, gold_dir or config.GOLD_DIR, gold_schema, GOLD_COLUMN_MAPS)
 
 
 def main():
@@ -355,6 +409,9 @@ def main():
     compare = commands.add_parser("compare-silver", help="dbt Silver와 파이썬 Silver(data/silver) 비교")
     compare.add_argument("--silver-dir", default=config.SILVER_DIR)
     compare.add_argument("--silver-schema", default="silver", help="합성 데이터는 synthetic_silver")
+    compare_g = commands.add_parser("compare-gold", help="dbt Gold와 파이썬 Gold(data/gold) 비교")
+    compare_g.add_argument("--gold-dir", default=config.GOLD_DIR)
+    compare_g.add_argument("--gold-schema", default="gold", help="합성 데이터는 synthetic_gold")
     arguments = parser.parse_args()
 
     try:
@@ -363,6 +420,8 @@ def main():
             print(load_raw(arguments.bronze_dir, warehouse).to_string(index=False))
         elif arguments.command == "compare-silver":
             print(compare_silver(warehouse, arguments.silver_dir, arguments.silver_schema).to_string(index=False))
+        elif arguments.command == "compare-gold":
+            print(compare_gold(warehouse, arguments.gold_dir, arguments.gold_schema).to_string(index=False))
         else:
             print(warehouse.status().to_string(index=False))
     except ValueError as error:

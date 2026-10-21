@@ -8,6 +8,7 @@
 #   raw     파이썬(warehouse.py)이 원본을 표기 그대로 넣은 곳. dbt는 읽기만 합니다 (models/sources.yml)
 #   ref     코드 · 이름 기준표 (seeds/*.csv)
 #   silver  거르기 · 코드 → 이름 · 표준화 (models/silver/)
+#   gold    연령별 소비구조 · 프로필 · Future Stress · 4유형 (models/gold/)
 
 name: future_stress
 version: "0.1.0"
@@ -27,6 +28,11 @@ vars:
   # 기준연도와 비교연도 (src/future_stress/config.py와 같은 값)
   base_year: 2026
   target_years: [2030, 2035, 2040]
+  # Future Stress를 계산하는 연도, 분석 기간, 판정 기준 (config.py의 STRESS_YEARS · ANALYSIS_MONTHS · MIN_RISING_MONTHS · SIZE_TOP_PERCENT)
+  stress_years: [2035, 2040]
+  analysis_months: [202601, 202602, 202603, 202604, 202605, 202606]
+  min_rising_months: 3
+  size_top_percent: 25
 
 seeds:
   future_stress:
@@ -36,4 +42,7 @@ models:
   future_stress:
     silver:
       +schema: silver
+      +materialized: table
+    gold:
+      +schema: gold
       +materialized: table

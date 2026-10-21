@@ -36,3 +36,9 @@ seeds:
     columns:
       - name: age_label
         data_tests: [unique, not_null]
+
+  - name: market_types
+    description: 4유형과 전략 방향 (diagnosis.MARKET_TYPE_STRATEGY와 같은 내용). 성장 여부 × Stress 2040 부호로 정함
+    columns:
+      - name: market_type
+        data_tests: [unique, not_null]

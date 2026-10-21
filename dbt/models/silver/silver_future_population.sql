@@ -6,7 +6,7 @@
     서울(CSV)          남녀 합계('계'), 서울 합계 행 제외, 5세 구간 목록(seed)에 있는 표기만, 빈 값은 0
     부산 · 경기(엑셀)   남녀 합계, 시도 합계 행 제외, 연령별(2)가 '소계'인 5세 구간 행만, 연령 '계' 제외
   재현용 버릇: 서울 목록의 마지막이 원본에 없는 '90세 이상'이라 서울 90세 이상 인구는 빠집니다 (seeds.yml 참고).
-  증감률 = (그 해 인구 − 2026년 인구) ÷ 2026년 인구 × 100, 소수 첫째 자리 반올림
+  증감률 = (그 해 인구 − 2026년 인구) ÷ 2026년 인구 × 100, 소수 첫째 자리에서 파이썬과 같은 방식(짝수 쪽)으로 반올림
 #}
 {% set base_year = var('base_year') %}
 {% set years = [base_year] + var('target_years') %}
@@ -61,7 +61,8 @@ select
     population_{{ year }},
     {% endfor %}
     {% for year in var('target_years') %}
-    round((population_{{ year }} - population_{{ base_year }}) * 100.0 / nullif(population_{{ base_year }}, 0), 1)
+    -- 파이썬과 같은 순서 · 같은 반올림: (그 해 − 기준) ÷ 기준 × 100 을 실수로 계산 → 짝수 쪽 반올림 (macros/round_half_even.sql)
+    {{ round_half_even('(population_' ~ year ~ ' - population_' ~ base_year ~ ')::double precision / nullif(population_' ~ base_year ~ ', 0)::double precision * 100', 1) }}
         as change_rate_{{ year }}{{ "," if not loop.last }}
     {% endfor %}
 from by_age_group
