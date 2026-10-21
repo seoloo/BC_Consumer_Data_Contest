@@ -1,0 +1,69 @@
+# CI · 코드를 올릴 때마다 GitHub의 깨끗한 서버에서 처음부터 끝까지 자동으로 돌려 봅니다. (기록: docs/notes/17_ci.md)
+#
+# 원본 데이터는 공개할 수 없어서 합성 데이터로 돌립니다. 확인하는 것:
+#   1. 파이썬 테스트 전체 (실제 SeaweedFS · PostgreSQL이 필요한 통합 테스트까지)
+#   2. 합성 데이터로 Bronze → 객체 저장소 → raw → Silver → Gold, 층 사이 대사
+#   3. dbt build (모델 + 테스트)
+#   4. dbt 결과가 파이썬 결과와 한 칸씩 같은지 (다르면 실패)
+# 계정 키 · 비밀번호는 저장소에 적지 않고, 실행할 때마다 local_env가 무작위로 새로 만듭니다 (이 서버 안에서만 쓰고 사라짐).
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:        # GitHub 화면에서 손으로 다시 돌릴 수 있게
+
+# 같은 브랜치에 새로 올리면 앞의 실행은 취소 (기다릴 필요 없는 실행에 시간 쓰지 않게)
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pipeline:
+    name: 테스트 · 파이프라인 · dbt (합성 데이터)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PYTHONIOENCODING: utf-8
+    steps:
+      - name: 코드 받기
+        uses: actions/checkout@v4
+
+      - name: Python 3.14
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+
+      - name: 패키지 설치
+        run: python -m pip install -e ".[dev]"
+
+      - name: 로컬 서비스 계정 만들기 (.env, 실행마다 새 무작위 값)
+        run: python -m future_stress.local_env
+
+      - name: 객체 저장소 · PostgreSQL 띄우기
+        # --wait: healthcheck가 healthy가 될 때까지 기다림 (준비 안 된 DB에 붙어 실패하지 않게)
+        run: docker compose up -d --wait object-store warehouse
+
+      - name: 파이썬 테스트 (통합 테스트 포함)
+        run: python -m pytest -q
+
+      - name: 합성 데이터로 파이프라인 (객체 저장소 + raw 적재 + 대사)
+        run: python -m future_stress.pipeline --synthetic --object-store --warehouse
+
+      - name: dbt build (합성 데이터 스키마)
+        # 'raw_schema: raw_synthetic'의 ': '를 YAML이 키-값으로 읽지 않도록 블록(|)으로 씀
+        run: |
+          docker compose run --rm dbt build --target synthetic --vars "{raw_schema: raw_synthetic}"
+
+      - name: dbt Silver = 파이썬 Silver
+        run: python -m future_stress.warehouse compare-silver --silver-dir data/synthetic/silver --silver-schema synthetic_silver
+
+      - name: dbt Gold = 파이썬 Gold
+        run: python -m future_stress.warehouse compare-gold --gold-dir data/synthetic/gold --gold-schema synthetic_gold
+
+      - name: 실패하면 컨테이너 기록 남기기
+        if: failure()
+        run: docker compose logs --tail 200

@@ -80,6 +80,11 @@
 | **boto3** | 파이썬에서 S3 API를 쓰는 표준 라이브러리. | `object_store.py` |
 | **pytest · fixture** | 파이썬 테스트 도구 · 여러 테스트가 함께 쓰는 준비물(예: 합성 원본 폴더). | `tests/`, `conftest.py` |
 | **가짜 객체 (fake)** | 실제 서버 대신 같은 모양으로 대답하는 테스트용 객체. 서버 없이도 테스트가 돌게 함. | `FakeS3Client`, `FakeSession` |
+| **CI (지속적 통합)** | 코드를 올릴 때마다 자동으로 설치 · 테스트를 돌려 문제가 있으면 바로 알려 주는 방식. | `.github/workflows/ci.yml`, [17](17_ci.md) |
+| **GitHub Actions · 워크플로** | GitHub가 제공하는 CI · 그 실행 순서를 적은 YAML 파일. | `ci.yml` |
+| **러너 (runner)** | 워크플로를 실제로 돌리는 서버. 실행마다 깨끗한 새 서버를 받음. | `ubuntu-latest` |
+| **PR (Pull Request)** | 브랜치의 변경을 main에 합쳐 달라는 요청. 여기서 CI 결과와 바뀐 내용을 함께 봄. | PR #2 |
+| **종료 코드** | 명령이 끝날 때 남기는 숫자. 0이면 성공, 그 밖은 실패. CI는 이것으로 판단. | `compare-gold` |
 | **브랜치 · 병합** | 작업을 main과 떼어 따로 하는 갈래 · 다 확인한 뒤 main에 합치는 것. | `feature/*`, [12](12_docs_and_git.md) |
 
 ## 분석

@@ -418,10 +418,15 @@ def main():
         warehouse = Warehouse.from_environment()
         if arguments.command == "load-raw":
             print(load_raw(arguments.bronze_dir, warehouse).to_string(index=False))
-        elif arguments.command == "compare-silver":
-            print(compare_silver(warehouse, arguments.silver_dir, arguments.silver_schema).to_string(index=False))
-        elif arguments.command == "compare-gold":
-            print(compare_gold(warehouse, arguments.gold_dir, arguments.gold_schema).to_string(index=False))
+        elif arguments.command in ("compare-silver", "compare-gold"):
+            if arguments.command == "compare-silver":
+                report = compare_silver(warehouse, arguments.silver_dir, arguments.silver_schema)
+            else:
+                report = compare_gold(warehouse, arguments.gold_dir, arguments.gold_schema)
+            print(report.to_string(index=False))
+            # 하나라도 불일치면 실패 코드(1)로 끝냅니다. 출력만 하면 CI(GitHub Actions)가 불일치를 '성공'으로 봅니다.
+            if (report["결과"] != "일치").any():
+                raise SystemExit("[불일치] dbt 결과와 파이썬 결과가 다른 표가 있습니다.")
         else:
             print(warehouse.status().to_string(index=False))
     except ValueError as error:
