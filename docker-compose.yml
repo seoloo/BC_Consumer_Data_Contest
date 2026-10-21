@@ -1,8 +1,9 @@
 # 이 프로젝트를 돌리는 데 필요한 로컬 서비스.
-# 지금은 Bronze 원본을 보관할 S3 호환 객체 저장소(SeaweedFS) 하나입니다. (기록: docs/notes/14_object_storage.md)
+#   object-store  Bronze 원본을 보관하는 S3 호환 객체 저장소(SeaweedFS)   기록: docs/notes/14_object_storage.md
+#   warehouse     raw · silver · gold 스키마를 둘 데이터 웨어하우스(PostgreSQL)  기록: docs/notes/15_postgresql.md
 #
 # 처음 한 번 (저장소 루트에서, PowerShell은 한 줄씩)
-#   .venv\Scripts\python -m future_stress.object_store init-env    # .env에 로컬 전용 S3 계정 키 만들기
+#   .venv\Scripts\python -m future_stress.local_env               # .env에 로컬 전용 계정 만들기 (S3 · PostgreSQL)
 #   docker compose up -d                                           # 저장소 띄우기
 #   docker compose ps                                              # STATUS가 healthy인지 확인
 #
@@ -16,8 +17,8 @@ services:
     # 같은 S3 API를 쓰는 SeaweedFS로 정했습니다. 언제 띄워도 같은 환경이 되도록 버전을 고정합니다.
     image: chrislusf/seaweedfs:4.48
     environment:
-      S3_ACCESS_KEY: ${S3_ACCESS_KEY:?먼저 python -m future_stress.object_store init-env 를 실행해 주세요}
-      S3_SECRET_KEY: ${S3_SECRET_KEY:?먼저 python -m future_stress.object_store init-env 를 실행해 주세요}
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY:?먼저 python -m future_stress.local_env 를 실행해 주세요}
+      S3_SECRET_KEY: ${S3_SECRET_KEY:?먼저 python -m future_stress.local_env 를 실행해 주세요}
     # 시작할 때 환경변수로 S3 계정 설정 파일을 만든 뒤, master · volume · filer · S3를 한 컨테이너로 띄웁니다.
     # 키를 이미지나 이 파일에 적지 않고 .env에서만 받기 위해서입니다.
     # 볼륨 수는 디스크 여유에 맞춰 자동(-volume.max=0), 볼륨 하나는 256MB로 작게 둡니다
@@ -41,5 +42,25 @@ services:
       retries: 30
     restart: unless-stopped
 
+  warehouse:
+    # 이 PC에 이미 받아 둔 버전으로 고정합니다. 다른 프로젝트도 같은 이미지를 쓰지만 컨테이너 · 볼륨 · 포트는 따로입니다.
+    image: postgres:16.4
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?먼저 python -m future_stress.local_env 를 실행해 주세요}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?먼저 python -m future_stress.local_env 를 실행해 주세요}
+      POSTGRES_DB: ${POSTGRES_DB:-future_stress}
+    ports:
+      # 이 PC에서만 접속 가능. 다른 프로젝트가 쓰는 55432번과 겹치지 않게 55532번을 씁니다.
+      - "127.0.0.1:${POSTGRES_PORT:-55532}:5432"
+    volumes:
+      - warehouse-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+
 volumes:
   object-store-data:
+  warehouse-data:

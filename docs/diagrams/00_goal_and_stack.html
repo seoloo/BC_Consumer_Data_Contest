@@ -158,9 +158,9 @@
 
       <tr class="group-row"><td colspan="4">저장 · 변환 · 품질</td></tr>
       <tr>
-        <td class="layer-cell"><span class="lname">웨어하우스</span><br><span class="lphase t-violet">Phase 3</span></td>
-        <td class="tech-cell"><span class="tname">PostgreSQL</span><span class="tsub">silver, gold 스키마</span></td>
-        <td class="why-cell">Silver와 Gold를 스키마로 나눠 SQL로 관리합니다. 서버형 DB를 직접 설계하고 운영해 보려는 목적도 있습니다.</td>
+        <td class="layer-cell"><span class="lname">웨어하우스</span><br><span class="lphase t-green">Phase 3 · raw 사용 중</span></td>
+        <td class="tech-cell"><span class="tname">PostgreSQL</span><span class="tsub">raw, silver, gold 스키마</span></td>
+        <td class="why-cell">원본을 표기 그대로 <code>raw</code>에 넣었습니다. SQL만으로 개인 결제 <b>159,235행 · 14.89조</b>가 나와 파이썬 Silver와 같습니다. Silver와 Gold도 스키마로 나눠 SQL로 옮깁니다.</td>
         <td class="alt-cell"><b>DuckDB</b> · 가볍고 편하지만 권한이나 동시 접속 같은 운영 부분을 다뤄 볼 수 없습니다.</td>
       </tr>
       <tr>

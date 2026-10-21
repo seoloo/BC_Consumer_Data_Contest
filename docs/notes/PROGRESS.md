@@ -3,6 +3,14 @@
 날짜별로 무엇을, 왜(사용자 말), 어떻게 했고, 숫자로 무엇을 확인했는지 적습니다. 최신이 위입니다.
 기술마다 정리한 내용은 [README 목차](README.md)의 주제 문서에 있습니다.
 
+## 2026-10-21 — PostgreSQL raw 스키마 (Phase 3-1)
+
+- 사용자 "응 합치고 Docker로 3-1 진행해줘". dbt는 Python 3.14 지원이 불확실해 Docker 공식 이미지로 하기로 (`ghcr.io/dbt-labs/dbt-postgres:1.9.0` 받을 수 있는 것 확인).
+- `docker-compose.yml`에 PostgreSQL 16.4(127.0.0.1:55532) 추가, `local_env.py`로 S3 · DB 계정 생성을 한곳에. `warehouse.py`: 원본을 표기 그대로 `raw.card_spending` · `raw.future_population`에 COPY, 지문 · 행 수 · 합계가 같으면 '변경 없음', 대사가 틀리면 되돌림, `raw._load_log` 기록. `pipeline --warehouse`.
+- 원본: 242,574행 · 17.22조, 장래인구 577,680행. 9초 → 두 번째 3초 '변경 없음'. **SQL만으로 개인 결제 159,235행 · 14.89조 = 파이썬 Silver와 같음.**
+- 처음 실행은 `COMMENT ... IS %s` 문법 오류로 실패했지만 트랜잭션이 모두 되돌려 깨끗하게 남음 → `sql.Literal`로 수정. 되돌리기 테스트가 표를 지우기 *전*에 실패하고 있던 것을 찾아, 지운 *뒤* 실패하도록 고침.
+- 합성 데이터는 `raw_synthetic` 스키마. 테스트 63개.
+
 ## 2026-10-21 — KOSIS 실제 호출 확인
 
 - 사용자 "kosis api key 넣었어 확인해줘". 다른 프로젝트 `.env`는 여전히 비어 있었고, 수정 시각을 보니 이 저장소 `.env`가 방금 고쳐져 있어(키 값은 보지 않음) 기본 설정으로 실행.

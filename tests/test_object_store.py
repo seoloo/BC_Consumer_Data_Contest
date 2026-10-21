@@ -109,7 +109,8 @@ def test_pipeline_reads_silver_input_from_object_store(synthetic_raw_dir, tmp_pa
 def test_init_env_writes_keys_once(tmp_path):
     env_file = tmp_path / ".env"
     env_file.write_text("KOSIS_API_KEY=", encoding="utf-8")          # 끝에 줄바꿈이 없는 기존 파일
-    assert init_env(env_file) == ["S3_ACCESS_KEY", "S3_SECRET_KEY", "S3_PORT"]
+    assert init_env(env_file) == ["S3_ACCESS_KEY", "S3_SECRET_KEY", "S3_PORT",
+                                  "POSTGRES_USER", "POSTGRES_PASSWORD", "POSTGRES_DB", "POSTGRES_PORT"]
     assert init_env(env_file) == []                                  # 두 번째는 아무것도 안 씀
     lines = env_file.read_text(encoding="utf-8").splitlines()
     assert lines[0] == "KOSIS_API_KEY=" and sum(line.startswith("S3_ACCESS_KEY=") for line in lines) == 1

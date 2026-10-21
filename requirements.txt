@@ -4,6 +4,7 @@ matplotlib
 numpy
 openpyxl
 pandas
+psycopg[binary]
 pyarrow
 pytest
 requests

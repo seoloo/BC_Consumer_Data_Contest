@@ -67,7 +67,7 @@
     <h1>공모전 노트북에서 데이터 파이프라인까지</h1>
     <p class="lede">공모전 노트북을 데이터 파이프라인으로 옮겨 가는 과정입니다. 단계가 하나 끝날 때마다 이 그림도 고칩니다.</p>
   </div>
-  <div class="version"><b>로드맵 v7</b><br>2026-10-21 Phase 2 완료</div>
+  <div class="version"><b>로드맵 v8</b><br>2026-10-21 PostgreSQL raw</div>
 </div>
 
 <div data-part="1" class="goal">
@@ -138,8 +138,8 @@
         <h4>데이터 마트 · 품질</h4>
         <p class="p-goal">Silver와 Gold 계산을 SQL 모델로 옮기고 숫자 확인을 붙입니다.</p>
         <div><div class="block-label">할 일</div><ul class="todo">
-          <li>PostgreSQL silver, gold 스키마</li>
-          <li>dbt 모델, 지역 · 연령 기준표</li>
+          <li class="ok">PostgreSQL raw 스키마에 원본 적재 (3-1)</li>
+          <li>dbt Silver · Gold 모델, 지역 · 연령 기준표 (3-2 · 3-3)</li>
           <li>dbt tests, 원본과 결과 합계 비교 리포트</li>
           <li>ERD, 데이터 출처 문서</li></ul></div>
         <div class="techs"><span class="tech">PostgreSQL</span><span class="tech">dbt</span><span class="tech">SQL</span></div>
@@ -173,7 +173,8 @@
         <div class="log-row"><span class="date">2026-10-21</span><span class="dot" style="background:var(--green)"></span><div><b>합성 데이터 생성기</b><p>원본 8종과 형식이 같은 파일을 만들어, 원본 없이도 숫자 확인 10개를 통과했습니다. 성별 코드 x, 업종명 공백처럼 원본에서 애먹었던 부분도 그대로 넣었습니다.</p></div></div>
         <div class="log-row"><span class="date">2026-10-21</span><span class="dot" style="background:var(--green)"></span><div><b>KOSIS 인구 수집기</b><p>서울 · 경기 장래인구를 API로 받아, 예전에 내려받은 파일과 4,640칸이 모두 같은 것을 확인했습니다. 시도 합계 행 이름이 원본마다 달라 처음엔 불일치가 났습니다.</p></div></div>
         <div class="log-row"><span class="date">2026-10-21</span><span class="dot" style="background:var(--green)"></span><div><b>Bronze를 SeaweedFS로</b><p>MinIO 무료판 이미지가 사라져 같은 S3 방식의 SeaweedFS로 바꿨습니다. 원본 60개를 배치 월 폴더에 올리고 받아 지문을 맞춰 봤고, 발표 숫자도 그대로입니다.</p></div></div>
-        <div class="log-row"><span class="date">다음</span><span class="dot" style="background:var(--primary)"></span><div><b>Phase 3 · PostgreSQL과 dbt</b><p>Silver · Gold 계산을 SQL 모델로 옮기고, 숫자 확인 10개를 dbt tests로 옮길 계획입니다.</p></div></div>
+        <div class="log-row"><span class="date">2026-10-21</span><span class="dot" style="background:var(--green)"></span><div><b>PostgreSQL raw 스키마</b><p>원본을 표기 그대로 DB에 넣었습니다. SQL만으로 개인 결제 159,235행 · 14.89조가 나와 파이썬 Silver와 같았습니다.</p></div></div>
+        <div class="log-row"><span class="date">다음</span><span class="dot" style="background:var(--primary)"></span><div><b>dbt Silver 모델</b><p>개인 결제 거르기, 코드 → 이름, 5세 구간 고르기를 SQL 모델과 dbt tests로 옮길 계획입니다.</p></div></div>
       </div>
     </div>
     <div class="card pad stack" style="gap:12px">

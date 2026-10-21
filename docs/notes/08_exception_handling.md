@@ -24,6 +24,8 @@
 | 저장소가 안 떠 있는 것 | Docker를 켜지 않고 `--object-store` 실행 | "`docker compose up -d`로 띄운 뒤 다시 실행" 한 줄 안내 | `object_store.main()` → `EndpointConnectionError` |
 | 받은 파일이 영수증과 다른 것 | 버킷의 파일이 바뀌었거나 덮어써짐 | 그 파일 이름을 모두 적어 멈춤 | `download_bronze()` → `DataQualityError` |
 | '없음'이 정상인 것 | 처음 올리는 객체 · 아직 없는 버킷 (S3 404) | 오류가 아니라 '새로 만들기'로 처리. 다른 S3 오류는 그대로 올림 | `object_store.is_not_found()` |
+| DB가 안 떠 있는 것 | Docker를 켜지 않고 `--warehouse` 실행 | 연결 정보가 든 원래 메시지 대신 한 줄 안내 | `warehouse.main()` → `psycopg.OperationalError` |
+| 적재 중간에 실패한 것 | COPY 실패, 대사 불일치 | 트랜잭션을 되돌려 이전 표를 그대로 둠 | `Warehouse.load()` (with 블록) |
 | 인코딩이 다른 것 | utf-8로 못 읽는 CSV | 다음 후보(cp949)로 다시 시도. 모두 실패하면 마지막 오류를 그대로 올림 | `io_utils.read_csv_with_encoding_fallback()` |
 
 ## 지킨 원칙
@@ -39,6 +41,7 @@
 - 원본이 하나도 없는 폴더로 실행하면 8종 중 빠진 것을 한 줄에 모두 알려 줍니다 (`test_missing_raw_files_are_reported_at_once`).
 - 연결 끊김 → 503 → 성공 순서의 응답에서 결과를 받아 오고, 인증키 만료 응답에서는 한 번만 요청하고 멈추는 것을 테스트로 확인했습니다 (`test_kosis.py`).
 - 실제로 KOSIS 인증키가 비어 있는 `.env`를 지정했을 때 "줄은 있지만 값이 비어 있습니다"라고 정확히 알려 줘서, 키 값을 보지 않고도 원인을 알 수 있었습니다.
+- PostgreSQL 적재 중 `COMMENT` 문법 오류가 났을 때, 그 전에 만든 스키마 · 표가 모두 되돌려져 반쯤 만든 상태가 남지 않았습니다 (15 참고).
 - SLSQP 결과를 제약으로 판단하게 바꾼 뒤, 노트북에서 버려지던 다변화 재조정 답을 쓸 수 있게 됐습니다.
 
 ## 다른 방법과 고르지 않은 이유

@@ -22,10 +22,10 @@
 지키는 것
     1. 같은 파일은 다시 올리지 않습니다. 올릴 때 객체 메타데이터에 SHA-256을 적어 두고, 다음에 비교합니다 (멱등).
     2. 내려받은 파일의 지문을 영수증과 다시 맞춰 봅니다. 하나라도 다르면 DataQualityError로 멈춥니다.
-    3. 계정 키는 코드에 쓰지 않고 .env에서만 읽습니다. init-env가 이 PC 전용 키를 만들어 줍니다.
+    3. 계정 키는 코드에 쓰지 않고 .env에서만 읽습니다. local_env가 이 PC 전용 키를 만들어 줍니다.
 
 실행 방법 (저장소 루트에서)
-    .venv\\Scripts\\python -m future_stress.object_store init-env     # .env에 S3 계정 키 만들기 (처음 한 번)
+    .venv\\Scripts\\python -m future_stress.local_env               # .env에 로컬 서비스 계정 만들기 (처음 한 번)
     docker compose up -d                                             # 저장소 띄우기
     .venv\\Scripts\\python -m future_stress.object_store status        # 버킷에 무엇이 있는지 보기
     .venv\\Scripts\\python -m future_stress.pipeline --object-store    # Bronze를 저장소에 올리고, 거기서 받아 Silver부터 실행
@@ -34,7 +34,6 @@
 import argparse
 import hashlib
 import json
-import secrets
 from pathlib import Path
 
 import boto3
@@ -44,11 +43,11 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 
 from . import config
 from .io_utils import read_env_value
+from .local_env import DEFAULT_S3_PORT, init_env  # noqa: F401  (init_env: 예전 명령 'object_store init-env' 유지용)
 from .medallion import DataQualityError
 
 DEFAULT_BUCKET = "bronze"
 SYNTHETIC_BUCKET = "bronze-synthetic"    # 합성 데이터용. 원본과 파일 이름이 같아 같은 버킷에 두면 덮어쓰기 때문
-DEFAULT_S3_PORT = "59100"
 MANIFEST_NAME = "_manifest.json"
 FINGERPRINT_METADATA_KEY = "sha256"    # 객체 메타데이터 이름 (S3에서는 x-amz-meta-sha256으로 저장됨)
 
@@ -210,37 +209,10 @@ def download_bronze(store, target_dir, batch_month=None):
 # 처음 설정 · 상태 보기
 # ===========================================================================
 
-def init_env(env_file=None):
-    """.env에 이 PC 전용 S3 계정 키가 없으면 새로 만들어 덧붙입니다.
-
-    로컬 저장소(127.0.0.1)에만 쓰는 키라 무작위로 만들어도 됩니다. 키 값은 화면에 출력하지 않습니다.
-    Returns: 새로 쓴 이름 목록 (이미 있으면 빈 목록)
-    """
-    env_file = Path(env_file or config.PROJECT_ROOT / ".env")
-    existing = env_file.read_text(encoding="utf-8-sig") if env_file.exists() else ""
-    present = {line.partition("=")[0].strip() for line in existing.splitlines() if line.partition("=")[2].strip()}
-    new_values = {
-        "S3_ACCESS_KEY": secrets.token_hex(10),
-        "S3_SECRET_KEY": secrets.token_urlsafe(30),
-        "S3_PORT": DEFAULT_S3_PORT,
-    }
-    to_write = {name: value for name, value in new_values.items() if name not in present}
-    if to_write:
-        block = ["# 로컬 객체 저장소(SeaweedFS) 계정 · 이 PC에서만 쓰는 값 (object_store.init_env가 만듦)"]
-        block += [f"{name}={value}" for name, value in to_write.items()]
-        separator = ""
-        if existing:
-            # 기존 내용 끝에 줄바꿈이 없으면 붙여 쓰지 않도록 하나 넣고, 한 줄을 띄워 구분합니다.
-            separator = ("" if existing.endswith("\n") else "\n") + "\n"
-        with open(env_file, "a", encoding="utf-8") as file:
-            file.write(separator + "\n".join(block) + "\n")
-    return list(to_write)
-
-
 def main():
     parser = argparse.ArgumentParser(description="Bronze 객체 저장소(SeaweedFS) 도구")
     commands = parser.add_subparsers(dest="command", required=True)
-    commands.add_parser("init-env", help=".env에 로컬 S3 계정 키 만들기")
+    commands.add_parser("init-env", help=".env에 로컬 서비스 계정 만들기 (python -m future_stress.local_env와 같음)")
     status = commands.add_parser("status", help="버킷에 있는 객체 보기")
     status.add_argument("--prefix", default="")
     upload = commands.add_parser("upload", help="data/bronze를 버킷에 올리기")

@@ -12,17 +12,19 @@ MinIO 무료판 이미지가 Docker Hub에서 지워져 같은 S3 API의 Seaweed
 ### Docker Compose (시작함)
 
 - **왜:** 저장소, PostgreSQL, Airflow를 각자 설치하면 PC마다 버전 · 설정이 달라집니다. Compose 파일 하나로 같은 환경을 띄우고 지울 수 있습니다.
-- **지금:** `docker-compose.yml`에 SeaweedFS 하나. 버전 고정, 키는 `.env`에서만, healthcheck로 준비 확인 (2026-10-21).
+- **지금:** `docker-compose.yml`에 SeaweedFS(객체 저장소) · PostgreSQL(웨어하우스) 두 개. 버전 고정, 계정은 `local_env`가 `.env`에만 만듦, healthcheck로 준비 확인 (2026-10-21).
 - **확인할 것:** PostgreSQL · Airflow를 더한 뒤에도 새 PC에서 `docker compose up -d` 한 번으로 전체가 뜨는지.
 
 ## Phase 3 · 데이터 마트와 품질
 
-### PostgreSQL
+### ~~PostgreSQL~~ → 2026-10-21 raw 스키마부터 사용 중 ([15](15_postgresql.md)). silver · gold 스키마는 dbt와 함께
 
 - **왜:** Silver · Gold를 SQL로 조회할 수 있어야 대시보드나 다른 도구에서 쓸 수 있습니다. 파일(Parquet)과 달리 여러 사람이 동시에 읽고, 권한을 나누고, 테이블 사이 관계를 제약으로 걸 수 있습니다.
 - **확인할 것:** 층 이름이 스키마 이름(silver, gold)이 되는지, 파이썬 결과와 SQL 결과가 같은지.
 
-### dbt + dbt tests
+### dbt + dbt tests (다음: 3-2)
+
+- **실행 방법 (결정):** Docker 공식 이미지 `ghcr.io/dbt-labs/dbt-postgres:1.9.0`. dbt가 Python 3.14를 아직 지원하지 않을 수 있어, PC에 Python을 더 설치하지 않고 버전을 고정하려고.
 
 - **왜:** 지금 Silver → Gold 계산은 파이썬 함수입니다. dbt로 옮기면 SQL 모델 사이의 의존 관계가 그림(lineage)으로 보이고, 품질 검사(지금의 대사 10개)를 `not_null`, `unique`, `relationships`, 직접 만든 테스트로 선언할 수 있습니다.
 - **확인할 것:** 같은 데이터로 dbt 결과와 파이썬 결과가 같은지, 지금의 대사 검사가 dbt tests로 모두 옮겨지는지.

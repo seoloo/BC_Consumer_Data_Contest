@@ -68,7 +68,7 @@
       <div class="arrow-r"><svg viewBox="0 0 26 26"><path d="M5 13h15M14 6.5l6.5 6.5-6.5 6.5" fill="none" stroke="#AEB6C4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <div class="node"><span class="n-step">변환</span><h4>데이터 웨어하우스</h4>
         <div class="wh">
-          <div style="background:#FBEFE6;color:#A0522D"><b>bronze</b><span>저장소 원본을 그대로 불러옴</span><code>bronze.card_spending</code></div>
+          <div style="background:#FBEFE6;color:#A0522D"><b>raw</b><span>저장소 원본을 표기 그대로 불러옴</span><code>raw.card_spending</code></div>
           <div style="background:#EEF1F5;color:#5F6B7A"><b>silver</b><span>코드, 이름, 단위 정리</span><code>stg_card_spending</code></div>
           <div style="background:#B7860B;color:#fff"><b>gold</b><span style="color:#FFF3CF">Stress, 4유형, 상권 정보</span><code style="color:#9A6F00">mart_future_stress</code></div>
         </div>
@@ -110,7 +110,7 @@
       <div class="dag">
         <div class="task"><b>collect_sources</b><span>데이터 받기</span></div><span class="to">→</span>
         <div class="task"><b>land_bronze_files</b><span>SeaweedFS에 보관</span></div><span class="to">→</span>
-        <div class="task"><b>load_bronze_tables</b><span>DB로 불러오기</span></div>
+        <div class="task"><b>load_raw_tables</b><span>DB로 불러오기</span></div>
       </div>
       <div class="dag">
         <span class="to">→</span>

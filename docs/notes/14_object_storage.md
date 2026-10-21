@@ -23,7 +23,7 @@ Bronze 원본을 이 PC 폴더 대신 **S3 호환 객체 저장소(SeaweedFS)** 
 | 무엇 | 어디 | 핵심 |
 |---|---|---|
 | 저장소 띄우기 | `docker-compose.yml` | `chrislusf/seaweedfs:4.48` 버전 고정, `127.0.0.1:59100`(이 PC에서만 접속), 데이터는 Docker 볼륨, healthcheck |
-| 계정 키 | `object_store.init_env()`, `.env` | 이 PC 전용 키를 무작위로 만들어 `.env`에만 저장(화면에 출력 안 함). 컨테이너는 시작할 때 이 키로 계정 설정 파일을 만듦 |
+| 계정 키 | `local_env.init_env()`(예전 `object_store init-env`도 같음), `.env` | 이 PC 전용 키를 무작위로 만들어 `.env`에만 저장(화면에 출력 안 함). 컨테이너는 시작할 때 이 키로 계정 설정 파일을 만듦 |
 | 저장소 창구 | `object_store.ObjectStore` | boto3 클라이언트를 밖에서 받음(의존성 주입) → 테스트는 가짜 클라이언트로 Docker 없이 |
 | 올리기 | `upload_bronze()` | 키 = `batch_month=202606/<원본 종류>/<파일>`. 객체 메타데이터에 SHA-256을 적고, 같으면 안 올림 |
 | 받기 | `download_bronze()` | 받은 파일의 지문을 영수증(`_manifest.json`)과 다시 맞춤. 다르면 `DataQualityError`로 멈춤 |
