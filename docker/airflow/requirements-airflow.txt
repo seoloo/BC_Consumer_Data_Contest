@@ -1,0 +1,10 @@
+# Airflow 컨테이너(Python 3.12)에 설치하는 이 프로젝트의 의존성. 이 PC의 .venv와 같은 버전으로 고정합니다.
+# (matplotlib는 흐름도 그리기에만 쓰여 넣지 않음)
+pandas==3.0.6
+numpy==2.5.4
+scipy==1.18.1
+pyarrow==26.0.0
+openpyxl==3.1.5
+requests==2.34.2
+boto3==1.43.116
+psycopg[binary]==3.3.6

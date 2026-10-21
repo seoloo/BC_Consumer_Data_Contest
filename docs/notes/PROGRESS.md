@@ -3,6 +3,14 @@
 날짜별로 무엇을, 왜(사용자 말), 어떻게 했고, 숫자로 무엇을 확인했는지 적습니다. 최신이 위입니다.
 기술마다 정리한 내용은 [README 목차](README.md)의 주제 문서에 있습니다.
 
+## 2026-10-21 — Airflow 월 배치 (Phase 4-2)
+
+- 사용자가 다음 작업으로 '4-2 Airflow'를 고름. PR #2는 '지금 main에 합치기'.
+- 이 PC의 공식 이미지(3.1.7) 위에 프로젝트 의존성 + dbt 1.9.0(별도 가상환경)을 얹은 이미지, `airflow standalone`, 기록 DB는 같은 PostgreSQL의 `airflow` 데이터베이스, 평소엔 안 띄움(`--profile airflow`).
+- DAG `future_stress_monthly`: 새 원본 확인 → Bronze → 저장소 → raw → (dbt ‖ 파이썬) → 비교. 일은 `orchestration.py`가, DAG는 순서만. 파이프라인의 뒷부분을 `build_layers_and_export()`로 떼어 냄.
+- 6월 배치 8단계 성공(67초), 다시 돌려도 '변경 없음'. backfill: 2 ~ 5월 1일 실행은 건너뜀, 7월 1일 실행(배치 202606)만 처리.
+- 부딪힌 문제 3가지: 기록 DB가 생기기 전에 공식 이미지가 접속 확인 → `CONNECTION_CHECK_MAX_COUNT=0` / dbt 폴더 권한(root가 만든 dbt/logs) → `DBT_TARGET_PATH` · `DBT_LOG_PATH` / 배치 월이 UTC 때문에 한 달 어긋남 → 한국 시간 '지난달'로 고치고 테스트.
+
 ## 2026-10-21 — GitHub Actions CI (Phase 4-1)
 
 - 사용자 "Phase 4 진행해줘". 4-1 CI → 4-2 Airflow → 4-3 Streamlit → 4-4 운영 매뉴얼로 나눔. CI가 생기므로 작업 방식을 브랜치 → PR → CI → 합치기로 다시 바꿈.

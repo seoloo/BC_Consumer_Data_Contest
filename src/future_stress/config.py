@@ -45,6 +45,10 @@ ANALYSIS_MONTHS = [202601, 202602, 202603, 202604, 202605, 202606]
 FIRST_MONTH = ANALYSIS_MONTHS[0]
 LAST_MONTH = ANALYSIS_MONTHS[-1]
 
+# 배치 월을 정할 때 쓰는 시간대. Airflow는 실행 시각을 UTC로 넘겨주는데, 한국 시간 1일 0시는 UTC로는 전날이라
+# 그대로 읽으면 한 달이 어긋납니다 (orchestration.batch_month_for_run).
+TIMEZONE = "Asia/Seoul"
+
 # 장래인구 증감률의 기준연도와 비교연도.
 # "2026년 인구 대비 2035 · 2040년에 몇 % 늘거나 줄어드는가"를 계산합니다.
 POPULATION_BASE_YEAR = 2026

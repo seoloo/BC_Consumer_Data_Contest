@@ -85,6 +85,12 @@
 | **러너 (runner)** | 워크플로를 실제로 돌리는 서버. 실행마다 깨끗한 새 서버를 받음. | `ubuntu-latest` |
 | **PR (Pull Request)** | 브랜치의 변경을 main에 합쳐 달라는 요청. 여기서 CI 결과와 바뀐 내용을 함께 봄. | PR #2 |
 | **종료 코드** | 명령이 끝날 때 남기는 숫자. 0이면 성공, 그 밖은 실패. CI는 이것으로 판단. | `compare-gold` |
+| **Airflow · DAG** | 작업 흐름을 정해 진 시각에 순서대로 돌리는 도구 · 그 흐름(단계와 순서)을 적은 것. | `airflow/dags/`, [18](18_airflow.md) |
+| **task (단계)** | DAG 안의 일 하나. 따로 성공 · 실패 · 재시도 · 건너뜀 상태를 가짐. | `build_bronze` 등 8개 |
+| **short_circuit** | False를 돌려주면 뒤 단계를 '건너뜀'으로 두는 단계. 실패가 아님. | `has_new_batch` |
+| **backfill** | 지난 기간을 골라 다시 돌리는 것. 멱등해야 안전함. | `airflow backfill create` |
+| **XCom** | 단계 사이에 작은 값을 넘기는 Airflow 저장소. 큰 표는 넘기지 않음. | 단계별 요약 dict |
+| **배치 월** | 한 번에 도착한 원본 묶음의 이름(BC카드 파일 이름의 끝월). DAG는 실행 시각(한국 시간)의 지난달을 처리. | `batch_month=202606` |
 | **브랜치 · 병합** | 작업을 main과 떼어 따로 하는 갈래 · 다 확인한 뒤 main에 합치는 것. | `feature/*`, [12](12_docs_and_git.md) |
 
 ## 분석

@@ -178,9 +178,9 @@
 
       <tr class="group-row"><td colspan="4">운영 · 제공</td></tr>
       <tr>
-        <td class="layer-cell"><span class="lname">스케줄링</span><br><span class="lphase t-amber">Phase 4</span></td>
-        <td class="tech-cell"><span class="tname">Airflow</span><span class="tsub">월 배치 DAG</span></td>
-        <td class="why-cell">수집부터 대시보드까지 순서대로 돌리고, 실패하면 다시 시도하고, <b>지난 달을 다시 돌리는 일(backfill)</b>까지 한곳에서 관리합니다.</td>
+        <td class="layer-cell"><span class="lname">스케줄링</span><br><span class="lphase t-green">Phase 4 · 사용 중</span></td>
+        <td class="tech-cell"><span class="tname">Airflow</span><span class="tsub">월 배치 DAG · 3.1</span></td>
+        <td class="why-cell">원본 확인부터 dbt · 파이썬 비교까지 8단계로 나눠 매달 돌립니다. <b>지난달 다시 돌리기(backfill)</b>에서 원본이 없는 달은 건너뛰고, 같은 달을 다시 돌려도 '변경 없음'입니다.</td>
         <td class="alt-cell"><b>cron</b> · 작업 순서를 정하거나 실패한 지점부터 다시 돌리기가 어렵습니다.</td>
       </tr>
       <tr>
