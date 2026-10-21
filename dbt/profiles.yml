@@ -1,0 +1,24 @@
+# 접속 정보. 비밀번호는 여기에 적지 않고 docker compose가 넘겨주는 환경변수(.env)에서 읽습니다.
+# 호스트 'warehouse'는 docker-compose.yml의 PostgreSQL 서비스 이름입니다 (컨테이너끼리는 서비스 이름으로 접속).
+future_stress:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: "{{ env_var('POSTGRES_HOST', 'warehouse') }}"
+      port: "{{ env_var('POSTGRES_INTERNAL_PORT', '5432') | int }}"
+      user: "{{ env_var('POSTGRES_USER') }}"
+      password: "{{ env_var('POSTGRES_PASSWORD') }}"
+      dbname: "{{ env_var('POSTGRES_DB') }}"
+      schema: public
+      threads: 4
+    # 합성 데이터용. 스키마 이름 앞에 synthetic_ 을 붙여 원본 결과(silver)와 섞이지 않게 합니다.
+    synthetic:
+      type: postgres
+      host: "{{ env_var('POSTGRES_HOST', 'warehouse') }}"
+      port: "{{ env_var('POSTGRES_INTERNAL_PORT', '5432') | int }}"
+      user: "{{ env_var('POSTGRES_USER') }}"
+      password: "{{ env_var('POSTGRES_PASSWORD') }}"
+      dbname: "{{ env_var('POSTGRES_DB') }}"
+      schema: synthetic
+      threads: 4

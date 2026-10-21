@@ -22,7 +22,7 @@ MinIO 무료판 이미지가 Docker Hub에서 지워져 같은 S3 API의 Seaweed
 - **왜:** Silver · Gold를 SQL로 조회할 수 있어야 대시보드나 다른 도구에서 쓸 수 있습니다. 파일(Parquet)과 달리 여러 사람이 동시에 읽고, 권한을 나누고, 테이블 사이 관계를 제약으로 걸 수 있습니다.
 - **확인할 것:** 층 이름이 스키마 이름(silver, gold)이 되는지, 파이썬 결과와 SQL 결과가 같은지.
 
-### dbt + dbt tests (다음: 3-2)
+### dbt + dbt tests → 2026-10-21 Silver부터 사용 중 ([16](16_dbt.md)). Gold는 3-3
 
 - **실행 방법 (결정):** Docker 공식 이미지 `ghcr.io/dbt-labs/dbt-postgres:1.9.0`. dbt가 Python 3.14를 아직 지원하지 않을 수 있어, PC에 Python을 더 설치하지 않고 버전을 고정하려고.
 

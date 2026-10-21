@@ -33,15 +33,17 @@ import csv
 import hashlib
 import io
 from dataclasses import dataclass
+from pathlib import Path
 
 import pandas as pd
 import psycopg
 from psycopg import sql
 
 from . import config
-from .io_utils import read_csv_with_encoding_fallback, read_env_value
+from .io_utils import read_csv_with_encoding_fallback, read_env_value, read_parquet
 from .local_env import DEFAULT_POSTGRES_DB, DEFAULT_POSTGRES_PORT, DEFAULT_POSTGRES_USER
 from .medallion import DataQualityError, bronze_path, file_fingerprint
+from .population import POPULATION_YEARS
 
 RAW_SCHEMA = "raw"
 SYNTHETIC_RAW_SCHEMA = "raw_synthetic"
@@ -269,18 +271,98 @@ def load_raw(bronze_dir, warehouse):
                          for table, build, fingerprint in raw_sources(bronze_dir)])
 
 
+# ===========================================================================
+# dbt Silver와 파이썬 Silver 비교 (Phase 3-2)
+# ===========================================================================
+
+# 파이썬 Silver 열 이름 → dbt Silver 열 이름. dbt는 SQL에서 다루기 쉬운 영어 열 이름을 씁니다.
+SILVER_COLUMN_MAPS = {
+    "card_spending": {
+        "dbt_table": "silver_card_spending",
+        "keys": {"기준년월": "base_month", "시도": "province", "시군구": "district", "성별": "sex",
+                 "연령대": "age_group", "업종코드": "industry_code", "업종명": "industry_name"},
+        "values": {"이용금액": "amount", "이용건수": "payment_count"},
+    },
+    "future_population": {
+        "dbt_table": "silver_future_population",
+        "keys": {"시도": "province", "시군구": "district", "연령대": "age_group"},
+        "values": {**{f"{year}년 인구": f"population_{year}" for year in POPULATION_YEARS},
+                   **{f"{year} 증감률": f"change_rate_{year}" for year in config.POPULATION_TARGET_YEARS}},
+    },
+}
+
+
+def read_table(warehouse, qualified):
+    """DB 표 전체를 DataFrame으로 읽습니다."""
+    with warehouse.connect() as connection, connection.cursor() as cursor:
+        cursor.execute(f"SELECT * FROM {qualified}")
+        columns = [column.name for column in cursor.description]
+        return pd.DataFrame(cursor.fetchall(), columns=columns)
+
+
+def compare_table(dbt_table, python_table, keys, values):
+    """두 표를 열쇠 열로 맞춰 값 열을 한 칸씩 비교합니다.
+
+    같은 열쇠가 여러 줄이면 합계로 묶어 비교합니다(행이 겹쳐도 비교가 부풀지 않게).
+    Returns: {'행 수 (dbt / 파이썬)', '비교한 칸', '다른 칸', '한쪽에만', '결과'}
+    """
+    def prepare(table):
+        table = table.copy()
+        for column in values:
+            table[column] = pd.to_numeric(table[column], errors="coerce").astype(float)
+        for column in keys:
+            table[column] = table[column].astype(str)
+        return table.groupby(keys, as_index=False)[values].sum(min_count=1)
+
+    left, right = prepare(dbt_table), prepare(python_table)
+    merged = left.merge(right, on=keys, how="outer", suffixes=("_dbt", "_python"), indicator=True)
+    both = merged[merged["_merge"] == "both"]
+    different = 0
+    for column in values:
+        a, b = both[f"{column}_dbt"], both[f"{column}_python"]
+        different += int((((a - b).abs() > 1e-6) | (a.isna() != b.isna())).sum())
+    one_side = int((merged["_merge"] != "both").sum())
+    return {
+        "행 수 (dbt / 파이썬)": f"{len(dbt_table):,} / {len(python_table):,}",
+        "비교한 칸": len(both) * len(values), "다른 칸": different, "한쪽에만": one_side,
+        "결과": "일치" if different == 0 and one_side == 0 and len(dbt_table) == len(python_table) else "불일치",
+    }
+
+
+def compare_silver(warehouse, silver_dir=None, silver_schema="silver"):
+    """dbt가 만든 Silver(PostgreSQL)와 파이썬이 만든 Silver(Parquet)가 같은지 확인합니다.
+
+    같다면 Silver 규칙을 dbt로 옮겨도 결과가 바뀌지 않았다는 뜻입니다. (리팩토링 때 발표 결과 6/6과 같은 역할)
+    """
+    silver_dir = Path(silver_dir or config.SILVER_DIR)
+    rows = []
+    for python_name, mapping in SILVER_COLUMN_MAPS.items():
+        python_table = read_parquet(silver_dir / f"{python_name}.parquet")
+        python_table = python_table.rename(columns={**mapping["keys"], **mapping["values"]})
+        dbt_table = read_table(warehouse, f"{silver_schema}.{mapping['dbt_table']}")
+        rows.append({"표": f"{silver_schema}.{mapping['dbt_table']}",
+                     **compare_table(dbt_table, python_table, list(mapping["keys"].values()),
+                                     list(mapping["values"].values()))})
+    return pd.DataFrame(rows)
+
+
 def main():
-    parser = argparse.ArgumentParser(description="PostgreSQL raw 스키마 적재 도구")
+    parser = argparse.ArgumentParser(description="PostgreSQL raw 스키마 적재 · dbt 결과 비교 도구")
     commands = parser.add_subparsers(dest="command", required=True)
     load = commands.add_parser("load-raw", help="Bronze 원본을 raw 스키마에 적재")
     load.add_argument("--bronze-dir", default=config.BRONZE_DIR)
     commands.add_parser("status", help="표마다 행 수와 마지막 적재")
+    compare = commands.add_parser("compare-silver", help="dbt Silver와 파이썬 Silver(data/silver) 비교")
+    compare.add_argument("--silver-dir", default=config.SILVER_DIR)
+    compare.add_argument("--silver-schema", default="silver", help="합성 데이터는 synthetic_silver")
     arguments = parser.parse_args()
 
     try:
         warehouse = Warehouse.from_environment()
         if arguments.command == "load-raw":
             print(load_raw(arguments.bronze_dir, warehouse).to_string(index=False))
+        elif arguments.command == "compare-silver":
+            print(compare_silver(warehouse, arguments.silver_dir, arguments.silver_schema).to_string(index=False))
         else:
             print(warehouse.status().to_string(index=False))
     except ValueError as error:

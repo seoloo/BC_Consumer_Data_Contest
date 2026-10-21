@@ -1,0 +1,38 @@
+version: 2
+
+# 기준표 (ref 스키마). 코드를 바꾸는 규칙을 SQL 안에 숨기지 않고 표로 보이게 둡니다.
+# 파이썬 src/future_stress/age_groups.py의 딕셔너리와 같은 내용입니다.
+seeds:
+  - name: age_groups
+    description: 분석에서 쓰는 6개 연령대와 순서
+    columns:
+      - name: age_group
+        data_tests: [unique, not_null]
+
+  - name: bc_age_codes
+    description: BC카드 AGE_CD → 연령대. 이 표에 없는 코드(x 등)는 Silver에서 빠짐
+    config:
+      column_types: {age_cd: text, age_group: text}
+    columns:
+      - name: age_cd
+        data_tests: [unique, not_null]
+      - name: age_group
+        data_tests:
+          - relationships: {to: ref('age_groups'), field: age_group}
+
+  - name: bc_gender_codes
+    description: BC카드 GENDER_CD → 성별. 이 표에 없는 코드(3 · x)는 개인이 아닌 결제라 Silver에서 빠짐
+    config:
+      column_types: {gender_cd: text, sex: text}
+    columns:
+      - name: gender_cd
+        data_tests: [unique, not_null]
+
+  - name: seoul_five_year_age_labels
+    description: >
+      서울 장래인구에서 쓰는 5세 구간 표기 목록. 발표 결과 재현용으로 원래 노트북의 목록을 그대로 둡니다.
+      주의: 마지막 '90세 이상'은 원본 파일에 없는 표기라(실제는 '90~94세' · '95세 이상') 서울 90세 이상 인구가 빠집니다.
+      (docs/refactoring_notes.md 4절, docs/notes/07)
+    columns:
+      - name: age_label
+        data_tests: [unique, not_null]

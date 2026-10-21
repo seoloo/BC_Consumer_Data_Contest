@@ -3,6 +3,14 @@
 날짜별로 무엇을, 왜(사용자 말), 어떻게 했고, 숫자로 무엇을 확인했는지 적습니다. 최신이 위입니다.
 기술마다 정리한 내용은 [README 목차](README.md)의 주제 문서에 있습니다.
 
+## 2026-10-21 — dbt Silver 모델 (Phase 3-2) · 작업 방식 바꿈
+
+- 사용자 "근데 굳이 브랜치를 나눠서 할 필요 있을까?" → 혼자 작업하고 바로 합쳐서 이득이 적다고 설명, 사용자 "응 그렇게 하고 main에 합친 다음 3-2 진행해줘". 이제 main에 바로 커밋 · 푸시 (12 참고).
+- `docker-compose.yml`에 dbt(`ghcr.io/dbt-labs/dbt-postgres:1.9.0`, `profiles: ["tools"]`) 추가. `dbt/` 프로젝트: seed 기준표 4개, Silver 모델 2개, 테스트 25개(직접 만든 중복 · 대사 테스트 포함), 스키마 이름 규칙 매크로.
+- `dbt build` 31개 모두 통과(2.6초). `warehouse compare-silver`: **카드 318,470칸 · 장래인구 3,024칸 모두 파이썬 Silver와 같음.** 합성 데이터(`synthetic_` 스키마)도 같음.
+- 반올림 방식 차이(pandas 짝수 쪽 vs PostgreSQL 0에서 먼 쪽)를 걱정했지만 증감률 1,296칸 모두 같았음.
+- 테스트 64개.
+
 ## 2026-10-21 — PostgreSQL raw 스키마 (Phase 3-1)
 
 - 사용자 "응 합치고 Docker로 3-1 진행해줘". dbt는 Python 3.14 지원이 불확실해 Docker 공식 이미지로 하기로 (`ghcr.io/dbt-labs/dbt-postgres:1.9.0` 받을 수 있는 것 확인).

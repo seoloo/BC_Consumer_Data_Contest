@@ -164,13 +164,13 @@
         <td class="alt-cell"><b>DuckDB</b> · 가볍고 편하지만 권한이나 동시 접속 같은 운영 부분을 다뤄 볼 수 없습니다.</td>
       </tr>
       <tr>
-        <td class="layer-cell"><span class="lname">변환</span><br><span class="lphase t-violet">Phase 3</span></td>
-        <td class="tech-cell"><span class="tname">dbt</span><span class="tsub">SQL 모델</span></td>
-        <td class="why-cell">Phase 1에서 나눠 둔 함수를 하나씩 SQL 모델로 옮깁니다. 어떤 표가 어디서 왔는지 보여주는 <b>계보 문서와 테스트</b>가 함께 생깁니다.</td>
+        <td class="layer-cell"><span class="lname">변환</span><br><span class="lphase t-green">Phase 3 · Silver 사용 중</span></td>
+        <td class="tech-cell"><span class="tname">dbt</span><span class="tsub">SQL 모델 · Docker로 실행</span></td>
+        <td class="why-cell">Phase 1에서 나눠 둔 함수를 SQL 모델로 옮기고 있습니다. Silver 두 표를 옮겨 파이썬 결과와 <b>32만 칸이 모두 같았고</b>, 코드 → 이름 규칙은 기준표(seed)로 보입니다.</td>
         <td class="alt-cell"><b>파이썬 스크립트, 프로시저</b> · 표가 많아지면 출처와 검사 내용을 따라가기 어렵습니다.</td>
       </tr>
       <tr>
-        <td class="layer-cell"><span class="lname">품질 검사</span><br><span class="lphase t-violet">Phase 3</span></td>
+        <td class="layer-cell"><span class="lname">품질 검사</span><br><span class="lphase t-green">Phase 3 · 사용 중</span></td>
         <td class="tech-cell"><span class="tname">dbt tests</span><span class="tsub">+ 대사 쿼리</span></td>
         <td class="why-cell">빈 값, 이상한 연령대, 없는 지역 코드, 6개월 누락, <b>원본 합계와 결과 합계</b>를 매번 자동으로 맞춰 봅니다.</td>
         <td class="alt-cell"><b>눈으로 확인</b> · 공모전 때 '20대미만'과 '20대이하'가 달라서, 합친 뒤에야 빈칸을 발견했습니다.</td>

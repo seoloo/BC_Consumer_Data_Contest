@@ -1,0 +1,22 @@
+version: 2
+
+# raw 스키마: 파이썬(src/future_stress/warehouse.py)이 Bronze 원본을 표기 그대로 넣은 표. dbt는 읽기만 합니다.
+sources:
+  - name: raw
+    schema: "{{ var('raw_schema') }}"
+    tables:
+      - name: card_spending
+        description: BC카드 결제 원본 (CSV 그대로, 개인이 아닌 결제 포함)
+        columns:
+          - name: strd_yymm
+            data_tests: [not_null]
+          - name: amt
+            data_tests: [not_null]
+      - name: future_population
+        description: 서울 · 부산 · 경기 장래인구 원본 (표기 그대로, 연도 열만 세로로)
+        columns:
+          - name: province
+            data_tests:
+              - accepted_values: {values: ['서울특별시', '부산광역시', '경기도']}
+          - name: year
+            data_tests: [not_null]

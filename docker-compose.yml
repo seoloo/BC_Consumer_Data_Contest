@@ -1,6 +1,9 @@
 # 이 프로젝트를 돌리는 데 필요한 로컬 서비스.
 #   object-store  Bronze 원본을 보관하는 S3 호환 객체 저장소(SeaweedFS)   기록: docs/notes/14_object_storage.md
 #   warehouse     raw · silver · gold 스키마를 둘 데이터 웨어하우스(PostgreSQL)  기록: docs/notes/15_postgresql.md
+#   dbt           raw → silver SQL 모델 · 테스트 (필요할 때만 실행)                 기록: docs/notes/16_dbt.md
+#
+# dbt 실행 (up으로는 뜨지 않고 run으로만):  docker compose run --rm dbt build
 #
 # 처음 한 번 (저장소 루트에서, PowerShell은 한 줄씩)
 #   .venv\Scripts\python -m future_stress.local_env               # .env에 로컬 전용 계정 만들기 (S3 · PostgreSQL)
@@ -60,6 +63,25 @@ services:
       timeout: 3s
       retries: 30
     restart: unless-stopped
+
+  dbt:
+    # dbt가 Python 3.14를 아직 지원하지 않을 수 있어, PC에 Python을 더 설치하지 않고 공식 이미지로 돌립니다 (버전 고정).
+    image: ghcr.io/dbt-labs/dbt-postgres:1.9.0
+    # profiles에 넣으면 'docker compose up'으로는 뜨지 않고, 'docker compose run --rm dbt ...'로만 실행됩니다.
+    # dbt는 계속 떠 있는 서버가 아니라 한 번 돌고 끝나는 명령이기 때문입니다.
+    profiles: ["tools"]
+    depends_on:
+      warehouse:
+        condition: service_healthy
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?먼저 python -m future_stress.local_env 를 실행해 주세요}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?먼저 python -m future_stress.local_env 를 실행해 주세요}
+      POSTGRES_DB: ${POSTGRES_DB:-future_stress}
+      POSTGRES_HOST: warehouse          # 컨테이너끼리는 서비스 이름으로 접속
+      DBT_PROFILES_DIR: /usr/app/dbt    # 저장소의 dbt/profiles.yml (비밀번호는 위 환경변수에서)
+    volumes:
+      - ./dbt:/usr/app/dbt
+    working_dir: /usr/app/dbt
 
 volumes:
   object-store-data:

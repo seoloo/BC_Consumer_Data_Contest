@@ -38,3 +38,8 @@ data/synthetic/
 
 # Claude Code 개인 설정
 .claude/settings.local.json
+
+# dbt 실행 결과물 (매번 새로 만들어짐)
+dbt/target/
+dbt/logs/
+dbt/dbt_packages/

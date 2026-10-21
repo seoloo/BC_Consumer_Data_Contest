@@ -66,7 +66,9 @@ def find_part_numbers(html_text):
 
 def capture(html_path, png_path, width, height, browser):
     """HTML 한 개를 PNG로 캡처하고 아래쪽 빈 배경을 잘라냅니다. 남은 높이(CSS px)를 돌려줍니다."""
-    with tempfile.TemporaryDirectory() as profile_dir:   # 매번 깨끗한 브라우저 프로필 사용
+    # 매번 깨끗한 브라우저 프로필 사용. Chrome이 끝난 직후에도 잠깐 파일을 잡고 있어 지우기가 실패할 때가 있는데,
+    # 임시 폴더 정리 실패 때문에 그림 저장까지 멈추지 않도록 정리 오류는 무시합니다 (Windows에서 실제로 발생).
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as profile_dir:
         subprocess.run(
             [
                 str(browser), "--headless=new", "--disable-gpu", "--hide-scrollbars", "--no-first-run",

@@ -67,7 +67,7 @@
     <h1>공모전 노트북에서 데이터 파이프라인까지</h1>
     <p class="lede">공모전 노트북을 데이터 파이프라인으로 옮겨 가는 과정입니다. 단계가 하나 끝날 때마다 이 그림도 고칩니다.</p>
   </div>
-  <div class="version"><b>로드맵 v8</b><br>2026-10-21 PostgreSQL raw</div>
+  <div class="version"><b>로드맵 v9</b><br>2026-10-21 dbt Silver</div>
 </div>
 
 <div data-part="1" class="goal">
@@ -139,7 +139,8 @@
         <p class="p-goal">Silver와 Gold 계산을 SQL 모델로 옮기고 숫자 확인을 붙입니다.</p>
         <div><div class="block-label">할 일</div><ul class="todo">
           <li class="ok">PostgreSQL raw 스키마에 원본 적재 (3-1)</li>
-          <li>dbt Silver · Gold 모델, 지역 · 연령 기준표 (3-2 · 3-3)</li>
+          <li class="ok">dbt Silver 모델 · 기준표 seed (3-2, 파이썬과 일치)</li>
+          <li>dbt Gold 모델 (3-3)</li>
           <li>dbt tests, 원본과 결과 합계 비교 리포트</li>
           <li>ERD, 데이터 출처 문서</li></ul></div>
         <div class="techs"><span class="tech">PostgreSQL</span><span class="tech">dbt</span><span class="tech">SQL</span></div>
@@ -174,7 +175,8 @@
         <div class="log-row"><span class="date">2026-10-21</span><span class="dot" style="background:var(--green)"></span><div><b>KOSIS 인구 수집기</b><p>서울 · 경기 장래인구를 API로 받아, 예전에 내려받은 파일과 4,640칸이 모두 같은 것을 확인했습니다. 시도 합계 행 이름이 원본마다 달라 처음엔 불일치가 났습니다.</p></div></div>
         <div class="log-row"><span class="date">2026-10-21</span><span class="dot" style="background:var(--green)"></span><div><b>Bronze를 SeaweedFS로</b><p>MinIO 무료판 이미지가 사라져 같은 S3 방식의 SeaweedFS로 바꿨습니다. 원본 60개를 배치 월 폴더에 올리고 받아 지문을 맞춰 봤고, 발표 숫자도 그대로입니다.</p></div></div>
         <div class="log-row"><span class="date">2026-10-21</span><span class="dot" style="background:var(--green)"></span><div><b>PostgreSQL raw 스키마</b><p>원본을 표기 그대로 DB에 넣었습니다. SQL만으로 개인 결제 159,235행 · 14.89조가 나와 파이썬 Silver와 같았습니다.</p></div></div>
-        <div class="log-row"><span class="date">다음</span><span class="dot" style="background:var(--primary)"></span><div><b>dbt Silver 모델</b><p>개인 결제 거르기, 코드 → 이름, 5세 구간 고르기를 SQL 모델과 dbt tests로 옮길 계획입니다.</p></div></div>
+        <div class="log-row"><span class="date">2026-10-21</span><span class="dot" style="background:var(--green)"></span><div><b>dbt Silver 모델</b><p>Silver 규칙을 SQL 모델과 테스트 25개로 옮겼습니다. 파이썬 Silver와 32만 칸을 비교해 모두 같았습니다.</p></div></div>
+        <div class="log-row"><span class="date">다음</span><span class="dot" style="background:var(--primary)"></span><div><b>dbt Gold 모델</b><p>연령별 소비구조, Future Stress, 4유형을 SQL로 옮기고 발표 결과 6/6이 그대로인지 볼 계획입니다.</p></div></div>
       </div>
     </div>
     <div class="card pad stack" style="gap:12px">

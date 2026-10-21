@@ -48,6 +48,18 @@
 - 검사가 실제로 동작하는지는 테스트로 확인합니다. Silver에서 한 행만 지워도 '카드 행 수 대사'가 실패합니다 (`test_quality_check_detects_lost_rows`).
 - 합성 데이터에서도 같은 10개가 모두 통과합니다 (179,702 − 66,206 = 113,496행).
 
+## dbt tests로 옮긴 것 (2026-10-21, Phase 3-2)
+
+| 파이썬 검사 | dbt |
+|---|---|
+| 1 · 2 카드 행 수 · 금액 대사 | `tests/assert_card_silver_reconciles_with_raw.sql` (raw = Silver + 뺀 결제) |
+| 3 연령대 허용값 | `relationships` (Silver 연령대 → `ref.age_groups`) |
+| 4 장래인구 연령대 허용값 | 같은 `relationships` |
+| (새로) 한 시군구 · 연령대에 한 줄 | `unique_combination` (직접 만든 일반 테스트) |
+| 5 ~ 10 (Gold 대사 · 매칭 · 완전관측) | 3-3에서 Gold 모델과 함께 |
+
+파이썬 검사는 그대로 두고 둘 다 돌립니다. dbt가 Gold까지 맡기 전까지는 파이썬이 기준입니다.
+
 ## 다른 방법과 고르지 않은 이유
 
 | 방법 | 고르지 않은 이유 |

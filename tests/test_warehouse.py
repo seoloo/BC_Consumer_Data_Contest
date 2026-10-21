@@ -111,3 +111,26 @@ def test_failed_load_keeps_previous_table(test_warehouse, bronze_dir):
     with pytest.raises(psycopg.errors.InvalidTextRepresentation):
         test_warehouse.load(table, broken_frame, "다른 지문")       # 지문이 달라 다시 적재를 시도함
     assert table_count(test_warehouse, table.name) == before
+
+
+# ===========================================================================
+# dbt Silver ↔ 파이썬 Silver 비교 함수 (DB 없이)
+# ===========================================================================
+
+def test_compare_table_finds_differences():
+    """같으면 '일치', 한 칸만 달라도 · 한쪽에만 있는 줄이 있어도 '불일치'를 내야 합니다."""
+    import pandas as pd
+
+    from future_stress.warehouse import compare_table
+
+    dbt = pd.DataFrame({"district": ["종로구", "중구"], "age_group": ["20대", "20대"], "amount": [100, 200]})
+    python = dbt.copy()
+    assert compare_table(dbt, python, ["district", "age_group"], ["amount"])["결과"] == "일치"
+
+    python.loc[1, "amount"] = 201
+    result = compare_table(dbt, python, ["district", "age_group"], ["amount"])
+    assert (result["결과"], result["다른 칸"]) == ("불일치", 1)
+
+    extra = pd.concat([dbt, pd.DataFrame({"district": ["용산구"], "age_group": ["30대"], "amount": [5]})])
+    result = compare_table(extra, dbt, ["district", "age_group"], ["amount"])
+    assert (result["결과"], result["한쪽에만"]) == ("불일치", 1)

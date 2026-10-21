@@ -1,0 +1,39 @@
+# dbt 프로젝트 설정 · Phase 3 (기록: docs/notes/16_dbt.md)
+#
+# 실행 (저장소 루트에서, docker compose up -d 뒤)
+#   docker compose run --rm dbt build          # seed → 모델 → 테스트를 순서대로
+#   docker compose run --rm dbt build --vars "{raw_schema: raw_synthetic}" --target synthetic   # 합성 데이터
+#
+# 층과 스키마
+#   raw     파이썬(warehouse.py)이 원본을 표기 그대로 넣은 곳. dbt는 읽기만 합니다 (models/sources.yml)
+#   ref     코드 · 이름 기준표 (seeds/*.csv)
+#   silver  거르기 · 코드 → 이름 · 표준화 (models/silver/)
+
+name: future_stress
+version: "0.1.0"
+config-version: 2
+profile: future_stress
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+target-path: "target"
+clean-targets: ["target", "logs"]
+
+vars:
+  # raw 스키마 이름. 합성 데이터는 raw_synthetic (warehouse.py가 나눠 넣음)
+  raw_schema: raw
+  # 기준연도와 비교연도 (src/future_stress/config.py와 같은 값)
+  base_year: 2026
+  target_years: [2030, 2035, 2040]
+
+seeds:
+  future_stress:
+    +schema: ref
+
+models:
+  future_stress:
+    silver:
+      +schema: silver
+      +materialized: table

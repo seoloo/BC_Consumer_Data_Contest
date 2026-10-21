@@ -59,7 +59,13 @@
 | **볼륨** | 컨테이너를 지워도 남는 데이터 보관 공간. | `object-store-data` |
 | **healthcheck** | 컨테이너가 일할 준비가 됐는지 주기적으로 확인하는 설정. 준비되면 `healthy`. | `docker-compose.yml` |
 | **psycopg** | 파이썬에서 PostgreSQL에 연결하는 라이브러리. | `warehouse.py` |
-| **dbt** | DB 안의 표를 SQL 파일(모델)로 바꿔 가는 도구. 모델 사이 관계를 알아서 순서대로 만들고, 테스트를 붙일 수 있음. | Phase 3-2부터, [13](13_planned.md) |
+| **dbt** | DB 안의 표를 SQL 파일(모델)로 바꿔 가는 도구. 모델 사이 관계를 알아서 순서대로 만들고, 테스트를 붙일 수 있음. | `dbt/`, [16](16_dbt.md) |
+| **dbt 모델** | SELECT 문 하나 = 표 하나. dbt가 실행해 표로 만들어 둠. | `dbt/models/silver/*.sql` |
+| **source · ref** | dbt 밖에서 들어온 표(raw) · dbt가 만든 다른 모델이나 seed. ref를 보고 만드는 순서를 정함. | `{{ source('raw', ...) }}`, `{{ ref(...) }}` |
+| **seed** | 저장소의 작은 CSV를 표로 올린 것. 여기서는 코드 → 이름 기준표. | `dbt/seeds/*.csv` |
+| **dbt test** | '문제가 되는 행'을 찾는 SELECT. 0행이면 통과. 기본 제공(not_null 등)과 직접 만든 것이 있음. | `schema.yml`, `dbt/tests/` |
+| **lineage (계보)** | 어떤 표가 어떤 표에서 만들어졌는지의 연결. dbt가 ref로 알아냄. | `dbt docs` |
+| **매크로 (macro)** | SQL 안에서 되풀이해 쓰는 조각을 함수처럼 만든 것. | `dbt/macros/` |
 | **boto3** | 파이썬에서 S3 API를 쓰는 표준 라이브러리. | `object_store.py` |
 | **pytest · fixture** | 파이썬 테스트 도구 · 여러 테스트가 함께 쓰는 준비물(예: 합성 원본 폴더). | `tests/`, `conftest.py` |
 | **가짜 객체 (fake)** | 실제 서버 대신 같은 모양으로 대답하는 테스트용 객체. 서버 없이도 테스트가 돌게 함. | `FakeS3Client`, `FakeSession` |

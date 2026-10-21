@@ -1,0 +1,35 @@
+version: 2
+
+models:
+  - name: silver_card_spending
+    description: 개인 결제만 남기고 코드를 이름으로 바꾼 BC카드 결제 (파이썬 Silver card_spending과 같은 내용)
+    columns:
+      - name: base_month
+        data_tests: [not_null]
+      - name: province
+        data_tests: [not_null]
+      - name: district
+        data_tests: [not_null]
+      - name: sex
+        data_tests:
+          - accepted_values: {values: ['남성', '여성']}
+      - name: age_group
+        data_tests:
+          - not_null
+          - relationships: {to: ref('age_groups'), field: age_group}
+      - name: amount
+        data_tests: [not_null]
+
+  - name: silver_future_population
+    description: 시도 × 시군구 × 연령대 장래인구와 2026년 대비 증감률 (파이썬 Silver future_population과 같은 내용)
+    data_tests:
+      # 한 시도 · 시군구 · 연령대에 한 줄만 있어야 Gold에서 결제와 붙일 때 두 번 세지 않습니다.
+      - unique_combination:
+          columns: [province, district, age_group]
+    columns:
+      - name: age_group
+        data_tests:
+          - not_null
+          - relationships: {to: ref('age_groups'), field: age_group}
+      - name: population_2026
+        data_tests: [not_null]
