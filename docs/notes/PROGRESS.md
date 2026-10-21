@@ -3,6 +3,13 @@
 날짜별로 무엇을, 왜(사용자 말), 어떻게 했고, 숫자로 무엇을 확인했는지 적습니다. 최신이 위입니다.
 기술마다 정리한 내용은 [README 목차](README.md)의 주제 문서에 있습니다.
 
+## 2026-10-21 — GitHub Actions CI (Phase 4-1)
+
+- 사용자 "Phase 4 진행해줘". 4-1 CI → 4-2 Airflow → 4-3 Streamlit → 4-4 운영 매뉴얼로 나눔. CI가 생기므로 작업 방식을 브랜치 → PR → CI → 합치기로 다시 바꿈.
+- `.github/workflows/ci.yml`: 실행마다 새 무작위 계정(`local_env`) → `docker compose up -d --wait` → pytest 전체 → 합성 데이터 파이프라인(객체 저장소 + raw + 대사) → dbt build → dbt = 파이썬 비교.
+- `compare-silver` · `compare-gold`가 불일치면 실패 코드로 끝나게 바꿈. 올리기 전에 YAML 문법 오류(`{raw_schema: ...}`의 `: `)를 찾아 고침.
+- PR [#2](https://github.com/seoloo/BC_Consumer_Data_Contest/pull/2)에서 첫 CI 실행.
+
 ## 2026-10-21 — 데이터 사전 · ERD · 출처 문서 (Phase 3-4, Phase 3 완료)
 
 - 사용자 "응 3-4 진행해줘 그리고 작업 했던 내용들 자세히 설명해줘".

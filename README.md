@@ -2,6 +2,8 @@
 
 현재 매출이 성장하는 상권도 핵심 소비연령의 인구가 감소하면 미래 소비기반이 약해질 수 있습니다. 이 프로젝트는 BC Card 결제 데이터와 장래인구, NAVER 관심도 자료를 결합해 지역과 업종별 미래 구조위험을 진단하고 유형별 고객 및 상품 전략을 제안합니다.
 
+[![CI](https://github.com/seoloo/BC_Consumer_Data_Contest/actions/workflows/ci.yml/badge.svg)](https://github.com/seoloo/BC_Consumer_Data_Contest/actions/workflows/ci.yml)
+
 ## 목표와 쓰는 기술
 
 공모전 때 노트북으로 한 분석을 매달 수집 · 정리 · 검증 · 조회까지 자동으로 돌아가는 데이터 파이프라인으로 다시 만들고 있습니다. 기술마다 고른 이유와 일부러 쓰지 않은 기술을 함께 정리했습니다.
@@ -116,7 +118,8 @@ Future Stress가 음수이면 현재 소비구조가 미래 인구감소에 더 
 | 수집 | requests (KOSIS 장래인구 수집기 · NAVER API) | 사용 중 |
 | 원본 보관 | SeaweedFS (S3 호환, boto3), Docker Compose | 사용 중 |
 | 저장 · 변환 · 품질 | PostgreSQL (raw · silver · gold 스키마), dbt (Docker), dbt tests | 사용 중 |
-| 운영 · 제공 | Airflow, GitHub Actions, Streamlit | Phase 4 |
+| 자동 검사 | GitHub Actions (PR · main마다 합성 데이터로 전체 실행) | 사용 중 |
+| 운영 · 제공 | Airflow, Streamlit | Phase 4 |
 
 ## 실행 방법
 
@@ -191,6 +194,8 @@ docker compose run --rm dbt build
 ```powershell
 .venv\Scripts\python -m future_stress.pipeline --compare
 ```
+
+GitHub에서는 PR과 main에 올릴 때마다 [CI](.github/workflows/ci.yml)가 합성 데이터로 위 과정(테스트 → 파이프라인 → dbt → 파이썬 비교)을 처음부터 자동으로 돌립니다.
 
 ## 저장소 구성
 
