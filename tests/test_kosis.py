@@ -120,7 +120,7 @@ def test_collect_twice_gives_same_file(tmp_path):
 
 def test_api_rows_keep_only_five_year_totals():
     rows = [
-        api_row("경기도", "계", "0 - 4세", 2040, 999),          # 시도 합계 → 제외
+        api_row("경기", "계", "0 - 4세", 2040, 500),            # 시도 합계 (API는 짧은 이름) → '(시도 합계)'
         api_row("수원시", "계", "계", 2040, 999),               # 연령 합계 → 제외
         api_row("수원시", "계", "0세", 2040, 999),              # 1세 단위 → 제외
         api_row("수원시", "남자", "0 - 4세", 2040, 999),        # 남자 → 제외
@@ -129,6 +129,7 @@ def test_api_rows_keep_only_five_year_totals():
     ]
     table = five_year_population_from_api(rows, "경기도")
     assert table.to_dict("records") == [
+        {"시군구": "(시도 합계)", "연령구간": "0-4세", "연도": 2040, "인구": 500},
         {"시군구": "수원시", "연령구간": "0-4세", "연도": 2040, "인구": 10},
         {"시군구": "수원시", "연령구간": "95세이상", "연도": 2040, "인구": 3},
     ]
