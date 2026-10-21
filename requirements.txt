@@ -9,3 +9,4 @@ pyarrow
 pytest
 requests
 scipy
+streamlit

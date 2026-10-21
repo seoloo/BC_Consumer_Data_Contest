@@ -38,7 +38,7 @@ jobs:
           cache: pip
 
       - name: 패키지 설치
-        run: python -m pip install -e ".[dev]"
+        run: python -m pip install -e ".[dev,dashboard]"
 
       - name: 로컬 서비스 계정 만들기 (.env, 실행마다 새 무작위 값)
         run: python -m future_stress.local_env
@@ -63,6 +63,10 @@ jobs:
 
       - name: dbt Gold = 파이썬 Gold
         run: python -m future_stress.warehouse compare-gold --gold-dir data/synthetic/gold --gold-schema synthetic_gold
+
+      - name: 대시보드가 합성 gold를 읽기 전용으로 읽는지
+        # 앞의 pytest 때는 합성 gold가 아직 없어 건너뛴 통합 테스트를, dbt build 뒤에 다시 돌림
+        run: python -m pytest -q tests/test_dashboard.py -m integration
 
       - name: 실패하면 컨테이너 기록 남기기
         if: failure()
