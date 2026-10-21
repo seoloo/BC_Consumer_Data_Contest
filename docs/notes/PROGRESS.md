@@ -8,7 +8,7 @@
 - 사용자 "Phase 4 진행해줘". 4-1 CI → 4-2 Airflow → 4-3 Streamlit → 4-4 운영 매뉴얼로 나눔. CI가 생기므로 작업 방식을 브랜치 → PR → CI → 합치기로 다시 바꿈.
 - `.github/workflows/ci.yml`: 실행마다 새 무작위 계정(`local_env`) → `docker compose up -d --wait` → pytest 전체 → 합성 데이터 파이프라인(객체 저장소 + raw + 대사) → dbt build → dbt = 파이썬 비교.
 - `compare-silver` · `compare-gold`가 불일치면 실패 코드로 끝나게 바꿈. 올리기 전에 YAML 문법 오류(`{raw_schema: ...}`의 `: `)를 찾아 고침.
-- PR [#2](https://github.com/seoloo/BC_Consumer_Data_Contest/pull/2)에서 첫 CI 실행.
+- PR [#2](https://github.com/seoloo/BC_Consumer_Data_Contest/pull/2)를 올렸지만 사용자 "CI가 지금 아마 안될거야. 11월부터 가능할텐데 다른 작업을 먼저 해야할 것 같아" — 실행이 대기 중에 머묾. 사용자가 'PR은 지금 합치기', '다음은 4-2 Airflow'를 고름. **CI 첫 실행 결과는 11월에 확인.**
 
 ## 2026-10-21 — 데이터 사전 · ERD · 출처 문서 (Phase 3-4, Phase 3 완료)
 
