@@ -18,6 +18,11 @@
 | **버킷 (bucket)** | 객체 저장소의 가장 큰 보관함. 폴더 묶음 하나라고 보면 됨. | `bronze`, `bronze-synthetic` |
 | **키 (key) · 객체 (object)** | 버킷 안 파일의 전체 경로 · 그 파일. 진짜 폴더가 있는 게 아니라 '/'가 든 이름일 뿐. | `batch_month=202606/card_spending/...` |
 | **파티션 (`이름=값` 폴더)** | 데이터를 기준(여기서는 배치 월)으로 나눈 폴더. 그 부분만 다시 처리할 수 있음. | `batch_month=202606/` |
+| **데이터 웨어하우스** | 분석용 데이터를 모아 두고 SQL로 꺼내 쓰는 데이터베이스. 여기서는 PostgreSQL. | [15](15_postgresql.md) |
+| **스키마 (schema)** | 데이터베이스 안의 표 묶음(폴더 같은 것). 층마다 하나: `raw` · `silver` · `gold`. | `raw.card_spending` |
+| **raw 스키마** | 원본을 표기 그대로 넣은 DB의 첫 층. 거르기 · 바꾸기는 하지 않음 (Bronze와 같은 생각). | `warehouse.py` |
+| **트랜잭션 · 커밋 · 롤백** | 여러 작업을 '모두 되거나 모두 안 되거나'로 묶는 단위 · 다 됐으니 확정 · 실패했으니 전부 되돌리기. | `Warehouse.load()` |
+| **COPY** | PostgreSQL에 많은 행을 한 번에 넣는 명령. 한 행씩 INSERT보다 훨씬 빠름. | `Warehouse._copy()` |
 | **객체 메타데이터** | 객체에 붙여 두는 작은 꼬리표. 여기서는 SHA-256 지문을 적어 둠. | `x-amz-meta-sha256` |
 
 ## 품질 · 신뢰
@@ -53,6 +58,8 @@
 | **이미지 · 태그** | 컨테이너의 설계도 · 그 버전 이름. 태그를 고정해야 언제 띄워도 같은 환경. | `chrislusf/seaweedfs:4.48` |
 | **볼륨** | 컨테이너를 지워도 남는 데이터 보관 공간. | `object-store-data` |
 | **healthcheck** | 컨테이너가 일할 준비가 됐는지 주기적으로 확인하는 설정. 준비되면 `healthy`. | `docker-compose.yml` |
+| **psycopg** | 파이썬에서 PostgreSQL에 연결하는 라이브러리. | `warehouse.py` |
+| **dbt** | DB 안의 표를 SQL 파일(모델)로 바꿔 가는 도구. 모델 사이 관계를 알아서 순서대로 만들고, 테스트를 붙일 수 있음. | Phase 3-2부터, [13](13_planned.md) |
 | **boto3** | 파이썬에서 S3 API를 쓰는 표준 라이브러리. | `object_store.py` |
 | **pytest · fixture** | 파이썬 테스트 도구 · 여러 테스트가 함께 쓰는 준비물(예: 합성 원본 폴더). | `tests/`, `conftest.py` |
 | **가짜 객체 (fake)** | 실제 서버 대신 같은 모양으로 대답하는 테스트용 객체. 서버 없이도 테스트가 돌게 함. | `FakeS3Client`, `FakeSession` |

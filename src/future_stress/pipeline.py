@@ -5,10 +5,12 @@
     .venv/Scripts/python -m future_stress.pipeline --compare    # 실행 후 results/의 발표 수치와 비교
     .venv/Scripts/python -m future_stress.pipeline --synthetic  # 원본 없이 합성 데이터로 실행 (data/synthetic/)
     .venv/Scripts/python -m future_stress.pipeline --object-store  # Bronze를 SeaweedFS에 올리고, 거기서 받아 Silver부터
+    .venv/Scripts/python -m future_stress.pipeline --warehouse     # Bronze 원본을 PostgreSQL raw 스키마에도 적재
 
 실행 순서
     1. Bronze   data/raw의 원본을 그대로 복사하고 적재 영수증을 남김     medallion.build_bronze
        (--object-store) 객체 저장소에 올리고 다시 받아 지문 확인          object_store.upload_bronze / download_bronze
+       (--warehouse)    PostgreSQL raw 스키마에 적재하고 행 수 · 합계 대사  warehouse.load_raw
     2. Silver   정제 · 표준화한 표를 Parquet으로 저장                   medallion.build_silver
     3. Gold     Silver만 읽어 Stress · 4유형 · 검증 · 전략 계산          medallion.build_gold
     4. 대사     계층 사이 건수 · 금액이 맞는지 검사, 실패하면 멈춤        medallion.run_quality_checks
@@ -35,6 +37,7 @@ from .medallion import (
     run_quality_checks,
 )
 from .object_store import DEFAULT_BUCKET, SYNTHETIC_BUCKET, ObjectStore, download_bronze, upload_bronze
+from .warehouse import RAW_SCHEMA, SYNTHETIC_RAW_SCHEMA, Warehouse, load_raw
 from .synthetic import write_synthetic_raw_files
 
 # 발표 결과 외에 output/에 함께 내보내는 Gold 표 (사람이 엑셀로 열어 보기 위한 용도)
@@ -49,7 +52,7 @@ def layer_dirs(data_dir=None):
     return data_dir / "bronze", data_dir / "silver", data_dir / "gold"
 
 
-def run_pipeline(raw_dir=None, output_dir=None, data_dir=None, object_store=None, batch_month=None):
+def run_pipeline(raw_dir=None, output_dir=None, data_dir=None, object_store=None, batch_month=None, warehouse=None):
     """원본에서 최종 결과표까지 메달리온 계층 순서로 실행합니다.
 
     Args:
@@ -59,6 +62,7 @@ def run_pipeline(raw_dir=None, output_dir=None, data_dir=None, object_store=None
         object_store: ObjectStore를 넘기면 Bronze를 객체 저장소에 올리고, 저장소에서 다시 받은 파일로 Silver를 만듭니다.
             None이면 지금처럼 로컬 폴더만 씁니다 (Docker 없이도 돌아가게).
         batch_month: 객체 저장소의 배치 월 폴더 (기본 분석 마지막 달 202606).
+        warehouse: Warehouse를 넘기면 Bronze 원본을 PostgreSQL raw 스키마에도 적재합니다 (Phase 3에서 dbt가 읽을 곳).
 
     Returns:
         {표 이름: DataFrame} · Gold 표 전체와 'quality_report'
@@ -78,6 +82,13 @@ def run_pipeline(raw_dir=None, output_dir=None, data_dir=None, object_store=None
             "객체 저장소 왕복 지문", "Bronze → 저장소 → Silver", f"{file_count:,}개 영수증과 같음", f"{file_count:,}개 같음",
             True, "올림: " + " · ".join(f"{status} {count}" for status, count in status_counts.items()),
         ))
+    if warehouse is not None:
+        # 적재 뒤 DB의 행 수 · 합계가 원본과 다르면 load_raw가 DataQualityError로 되돌리고 멈춥니다.
+        for result in load_raw(bronze_dir, warehouse).to_dict("records"):
+            store_checks.append(check_row(
+                f"raw 적재 대사 ({result['표']})", "Bronze → PostgreSQL", "원본과 행 수 · 합계 같음",
+                f"{result['행 수']:,}행", True, f"{result['상태']} · 합계 {result['합계']:,}",
+            ))
     silver = build_silver(bronze_dir, silver_dir)
     gold = build_gold(silver_dir, gold_dir)
 
@@ -148,6 +159,8 @@ def main():
     parser.add_argument("--synthetic", action="store_true",
                         help="합성 원본을 만들어 data/synthetic/ 아래에서 실행 (원본 데이터가 없을 때)")
     parser.add_argument("--seed", type=int, default=42, help="--synthetic에서 쓸 시드")
+    parser.add_argument("--warehouse", action="store_true",
+                        help="Bronze 원본을 PostgreSQL raw 스키마에도 적재 (docker compose up -d 필요)")
     parser.add_argument("--object-store", action="store_true",
                         help="Bronze를 객체 저장소(SeaweedFS)에 올리고 거기서 받아 실행 (docker compose up -d 필요)")
     arguments = parser.parse_args()
@@ -163,7 +176,11 @@ def main():
         # 합성 데이터는 원본과 파일 이름이 같아서, 같은 버킷에 올리면 원본 객체를 덮어씁니다. 버킷을 나눕니다.
         bucket = SYNTHETIC_BUCKET if arguments.synthetic else DEFAULT_BUCKET
         object_store = ObjectStore.from_environment(bucket=bucket)
-    tables = run_pipeline(arguments.raw_dir, arguments.output_dir, arguments.data_dir, object_store)
+    warehouse = None
+    if arguments.warehouse:
+        # 합성 데이터는 원본과 같은 표에 넣으면 덮어쓰므로 스키마를 나눕니다 (객체 저장소 버킷과 같은 이유).
+        warehouse = Warehouse.from_environment(schema=SYNTHETIC_RAW_SCHEMA if arguments.synthetic else RAW_SCHEMA)
+    tables = run_pipeline(arguments.raw_dir, arguments.output_dir, arguments.data_dir, object_store, warehouse=warehouse)
     bronze_dir, silver_dir, gold_dir = layer_dirs(arguments.data_dir)
     print(f"Bronze: {bronze_dir}\nSilver: {silver_dir}\nGold:   {gold_dir}")
     print("\n[계층 사이 대사]")

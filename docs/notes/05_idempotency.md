@@ -20,6 +20,7 @@
 | Bronze 적재 | 원본과 Bronze 복사본의 SHA-256이 같으면 복사하지 않고 '변경 없음'으로 영수증에 기록 | `medallion.build_bronze()`, `file_fingerprint()` |
 | KOSIS 수집 | 응답 행을 정렬해서 저장하고, 내용이 같으면 파일을 다시 쓰지 않음. 받은 시각은 데이터 파일이 아니라 기록 파일에 | `kosis.landing_json()`, `write_if_changed()` |
 | 객체 저장소 업로드 | 객체 메타데이터에 SHA-256을 적고, 다음에 같으면 올리지 않음. 받을 때 영수증 지문과 다시 맞춤 | `object_store.upload_if_changed()`, `download_bronze()` |
+| PostgreSQL raw 적재 | 원본 지문 · 행 수 · 합계가 지난 적재와 같으면 '변경 없음'. 다르면 한 트랜잭션에서 다시 적재 | `warehouse.Warehouse.load()` |
 | 합성 데이터 | 시드 고정 (`numpy.random.default_rng(seed)`), 엑셀 안에 저장되는 시각을 고정 | `synthetic.save_excel()` |
 | 분석 결과 | 노트북과 같은 반올림 규칙 유지 (연령 비중을 소수 첫째 자리로 반올림한 뒤 계산) | `card_spending.build_age_spending_structure()` |
 

@@ -52,7 +52,7 @@
 | Phase 1 | 리팩토링: 노트북 → `src/future_stress` 모듈 + 테스트, 발표 결과 6/6 재현 ([리팩토링 노트](docs/refactoring_notes.md)) | 완료 |
 | Phase 1.5 | 메달리온 아키텍처 로컬 세팅: Bronze → Silver → Gold, 계층 사이 대사 10개 | 완료 |
 | Phase 2 | 합성 데이터 생성기 · KOSIS 수집기(파일과 값 일치 확인) · SeaweedFS Bronze 저장소 · Docker Compose | 완료 |
-| Phase 3 | PostgreSQL + dbt 데이터 마트 · 품질 검사 | 다음 |
+| Phase 3 | PostgreSQL + dbt 데이터 마트 · 품질 검사 (raw 적재 완료, dbt 모델 다음) | 진행 중 |
 | Phase 4 | Airflow 배치 · CI · 대시보드 | 예정 |
 
 ## 분석 질문
@@ -114,7 +114,7 @@ Future Stress가 음수이면 현재 소비구조가 미래 인구감소에 더 
 | 합성 데이터 | NumPy 생성기 (원본 8종과 같은 형식, 시드 고정) | 사용 중 |
 | 수집 | requests (KOSIS 장래인구 수집기 · NAVER API) | 사용 중 |
 | 원본 보관 | SeaweedFS (S3 호환, boto3), Docker Compose | 사용 중 |
-| 저장 · 변환 · 품질 | PostgreSQL, dbt, dbt tests | Phase 3 |
+| 저장 · 변환 · 품질 | PostgreSQL (raw 스키마 사용 중), dbt, dbt tests | Phase 3 |
 | 운영 · 제공 | Airflow, GitHub Actions, Streamlit | Phase 4 |
 
 ## 실행 방법
@@ -149,10 +149,10 @@ python -m venv .venv
 .venv\Scripts\python -m future_stress.kosis compare
 ```
 
-Bronze 원본을 S3 호환 객체 저장소(SeaweedFS)에 두고 거기서 읽어 실행할 수도 있습니다. Docker Desktop이 필요합니다. 첫 줄은 처음 한 번만 실행하며, `.env`에 이 PC 전용 저장소 계정 키를 만듭니다.
+Docker로 로컬 서비스(객체 저장소 SeaweedFS, 데이터베이스 PostgreSQL)를 띄워 실행할 수도 있습니다. Docker Desktop이 필요합니다. 첫 줄은 처음 한 번만 실행하며, `.env`에 이 PC 전용 계정(저장소 키, DB 비밀번호)을 만듭니다.
 
 ```powershell
-.venv\Scripts\python -m future_stress.object_store init-env
+.venv\Scripts\python -m future_stress.local_env
 ```
 
 ```powershell
@@ -160,10 +160,10 @@ docker compose up -d
 ```
 
 ```powershell
-.venv\Scripts\python -m future_stress.pipeline --object-store
+.venv\Scripts\python -m future_stress.pipeline --object-store --warehouse
 ```
 
-원본이 없으면 `--synthetic`을 함께 붙이면 됩니다. 원본이 있으면 `--compare`를 붙여 발표 수치와 비교할 수 있습니다.
+`--object-store`는 Bronze를 SeaweedFS에 올리고 거기서 다시 받아 실행하고, `--warehouse`는 원본을 PostgreSQL `raw` 스키마에도 적재합니다(둘 중 하나만 써도 됩니다). 원본이 없으면 `--synthetic`을 함께 붙이면 됩니다. 원본이 있으면 `--compare`를 붙여 발표 수치와 비교할 수 있습니다.
 
 원본 데이터를 `data/raw/`에 넣었다면 전체 분석을 실행하고 발표 수치와 비교할 수 있습니다. 실행하면 `data/bronze` (원본 + 적재 영수증) → `data/silver` (정제 Parquet) → `data/gold` (분석 Parquet) 순서로 계층이 만들어지고, 계층 사이 건수 · 금액 대사를 통과해야 `output/`에 결과 CSV가 저장됩니다.
 
