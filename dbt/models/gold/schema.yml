@@ -1,63 +1,162 @@
 version: 2
 
 # Gold 모델 설명과 테스트. 파이썬 medallion.run_quality_checks()의 5 ~ 9번이 여기와 tests/로 옮겨졌습니다.
+# composite_relationships: 여러 열을 합친 열쇠가 다른 표에 반드시 있는지 (검사 + 데이터 사전 ERD의 연결선)
+
 models:
   - name: gold_age_spending_structure
     description: 전국 시군구 × 업종 × 연령대 이용금액과 비중(%) (파이썬 Gold age_spending_structure)
     data_tests:
       - unique_combination: {columns: [province, district, industry_code, industry_name, age_group]}
     columns:
+      - {name: province, description: "{{ doc('col_province') }}"}
+      - {name: district, description: "{{ doc('col_district') }}"}
+      - {name: industry_code, description: "{{ doc('col_industry_code') }}"}
+      - {name: industry_name, description: "{{ doc('col_industry_name') }}"}
+      - name: age_group
+        description: "{{ doc('col_age_group') }}"
+        data_tests:
+          - relationships: {to: ref('age_groups'), field: age_group}
+      - {name: amount, description: "{{ doc('col_amount') }} · 6개월 합계"}
+      - {name: payment_count, description: "{{ doc('col_payment_count') }} · 6개월 합계"}
+      - {name: industry_total_amount, description: "{{ doc('col_industry_total_amount') }}"}
       - name: amount_share
+        description: "{{ doc('col_amount_share') }}"
         data_tests: [not_null]
 
   - name: gold_gyeonggi_city_age_spending_structure
-    description: 경기 시 × 업종 × 연령대 이용금액과 비중(%) (일반구를 시로 합친 뒤)
+    description: 경기 시 × 업종 × 연령대 이용금액과 비중(%) (일반구를 시로 합친 뒤 · 파이썬 Gold gyeonggi_city_age_spending_structure)
     data_tests:
       - unique_combination: {columns: [province, district, industry_code, industry_name, age_group]}
-
-  - name: gold_region_industry_profile
-    description: 전국 지역 × 업종 한 건에 한 줄 · 핵심 연령대, 연령 집중도, 현재 성장 지표
-    data_tests:
-      - unique_combination: {columns: [province, district, industry_code, industry_name]}
     columns:
-      - name: main_age_group
+      - {name: province, description: "{{ doc('col_province') }}"}
+      - {name: district, description: 시 이름 (일반구를 합친 뒤)}
+      - {name: industry_code, description: "{{ doc('col_industry_code') }}"}
+      - {name: industry_name, description: "{{ doc('col_industry_name') }}"}
+      - name: age_group
+        description: "{{ doc('col_age_group') }}"
         data_tests:
           - relationships: {to: ref('age_groups'), field: age_group}
+      - {name: amount, description: "{{ doc('col_amount') }} · 6개월 합계"}
+      - {name: payment_count, description: "{{ doc('col_payment_count') }} · 6개월 합계"}
+      - {name: industry_total_amount, description: "{{ doc('col_industry_total_amount') }}"}
+      - {name: amount_share, description: "{{ doc('col_amount_share') }}"}
 
-  - name: gold_gyeonggi_city_region_industry_profile
-    description: 경기 시 × 업종 한 건에 한 줄
+  - name: gold_region_industry_profile
+    description: 전국 지역 × 업종 한 건에 한 줄 · 핵심 연령대, 연령 집중도, 현재 성장 지표 (파이썬 Gold region_industry_profile)
     data_tests:
       - unique_combination: {columns: [province, district, industry_code, industry_name]}
+      - composite_relationships:
+          columns: [province, district, industry_code, industry_name]
+          to: ref('gold_age_spending_structure')
+    # &profile_columns: 아래 경기 시 단위 프로필이 같은 열 설명을 그대로 쓰도록 이름을 붙여 둠 (YAML 앵커)
+    columns: &profile_columns
+      - {name: province, description: "{{ doc('col_province') }}"}
+      - {name: district, description: "{{ doc('col_district') }}"}
+      - {name: industry_code, description: "{{ doc('col_industry_code') }}"}
+      - {name: industry_name, description: "{{ doc('col_industry_name') }}"}
+      - name: main_age_group
+        description: "{{ doc('col_main_age_group') }}"
+        data_tests:
+          - relationships: {to: ref('age_groups'), field: age_group}
+      - {name: main_age_share, description: "{{ doc('col_main_age_share') }}"}
+      - {name: industry_total_amount, description: "{{ doc('col_industry_total_amount') }}"}
+      - {name: age_concentration, description: "{{ doc('col_age_concentration') }}"}
+      - {name: months_with_data, description: "{{ doc('col_months_with_data') }}"}
+      - {name: is_complete_6_months, description: "{{ doc('col_is_complete_6_months') }}"}
+      - {name: avg_monthly_change, description: "{{ doc('col_avg_monthly_change') }}"}
+      - {name: change_first_to_last_month, description: "{{ doc('col_change_first_to_last_month') }}"}
+      - {name: rising_months, description: "{{ doc('col_rising_months') }}"}
+
+  - name: gold_gyeonggi_city_region_industry_profile
+    description: 경기 시 × 업종 한 건에 한 줄 (경기 Future Stress의 바탕)
+    data_tests:
+      - unique_combination: {columns: [province, district, industry_code, industry_name]}
+      - composite_relationships:
+          columns: [province, district, industry_code, industry_name]
+          to: ref('gold_gyeonggi_city_age_spending_structure')
+    columns: *profile_columns
 
   - name: gold_age_stress
-    description: 연령대별 Stress 기여도 (서울 · 부산 시군구, 경기 시)
+    description: 연령대별 Stress 기여도 · 서울 · 부산은 시군구, 경기는 시 단위 (파이썬 Gold age_stress)
+    data_tests:
+      - composite_relationships:
+          columns: [province, district, industry_code, industry_name]
+          to: ref('gold_future_stress')
     columns:
+      - {name: province, description: "{{ doc('col_province') }}"}
+      - {name: district, description: "{{ doc('col_district') }}"}
+      - {name: industry_code, description: "{{ doc('col_industry_code') }}"}
+      - {name: industry_name, description: "{{ doc('col_industry_name') }}"}
+      - {name: age_group, description: "{{ doc('col_age_group') }}"}
+      - {name: amount, description: "{{ doc('col_amount') }} · 6개월 합계"}
+      - {name: payment_count, description: "{{ doc('col_payment_count') }} · 6개월 합계"}
+      - {name: industry_total_amount, description: "{{ doc('col_industry_total_amount') }}"}
+      - {name: amount_share, description: "{{ doc('col_amount_share') }}"}
+      - {name: change_rate_2030, description: "{{ doc('col_change_rate') }} · 2030년"}
+      - {name: change_rate_2035, description: "{{ doc('col_change_rate') }} · 2035년"}
       - name: change_rate_2040
-        description: 장래인구가 없는 시군구 · 연령대는 비어 Stress에서 빠짐
+        description: "{{ doc('col_change_rate') }} · 2040년. 장래인구가 없는 시군구 · 연령대는 비어 Stress에서 빠짐"
         data_tests:
           # 파이썬 대사 7 ~ 9번 '장래인구 매칭'과 같은 '경고'. 분석은 할 수 있어서 멈추지 않고 알리기만 합니다.
           - not_null: {config: {severity: warn}}
+      - {name: stress_2035, description: "{{ doc('col_stress_contribution') }} · 2035년"}
+      - {name: stress_2040, description: "{{ doc('col_stress_contribution') }} · 2040년"}
 
   - name: gold_future_stress
-    description: 지역 × 업종 Future Stress (2035 · 2040)
+    description: 지역 × 업종 Future Stress 2035 · 2040 (파이썬 Gold future_stress). 서울 · 부산은 전국 프로필, 경기는 시 단위 프로필
     data_tests:
       - unique_combination: {columns: [province, district, industry_code, industry_name]}
     columns:
+      - {name: province, description: "{{ doc('col_province') }}"}
+      - {name: district, description: "{{ doc('col_district') }}"}
+      - {name: industry_code, description: "{{ doc('col_industry_code') }}"}
+      - {name: industry_name, description: "{{ doc('col_industry_name') }}"}
+      - {name: main_age_group, description: "{{ doc('col_main_age_group') }}"}
+      - {name: main_age_share, description: "{{ doc('col_main_age_share') }}"}
+      - {name: industry_total_amount, description: "{{ doc('col_industry_total_amount') }}"}
+      - {name: age_concentration, description: "{{ doc('col_age_concentration') }}"}
+      - {name: months_with_data, description: "{{ doc('col_months_with_data') }}"}
+      - {name: is_complete_6_months, description: "{{ doc('col_is_complete_6_months') }}"}
+      - {name: avg_monthly_change, description: "{{ doc('col_avg_monthly_change') }}"}
+      - {name: change_first_to_last_month, description: "{{ doc('col_change_first_to_last_month') }}"}
+      - {name: rising_months, description: "{{ doc('col_rising_months') }}"}
+      - {name: stress_2035, description: "{{ doc('col_stress') }} · 2035년"}
       - name: stress_2040
+        description: "{{ doc('col_stress') }} · 2040년 (4유형 기준)"
         data_tests: [not_null]
 
   - name: gold_market_type
-    description: 지역 안 상위 25% 분석 대상과 4유형
+    description: 지역 안 상위 25% 분석 대상과 4유형 (파이썬 Gold market_type)
+    data_tests:
+      - composite_relationships:
+          columns: [province, district, industry_code, industry_name]
+          to: ref('gold_future_stress')
     columns:
+      - {name: size_cutoff, description: "{{ doc('col_size_cutoff') }} · 그 지역 안 기준"}
+      - {name: is_growing, description: "{{ doc('col_is_growing') }}"}
+      - {name: is_stable_2040, description: Stress 2040 ≥ 0 이면 안정}
       - name: market_type
+        description: "{{ doc('col_market_type') }}"
         data_tests:
           - relationships: {to: ref('market_types'), field: market_type}
 
   - name: gold_market_type_counts
-    description: 지역별 4유형 건수
+    description: 지역별 4유형 건수 (한 건도 없는 유형도 0으로)
     columns:
       - name: market_type
+        description: "{{ doc('col_market_type') }}"
         data_tests: [unique, not_null]
+      - {name: seoul, description: 서울 건수}
+      - {name: busan, description: 부산 건수}
+      - {name: gyeonggi, description: 경기 건수}
 
   - name: gold_seoul_analysis_targets
     description: 발표 기준(전국 상위 25%) 서울 분석 대상과 성장 판정. 통계 검정은 파이썬이 이 대상으로 계산
+    data_tests:
+      - composite_relationships:
+          columns: [province, district, industry_code, industry_name]
+          to: ref('gold_future_stress')
+    columns:
+      - {name: size_cutoff, description: "{{ doc('col_size_cutoff') }} · 전국 기준"}
+      - {name: is_growing, description: "{{ doc('col_is_growing') }}"}

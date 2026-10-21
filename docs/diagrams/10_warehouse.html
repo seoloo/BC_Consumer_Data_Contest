@@ -1,0 +1,190 @@
+<!-- size: 1600x2600 -->
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>Data Warehouse</title>
+<link rel="stylesheet" href="_style.css">
+<style>
+  :root {
+    --raw: #A0522D;    --raw-soft: #FBEFE6;
+    --ref: #0F766E;    --ref-soft: #E3F4F2;
+    --silver: #5F6B7A; --silver-soft: #EEF1F5;
+    --gold: #B7860B;   --gold-soft: #FFF6DA;
+  }
+  .schemas { display: grid; grid-template-columns: 1fr 30px 0.9fr 30px 1fr 30px 1.25fr; align-items: stretch; }
+  .schema { border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; background: #fff; border: 1px solid var(--line);
+            box-shadow: 0 1px 2px rgba(20,30,60,.04), 0 6px 18px rgba(20,30,60,.05); }
+  .schema .s-head { padding: 16px 18px 14px; color: #fff; display: flex; flex-direction: column; gap: 3px; }
+  .schema .s-head .s-tag { font-size: 12px; font-weight: 800; letter-spacing: .08em; opacity: .9; }
+  .schema .s-head h3 { font-size: 23px; font-weight: 800; color: #fff; }
+  .schema .s-head p { font-size: 13px; color: rgba(255,255,255,.92); }
+  .raw .s-head { background: linear-gradient(120deg, #8B4513, #B8692E); }
+  .ref .s-head { background: linear-gradient(120deg, #0F5F59, #14918A); }
+  .silver .s-head { background: linear-gradient(120deg, #4B5563, #7B8794); }
+  .gold .s-head { background: linear-gradient(120deg, #9A6F00, #D4A017); }
+  .schema .s-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .who { font-size: 12.5px; font-weight: 800; border-radius: 8px; padding: 6px 9px; }
+  .raw .who { background: var(--raw-soft); color: var(--raw); }
+  .ref .who { background: var(--ref-soft); color: var(--ref); }
+  .silver .who { background: var(--silver-soft); color: var(--silver); }
+  .gold .who { background: var(--gold-soft); color: var(--gold); }
+  .tbls { display: flex; flex-direction: column; gap: 4px; }
+  .tbls div { display: flex; justify-content: space-between; gap: 8px; font-size: 12.5px; padding: 5px 8px; border-radius: 7px; background: var(--soft); }
+  .tbls code { font-size: 11.5px; background: transparent; padding: 0; }
+  .tbls span { color: var(--muted); font-size: 11.5px; white-space: nowrap; }
+  .rules { list-style: none; display: flex; flex-direction: column; gap: 4px; margin-top: auto; padding-top: 10px; border-top: 1px dashed var(--line); }
+  .rules li { font-size: 12.5px; color: var(--sub); padding-left: 14px; position: relative; line-height: 1.5; }
+  .rules li::before { content: "▸"; position: absolute; left: 0; color: var(--muted); }
+  .cmp { display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px; }
+  .cmp-row { display: grid; grid-template-columns: 1fr 190px 84px; gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line); }
+  .cmp-row:first-of-type { border-top: 0; }
+  .cmp-row b { font-size: 14px; }
+  .cmp-row b span { display: block; font-size: 12px; color: var(--muted); font-weight: 600; }
+  .cmp-row .num { font-size: 15px; font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; }
+  .same { justify-self: end; font-size: 12.5px; font-weight: 800; color: var(--green); background: var(--green-soft); padding: 4px 10px; border-radius: 999px; }
+  .trick { border-radius: 14px; padding: 14px 16px; background: var(--soft); display: flex; flex-direction: column; gap: 6px; }
+  .trick b { font-size: 15px; }
+  .trick span { font-size: 13px; color: var(--sub); line-height: 1.55; }
+  .trick code { font-size: 12px; }
+  .tests { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .tests div { border-radius: 12px; padding: 12px 14px; background: #fff; border: 1px solid var(--line); display: flex; flex-direction: column; gap: 4px; }
+  .tests b { font-size: 20px; }
+  .tests em { font-style: normal; font-size: 13px; font-weight: 800; }
+  .tests span { font-size: 12.5px; color: var(--sub); line-height: 1.5; }
+  .cmd { font-family: Consolas, monospace; font-size: 13px; background: #1E2433; color: #E6EAF2; border-radius: 10px; padding: 12px 14px; line-height: 1.8; }
+  .cmd i { color: #8A94A8; font-style: normal; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="eyebrow"><span class="no">10</span>데이터 웨어하우스</div>
+    <h1>원본부터 4유형까지, 데이터베이스 안에서 SQL로</h1>
+    <p class="lede">파이썬은 원본 파일을 표로 읽어 넣는 일만 하고, 거르기 · 바꾸기 · 계산은 dbt가 SQL로 합니다.<br>옮긴 뒤에는 예전 파이썬 결과와 <b>한 칸씩 비교</b>해서 같은지 확인했습니다.</p>
+  </div>
+  <div class="version"><b>2026-10-21 Phase 3</b><br>PostgreSQL 16 · dbt 1.9 (둘 다 Docker)</div>
+</div>
+
+<!-- 1 -->
+<div data-part="1" class="section">
+  <div class="section-label"><span class="num">1</span><span class="title">네 개의 스키마</span><span class="desc">원본 데이터로 실제로 만든 표와 행 수</span></div>
+  <div class="schemas">
+    <div class="schema raw">
+      <div class="s-head"><span class="s-tag">RAW · 원본 표</span><h3>표기 그대로</h3><p>거르지도 바꾸지도 않습니다</p></div>
+      <div class="s-body">
+        <div class="who">파이썬 warehouse.py가 넣음</div>
+        <div class="tbls">
+          <div><code>card_spending</code><span>242,574행</span></div>
+          <div><code>future_population</code><span>577,680행</span></div>
+        </div>
+        <ul class="rules">
+          <li>성별 코드 3 · x, 업종명 공백까지 그대로</li>
+          <li>같은 원본이면 다시 넣지 않음</li>
+          <li>넣은 뒤 행 수 · 금액 대사, 틀리면 되돌림</li>
+        </ul>
+      </div>
+    </div>
+    <div class="arrow-r"><svg viewBox="0 0 26 26" width="26"><path d="M5 13h15M14 6.5l6.5 6.5-6.5 6.5" fill="none" stroke="#AEB6C4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="schema ref">
+      <div class="s-head"><span class="s-tag">REF · 기준표</span><h3>코드 → 이름</h3><p>규칙을 표로 보이게</p></div>
+      <div class="s-body">
+        <div class="who">dbt seed (CSV 5개)</div>
+        <div class="tbls">
+          <div><code>age_groups</code><span>6</span></div>
+          <div><code>bc_age_codes</code><span>6</span></div>
+          <div><code>bc_gender_codes</code><span>2</span></div>
+          <div><code>market_types</code><span>4</span></div>
+          <div><code>seoul_five_year…</code><span>19</span></div>
+        </div>
+        <ul class="rules">
+          <li>표에 없는 코드는 join에서 저절로 빠짐</li>
+        </ul>
+      </div>
+    </div>
+    <div class="arrow-r"><svg viewBox="0 0 26 26" width="26"><path d="M5 13h15M14 6.5l6.5 6.5-6.5 6.5" fill="none" stroke="#AEB6C4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="schema silver">
+      <div class="s-head"><span class="s-tag">SILVER · 표준화</span><h3>거르고 맞추기</h3><p>개인 결제만, 이름 · 연령대 통일</p></div>
+      <div class="s-body">
+        <div class="who">dbt 모델 2개</div>
+        <div class="tbls">
+          <div><code>silver_card_spending</code><span>159,235행</span></div>
+          <div><code>silver_future_population</code><span>432행</span></div>
+        </div>
+        <ul class="rules">
+          <li>서울 · 부산 · 경기의 서로 다른 형식을 한 표로</li>
+          <li>2026년 대비 증감률</li>
+          <li>raw = Silver + 뺀 결제 대사</li>
+        </ul>
+      </div>
+    </div>
+    <div class="arrow-r"><svg viewBox="0 0 26 26" width="26"><path d="M5 13h15M14 6.5l6.5 6.5-6.5 6.5" fill="none" stroke="#AEB6C4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="schema gold">
+      <div class="s-head"><span class="s-tag">GOLD · 분석 결과</span><h3>Stress와 4유형</h3><p>소비구조 → 성장 지표 → Stress → 유형</p></div>
+      <div class="s-body">
+        <div class="who">dbt 모델 9개</div>
+        <div class="tbls">
+          <div><code>gold_age_spending_structure</code><span>13,676행</span></div>
+          <div><code>gold_region_industry_profile</code><span>2,379행</span></div>
+          <div><code>gold_age_stress</code><span>4,053행</span></div>
+          <div><code>gold_future_stress</code><span>698행</span></div>
+          <div><code>gold_market_type</code><span>176행</span></div>
+          <div><code>gold_seoul_analysis_targets</code><span>114행</span></div>
+          <div><b style="font-weight:600">경기 시 단위 2개 · 유형 건수</b><span>2,007행</span></div>
+        </div>
+        <ul class="rules">
+          <li>통계 검정 · 최적화 · 보정 검증은 파이썬에 남김 (SQL에 없는 계산)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 2 -->
+<div data-part="2" class="section">
+  <div class="section-label"><span class="num">2</span><span class="title">파이썬 결과와 같은지</span><span class="desc">warehouse compare-silver · compare-gold</span></div>
+  <div class="cmp">
+    <div class="card pad">
+      <div class="cmp-row"><b>Silver 2개 표<span>결제 · 장래인구</span></b><div class="num">321,494칸</div><span class="same">모두 같음</span></div>
+      <div class="cmp-row"><b>Gold 7개 표<span>소비구조 · 프로필 · 기여도 · Stress · 4유형 · 건수</span></b><div class="num">125,805칸</div><span class="same">모두 같음</span></div>
+      <div class="cmp-row"><b>서울 발표 기준<span>전국 상위 25% · 114건</span></b><div class="num">성장 14 · 비성장 100</div><span class="same">발표와 같음</span></div>
+      <div class="cmp-row"><b>4유형 건수<span>착시 · 지속 · 구조취약 · 회복기회</span></b><div class="num">서울 9 · 0 · 41 · 11</div><span class="same">같음</span></div>
+      <div class="cmp-row"><b>합성 데이터<span>원본 없이 같은 과정</span></b><div class="num">9개 표</div><span class="same">모두 같음</span></div>
+    </div>
+    <div class="stack">
+      <div class="trick"><b>반올림을 파이썬과 똑같이</b><span>파이썬은 12.25 → <b>12.2</b>(짝수 쪽), PostgreSQL 기본은 <b>12.3</b>입니다. 반올림한 비중 · 증감률로 성장을 판정해서, 한 칸이 판정을 바꿀 수 있습니다. 실수로 계산하고 짝수 쪽으로 반올림하는 매크로로 맞췄습니다.</span></div>
+      <div class="trick"><b>동점일 때 고르는 순서도 똑같이</b><span>핵심 연령대가 비중이 같으면 파이썬은 먼저 나온 줄을 고릅니다. SQL도 같은 문자 순서(<code>collate "C"</code>)로 정렬했습니다.</span></div>
+      <div class="trick"><b>합계는 소수 15째 자리만 다름</b><span>pandas는 보정 덧셈, PostgreSQL은 그냥 덧셈이라 HHI · Stress 합계가 최대 3.6×10⁻¹⁵ 다릅니다. 결과는 둘째 자리 반올림이고 유형 판정도 모두 같습니다.</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- 3 -->
+<div data-part="2" class="section">
+  <div class="section-label"><span class="num">3</span><span class="title">테스트 49개와 자동 문서</span><span class="desc">dbt build가 표를 만들 때마다 모두 실행</span></div>
+  <div class="grid" style="grid-template-columns: 1.5fr 1fr;">
+    <div class="tests">
+      <div><b>20</b><em>빈 값 · 허용값</em><span>not_null, accepted_values. 성별은 남성 · 여성만</span></div>
+      <div><b>12</b><em>겹침 없음</em><span>unique, 여러 열 열쇠. 한 지역 × 업종에 한 줄</span></div>
+      <div><b>13</b><em>연결</em><span>연령대 → 기준표 8개, 여러 열(시도 · 시군구 · 업종) 연결 5개는 직접 만든 테스트</span></div>
+      <div><b>3</b><em>대사 · 비중</em><span>raw = Silver + 뺀 결제, 집계 전후 금액, 비중 합 ≈ 100</span></div>
+      <div style="grid-column: span 2;"><b>경고 1</b><em>장래인구 매칭</em><span>증감률이 없는 연령 행은 멈추지 않고 알리기만 합니다 (지금 0건)</span></div>
+    </div>
+    <div class="stack">
+      <div class="card pad stack" style="gap:8px">
+        <b style="font-size:15px">데이터 사전 · ERD는 자동으로</b>
+        <span class="small">설명은 dbt schema.yml에 한 번만 쓰고 PostgreSQL COMMENT로도 저장합니다. 스크립트가 DB와 dbt 결과를 읽어 표 · 열 · 행 수 · 계보 · ERD를 <code>docs/warehouse/README.md</code>로 다시 만듭니다. ERD의 선은 모두 매번 검사하는 연결입니다.</span>
+      </div>
+      <div class="cmd"><i># 저장소 루트에서</i><br>docker compose up -d<br>docker compose run --rm dbt build<br>python -m future_stress.warehouse compare-gold<br>python -m future_stress.warehouse_docs</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <span>미래 소비기반 스트레스 테스트 · 흐름도 시리즈</span>
+  <div class="series"><span>00 목표 · 기술</span><span>01 한눈에</span><span>02 데이터</span><span>03 파이프라인</span><span>04 검증</span><span>05 전략</span><span>06 코드 구조</span><span>07 메달리온</span><span>08 목표 아키텍처</span><span>09 로드맵</span><span class="on">10 웨어하우스</span></div>
+</div>
+
+</body>
+</html>

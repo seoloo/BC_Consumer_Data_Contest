@@ -58,6 +58,7 @@
 | (새로) 한 시군구 · 연령대에 한 줄 | `unique_combination` (직접 만든 일반 테스트) |
 | 5 · 6 집계 전후 금액 (전국 · 경기 시 단위) | `tests/assert_gold_amount_reconciles_with_silver.sql` (3-3) |
 | 7 ~ 9 장래인구 매칭 (경고) | `gold_age_stress.change_rate_2040`의 `not_null` 테스트를 `severity: warn`으로 (3-3) |
+| (새로) 표 사이 연결 | `composite_relationships` 5개 (기여도 · 유형 · 서울 대상 → Stress 표, 프로필 → 소비구조) (3-4) |
 | (새로) 비중 합 ≈ 100 | `tests/assert_amount_share_sums_to_100.sql` (3-3) |
 | 10 6개월 완전관측 비율 (참고) | 표의 `is_complete_6_months`로 바로 셀 수 있어 테스트로 두지 않음 |
 

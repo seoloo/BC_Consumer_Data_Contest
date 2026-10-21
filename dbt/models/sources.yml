@@ -1,22 +1,53 @@
 version: 2
 
 # raw 스키마: 파이썬(src/future_stress/warehouse.py)이 Bronze 원본을 표기 그대로 넣은 표. dbt는 읽기만 합니다.
+# 출처 · 기간 · 형식 문제는 docs/data_sources.md
 sources:
   - name: raw
     schema: "{{ var('raw_schema') }}"
     tables:
       - name: card_spending
-        description: BC카드 결제 원본 (CSV 그대로, 개인이 아닌 결제 포함)
+        description: BC카드 결제 원본 (공모전 제공, 2026.01 ~ 06). CSV 그대로, 열 이름만 소문자. 개인이 아닌 결제(성별 3 · x) 포함
         columns:
           - name: strd_yymm
+            description: 기준년월 (원본 STRD_YYMM)
             data_tests: [not_null]
+          - name: sido_nm
+            description: 시도 (원본 SIDO_NM)
+          - name: ccg_nm
+            description: 시군구 (원본 CCG_NM). 경기는 일반구 단위
+          - name: gender_cd
+            description: 성별 코드 (1 · 2 = 남 · 여, 3 · x = 개인이 아니거나 알 수 없음)
+          - name: age_cd
+            description: 연령 코드 (1 ~ 6, x = 알 수 없음)
+          - name: tp_buz_no
+            description: 업종 코드
+          - name: tp_buz_nm
+            description: 업종 이름 (원본 표기, 공백 포함)
           - name: amt
+            description: 이용금액 (원)
             data_tests: [not_null]
+          - name: cnt
+            description: 이용건수
       - name: future_population
-        description: 서울 · 부산 · 경기 장래인구 원본 (표기 그대로, 연도 열만 세로로)
+        description: 서울 · 부산 · 경기 장래인구 원본. 5세 · 1세 · 합계 행과 원본 표기 그대로, 연도 열만 세로로
         columns:
+          - name: source_file
+            description: 온 파일 이름
           - name: province
+            description: 시도 (파일로 정함. 서울 CSV에는 시도 열이 없음)
             data_tests:
               - accepted_values: {values: ['서울특별시', '부산광역시', '경기도']}
+          - name: region
+            description: 시군구 원본 표기 ('합계' · 시도 이름 = 시도 합계 행)
+          - name: sex
+            description: 성별 원본 표기 (계 · 남자 · 여자)
+          - name: age_label
+            description: 연령 원본 표기 (서울 '0~4세', '0세', '합계' / 부산 · 경기 '0 - 4세'). 엑셀 병합 셀은 위의 값으로 채움
+          - name: age_detail
+            description: 부산 · 경기 엑셀의 연령별(2). '소계' = 5세 구간 합, '0세' 같은 값 = 1세 단위. 서울은 비어 있음
           - name: year
+            description: 추계 연도
             data_tests: [not_null]
+          - name: population
+            description: 추계 인구 (명)

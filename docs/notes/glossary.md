@@ -69,6 +69,13 @@
 | **percentile_cont** | 정렬한 값 사이를 선형으로 이어 분위수를 구하는 SQL 함수. 파이썬 `quantile`과 같은 방식. | 상위 25% 기준 |
 | **짝수 쪽 반올림 (banker's rounding)** | 정확히 .5일 때 짝수 쪽으로 반올림 (2.5 → 2, 12.25 → 12.2). 파이썬 numpy의 방식. | `round_half_even` 매크로 |
 | **collate "C"** | 글자를 문자 코드 순서로 비교하라는 SQL 지정. 언어 규칙 정렬과 달리 파이썬 문자열 정렬과 같음. | 핵심 연령대 동점 처리 |
+| **데이터 사전 (data dictionary)** | 표마다 무엇이 들었고 열이 무슨 뜻인지 적은 문서. 여기서는 자동으로 만듦. | `docs/warehouse/README.md` |
+| **ERD** | 표와 표 사이 연결(어떤 열로 이어지나)을 그린 그림. PK = 겹치면 안 되는 열쇠, FK = 다른 표에 반드시 있어야 하는 값. | 데이터 사전 3절 |
+| **docs 블록** | dbt에서 설명을 한 번만 써 두고 여러 곳에서 `{{ doc('이름') }}`으로 가져다 쓰는 방법. | `dbt/models/docs.md` |
+| **persist_docs** | dbt의 표 · 열 설명을 데이터베이스 COMMENT로도 저장하는 설정. | `dbt_project.yml` |
+| **manifest.json** | dbt가 실행할 때 만드는 '프로젝트 지도'. 모델 · 계보 · 테스트가 모두 들어 있음. | `dbt/target/` |
+| **Mermaid** | 글로 쓰면 그림이 되는 도표 문법. GitHub가 마크다운 안에서 바로 그려 줌. | 계보 · ERD |
+| **YAML 앵커 (&, *)** | YAML에서 한 번 쓴 내용에 이름(&)을 붙이고 다른 곳에서(*) 그대로 다시 쓰는 문법. | `gold/schema.yml` 프로필 열 |
 | **매크로 (macro)** | SQL 안에서 되풀이해 쓰는 조각을 함수처럼 만든 것. | `dbt/macros/` |
 | **boto3** | 파이썬에서 S3 API를 쓰는 표준 라이브러리. | `object_store.py` |
 | **pytest · fixture** | 파이썬 테스트 도구 · 여러 테스트가 함께 쓰는 준비물(예: 합성 원본 폴더). | `tests/`, `conftest.py` |

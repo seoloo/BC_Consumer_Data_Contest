@@ -37,6 +37,7 @@
 | 07 | [메달리온 아키텍처](docs/diagrams/07_medallion.png) | [1](docs/diagrams/parts/07_medallion_1.png) · [2](docs/diagrams/parts/07_medallion_2.png) · [3](docs/diagrams/parts/07_medallion_3.png) | Bronze → Silver → Gold 계층, 계층 사이 대사 |
 | 08 | [목표 아키텍처](docs/diagrams/08_target_architecture.png) | [1](docs/diagrams/parts/08_target_architecture_1.png) · [2](docs/diagrams/parts/08_target_architecture_2.png) · [3](docs/diagrams/parts/08_target_architecture_3.png) | Phase 2~4에서 만들 데이터 마트 구조 (계획) |
 | 09 | [로드맵](docs/diagrams/09_roadmap.png) | [1](docs/diagrams/parts/09_roadmap_1.png) · [2](docs/diagrams/parts/09_roadmap_2.png) | 단계별 할 일과 완료 기준, 진행 기록 |
+| 10 | [데이터 웨어하우스](docs/diagrams/10_warehouse.png) | [1](docs/diagrams/parts/10_warehouse_1.png) · [2](docs/diagrams/parts/10_warehouse_2.png) | raw · ref · silver · gold 스키마, 파이썬 결과와 비교, 테스트 49개 |
 
 ## 로드맵
 
@@ -52,8 +53,8 @@
 | Phase 1 | 리팩토링: 노트북 → `src/future_stress` 모듈 + 테스트, 발표 결과 6/6 재현 ([리팩토링 노트](docs/refactoring_notes.md)) | 완료 |
 | Phase 1.5 | 메달리온 아키텍처 로컬 세팅: Bronze → Silver → Gold, 계층 사이 대사 10개 | 완료 |
 | Phase 2 | 합성 데이터 생성기 · KOSIS 수집기(파일과 값 일치 확인) · SeaweedFS Bronze 저장소 · Docker Compose | 완료 |
-| Phase 3 | PostgreSQL + dbt 데이터 마트 · 품질 검사 (raw · Silver · Gold 완료, 문서 · ERD 다음) | 진행 중 |
-| Phase 4 | Airflow 배치 · CI · 대시보드 | 예정 |
+| Phase 3 | PostgreSQL + dbt 데이터 마트 · 품질 검사 · 데이터 사전 · ERD · 출처 문서 | 완료 |
+| Phase 4 | Airflow 배치 · CI · 대시보드 | 다음 |
 
 ## 분석 질문
 
@@ -177,6 +178,12 @@ docker compose run --rm dbt build
 .venv\Scripts\python -m future_stress.warehouse compare-gold
 ```
 
+표 · 열 설명과 계보 · ERD가 담긴 [데이터 사전](docs/warehouse/README.md)은 DB와 dbt 결과를 읽어 자동으로 다시 만듭니다.
+
+```powershell
+.venv\Scripts\python -m future_stress.warehouse_docs
+```
+
 `--object-store`는 Bronze를 SeaweedFS에 올리고 거기서 다시 받아 실행하고, `--warehouse`는 원본을 PostgreSQL `raw` 스키마에도 적재합니다(둘 중 하나만 써도 됩니다). 원본이 없으면 `--synthetic`을 함께 붙이면 됩니다. 원본이 있으면 `--compare`를 붙여 발표 수치와 비교할 수 있습니다.
 
 원본 데이터를 `data/raw/`에 넣었다면 전체 분석을 실행하고 발표 수치와 비교할 수 있습니다. 실행하면 `data/bronze` (원본 + 적재 영수증) → `data/silver` (정제 Parquet) → `data/gold` (분석 Parquet) 순서로 계층이 만들어지고, 계층 사이 건수 · 금액 대사를 통과해야 `output/`에 결과 CSV가 저장됩니다.
@@ -189,16 +196,21 @@ docker compose run --rm dbt build
 
 ```text
 src/          분석 로직 패키지 (future_stress)
+dbt/          SQL 모델 (silver · gold), 기준표(seeds), 테스트
+docker-compose.yml  로컬 서비스: 객체 저장소(SeaweedFS) · PostgreSQL · dbt
 tests/        단위 테스트와 전체 실행 테스트
 notebooks/    실행 출력과 인증정보를 제거한 원래 분석 노트북 (보존용)
 assets/       발표에 쓴 결과 이미지
-docs/         최종 발표자료, 흐름도 시리즈(diagrams/), 리팩토링 노트, 기술 · 설계 기록(notes/)
+docs/         최종 발표자료, 흐름도 시리즈(diagrams/), 리팩토링 노트, 기술 · 설계 기록(notes/),
+              데이터 출처(data_sources.md), 데이터 사전 · ERD(warehouse/, 자동 생성)
 data/         데이터 비공개 사유와 재현 안내 (실행하면 raw · bronze · silver · gold · synthetic이 생기며 모두 git 제외)
 results/      발표자료에 사용한 소규모 집계 결과 CSV
 scripts/      공개용 노트북 정리 스크립트
 ```
 
 ## 데이터 공개 범위
+
+원본마다 어디서 왔는지는 [데이터 출처](docs/data_sources.md)에 정리했습니다(확인한 것과 형식으로 추정한 것을 나눠 표시).
 
 공모전에서 제공한 BC Card 원본과 상세 파생 데이터는 저장소에 포함하지 않습니다. `results`에는 발표자료에 이미 제시한 집계 결과만 포함합니다. 서울, 부산, 경기의 외부 데이터도 원본 파일 대신 출처와 처리 방식을 문서화합니다. 노트북 실행에는 사용 권한이 있는 원본 데이터와 NAVER API 인증정보가 필요합니다.
 

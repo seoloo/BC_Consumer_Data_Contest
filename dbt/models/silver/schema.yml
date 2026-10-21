@@ -5,20 +5,32 @@ models:
     description: 개인 결제만 남기고 코드를 이름으로 바꾼 BC카드 결제 (파이썬 Silver card_spending과 같은 내용)
     columns:
       - name: base_month
+        description: "{{ doc('col_base_month') }}"
         data_tests: [not_null]
       - name: province
+        description: "{{ doc('col_province') }}"
         data_tests: [not_null]
       - name: district
+        description: "{{ doc('col_district') }}"
         data_tests: [not_null]
       - name: sex
+        description: "{{ doc('col_sex') }}"
         data_tests:
           - accepted_values: {values: ['남성', '여성']}
       - name: age_group
+        description: "{{ doc('col_age_group') }}"
         data_tests:
           - not_null
           - relationships: {to: ref('age_groups'), field: age_group}
+      - name: industry_code
+        description: "{{ doc('col_industry_code') }}"
+      - name: industry_name
+        description: "{{ doc('col_industry_name') }}"
       - name: amount
+        description: "{{ doc('col_amount') }}"
         data_tests: [not_null]
+      - name: payment_count
+        description: "{{ doc('col_payment_count') }}"
 
   - name: silver_future_population
     description: 시도 × 시군구 × 연령대 장래인구와 2026년 대비 증감률 (파이썬 Silver future_population과 같은 내용)
@@ -27,9 +39,27 @@ models:
       - unique_combination:
           columns: [province, district, age_group]
     columns:
+      - name: province
+        description: "{{ doc('col_province') }}"
+      - name: district
+        description: 시군구 (경기는 시 단위)
       - name: age_group
+        description: "{{ doc('col_age_group') }}"
         data_tests:
           - not_null
           - relationships: {to: ref('age_groups'), field: age_group}
       - name: population_2026
+        description: "{{ doc('col_population') }} · 2026년 (기준연도)"
         data_tests: [not_null]
+      - name: population_2030
+        description: "{{ doc('col_population') }} · 2030년"
+      - name: population_2035
+        description: "{{ doc('col_population') }} · 2035년"
+      - name: population_2040
+        description: "{{ doc('col_population') }} · 2040년"
+      - name: change_rate_2030
+        description: "{{ doc('col_change_rate') }} · 2030년"
+      - name: change_rate_2035
+        description: "{{ doc('col_change_rate') }} · 2035년"
+      - name: change_rate_2040
+        description: "{{ doc('col_change_rate') }} · 2040년"

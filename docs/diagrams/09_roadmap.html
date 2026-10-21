@@ -67,7 +67,7 @@
     <h1>공모전 노트북에서 데이터 파이프라인까지</h1>
     <p class="lede">공모전 노트북을 데이터 파이프라인으로 옮겨 가는 과정입니다. 단계가 하나 끝날 때마다 이 그림도 고칩니다.</p>
   </div>
-  <div class="version"><b>로드맵 v10</b><br>2026-10-21 dbt Gold</div>
+  <div class="version"><b>로드맵 v11</b><br>2026-10-21 Phase 3 완료</div>
 </div>
 
 <div data-part="1" class="goal">
@@ -132,24 +132,24 @@
         <div class="dod"><b>기준 통과</b> · 원본 없이 전체가 돌고, 수집기 · 업로드를 다시 돌려도 모두 '변경 없음'</div>
       </div></div>
 
-    <div class="phase now"><span class="marker"></span>
+    <div class="phase done"><span class="marker"></span>
       <div class="card p-card">
-        <div class="p-head"><span class="p-no">PHASE 3</span><span class="status s-now">지금 여기</span></div>
+        <div class="p-head"><span class="p-no">PHASE 3</span><span class="status s-done">완료 · 2026.10</span></div>
         <h4>데이터 마트 · 품질</h4>
         <p class="p-goal">Silver와 Gold 계산을 SQL 모델로 옮기고 숫자 확인을 붙입니다.</p>
         <div><div class="block-label">할 일</div><ul class="todo">
           <li class="ok">PostgreSQL raw 스키마에 원본 적재 (3-1)</li>
           <li class="ok">dbt Silver 모델 · 기준표 seed (3-2, 파이썬과 일치)</li>
           <li class="ok">dbt Gold 모델 (3-3, 서울 14 vs 100 그대로)</li>
-          <li>dbt tests, 원본과 결과 합계 비교 리포트</li>
-          <li>ERD, 데이터 출처 문서</li></ul></div>
+          <li class="ok">dbt tests 49개, 파이썬 결과와 한 칸씩 비교</li>
+          <li class="ok">ERD · 데이터 사전 자동 생성, 데이터 출처 문서 (3-4)</li></ul></div>
         <div class="techs"><span class="tech">PostgreSQL</span><span class="tech">dbt</span><span class="tech">SQL</span></div>
-        <div class="dod"><b>끝났다고 볼 기준</b> · 같은 데이터로 dbt 결과와 파이썬 결과가 같고, 확인 항목이 모두 통과할 것</div>
+        <div class="dod"><b>기준 통과</b> · Silver · Gold 9개 표 45만 칸이 파이썬과 같고, 테스트 49개 통과</div>
       </div></div>
 
-    <div class="phase"><span class="marker"></span>
+    <div class="phase now"><span class="marker"></span>
       <div class="card p-card">
-        <div class="p-head"><span class="p-no">PHASE 4</span><span class="status s-next">예정</span></div>
+        <div class="p-head"><span class="p-no">PHASE 4</span><span class="status s-now">지금 여기</span></div>
         <h4>자동화 · 조회 화면</h4>
         <p class="p-goal">매달 자동으로 돌리고, 코드를 고치면 자동으로 확인하고, 결과를 화면으로 보여줍니다.</p>
         <div><div class="block-label">할 일</div><ul class="todo">
@@ -177,7 +177,8 @@
         <div class="log-row"><span class="date">2026-10-21</span><span class="dot" style="background:var(--green)"></span><div><b>PostgreSQL raw 스키마</b><p>원본을 표기 그대로 DB에 넣었습니다. SQL만으로 개인 결제 159,235행 · 14.89조가 나와 파이썬 Silver와 같았습니다.</p></div></div>
         <div class="log-row"><span class="date">2026-10-21</span><span class="dot" style="background:var(--green)"></span><div><b>dbt Silver 모델</b><p>Silver 규칙을 SQL 모델과 테스트 25개로 옮겼습니다. 파이썬 Silver와 32만 칸을 비교해 모두 같았습니다.</p></div></div>
         <div class="log-row"><span class="date">2026-10-21</span><span class="dot" style="background:var(--green)"></span><div><b>dbt Gold 모델</b><p>소비구조부터 4유형까지 SQL로 옮겨 파이썬 Gold와 12만 칸이 같았습니다. 반올림 방식을 파이썬과 맞추는 게 핵심이었습니다.</p></div></div>
-        <div class="log-row"><span class="date">다음</span><span class="dot" style="background:var(--primary)"></span><div><b>ERD와 데이터 출처 문서</b><p>스키마와 표 사이 관계를 그림으로 남기고, 원본마다 어디서 받았는지 정리할 계획입니다.</p></div></div>
+        <div class="log-row"><span class="date">2026-10-21</span><span class="dot" style="background:var(--green)"></span><div><b>데이터 사전 · ERD · 출처</b><p>DB와 dbt 결과를 읽어 데이터 사전과 ERD를 자동으로 만들고, 원본마다 출처를 확인한 것과 추정한 것으로 나눠 적었습니다.</p></div></div>
+        <div class="log-row"><span class="date">다음</span><span class="dot" style="background:var(--primary)"></span><div><b>Phase 4 · 자동화</b><p>Airflow로 매달 돌리고, GitHub Actions로 코드를 올릴 때마다 테스트가 돌게 할 계획입니다.</p></div></div>
       </div>
     </div>
     <div class="card pad stack" style="gap:12px">
@@ -192,6 +193,7 @@
         <tr><td><b>06</b> 코드 구조</td><td>리팩토링 결과, 모듈 지도, 테스트</td></tr>
         <tr><td><b>07</b> 메달리온</td><td>세 개의 층과 숫자 맞춰 보기</td></tr>
         <tr><td><b>08</b> 목표 아키텍처</td><td>Phase 2~4에서 만들 구조</td></tr>
+        <tr><td><b>10</b> 웨어하우스</td><td>raw · ref · silver · gold 스키마와 파이썬 비교</td></tr>
       </table>
     </div>
   </div>
@@ -199,7 +201,7 @@
 
 <div class="footer">
   <span>미래 소비기반 스트레스 테스트 · 흐름도 시리즈</span>
-  <div class="series"><span>00 목표 · 기술</span><span>01 한눈에</span><span>02 데이터</span><span>03 파이프라인</span><span>04 검증</span><span>05 전략</span><span>06 코드 구조</span><span>07 메달리온</span><span>08 목표 아키텍처</span><span class="on">09 로드맵</span></div>
+  <div class="series"><span>00 목표 · 기술</span><span>01 한눈에</span><span>02 데이터</span><span>03 파이프라인</span><span>04 검증</span><span>05 전략</span><span>06 코드 구조</span><span>07 메달리온</span><span>08 목표 아키텍처</span><span class="on">09 로드맵</span><span>10 웨어하우스</span></div>
 </div>
 
 </body>

@@ -3,6 +3,14 @@
 날짜별로 무엇을, 왜(사용자 말), 어떻게 했고, 숫자로 무엇을 확인했는지 적습니다. 최신이 위입니다.
 기술마다 정리한 내용은 [README 목차](README.md)의 주제 문서에 있습니다.
 
+## 2026-10-21 — 데이터 사전 · ERD · 출처 문서 (Phase 3-4, Phase 3 완료)
+
+- 사용자 "응 3-4 진행해줘 그리고 작업 했던 내용들 자세히 설명해줘".
+- 열 설명을 dbt docs 블록(`dbt/models/docs.md`)에 모으고 `persist_docs`로 PostgreSQL COMMENT에도 저장. 여러 열 연결 테스트(`composite_relationships`) 5개 추가 → dbt 65단계 모두 통과(테스트 49개).
+- `warehouse_docs.py`: DB(열 · 타입 · 설명 · 행 수)와 dbt manifest(계보 · 열쇠 · 연결)를 읽어 `docs/warehouse/README.md` 자동 생성 (표 18개, Mermaid 계보 · ERD). 테스트 수 누락(42 → 49)과 ERD 연결 기호 오류를 찾아 고침. Mermaid 11로 그려지는 것 확인.
+- `docs/data_sources.md`: 원본 8종 + API. 서울 · 경기 장래인구는 KOSIS와 값이 같아 '확인', 나머지는 '형식으로 추정' · '확인 필요'로 나눠 표시 (발표자료에도 기관 이름은 없었음).
+- 흐름도 10 웨어하우스 추가, 로드맵 v11(Phase 3 완료 · Phase 4 지금 여기). 테스트 68개.
+
 ## 2026-10-21 — dbt Gold 모델 (Phase 3-3)
 
 - 사용자 "응 3-3 진행해줘".
