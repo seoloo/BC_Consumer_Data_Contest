@@ -32,6 +32,7 @@ import argparse
 import csv
 import hashlib
 import io
+import os
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -175,9 +176,11 @@ class Warehouse:
             except ValueError:
                 return default
 
+        # 이 PC에서는 127.0.0.1:55532, 컨테이너 안(Airflow)에서는 서비스 이름 warehouse:5432로 접속합니다.
+        # WAREHOUSE_HOST · WAREHOUSE_PORT는 docker-compose.yml이 컨테이너에만 넣어 주는 값입니다.
         params = {
-            "host": "127.0.0.1",
-            "port": optional("POSTGRES_PORT", DEFAULT_POSTGRES_PORT),
+            "host": os.getenv("WAREHOUSE_HOST", "127.0.0.1"),
+            "port": os.getenv("WAREHOUSE_PORT") or optional("POSTGRES_PORT", DEFAULT_POSTGRES_PORT),
             "dbname": optional("POSTGRES_DB", DEFAULT_POSTGRES_DB),
             "user": optional("POSTGRES_USER", DEFAULT_POSTGRES_USER),
             "password": read_env_value("POSTGRES_PASSWORD", env_file),

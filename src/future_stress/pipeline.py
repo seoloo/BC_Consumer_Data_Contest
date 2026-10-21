@@ -89,13 +89,26 @@ def run_pipeline(raw_dir=None, output_dir=None, data_dir=None, object_store=None
                 f"raw 적재 대사 ({result['표']})", "Bronze → PostgreSQL", "원본과 행 수 · 합계 같음",
                 f"{result['행 수']:,}행", True, f"{result['상태']} · 합계 {result['합계']:,}",
             ))
+    return build_layers_and_export(bronze_dir, silver_dir, gold_dir, output_dir, store_checks)
+
+
+def build_layers_and_export(bronze_dir, silver_dir, gold_dir, output_dir, extra_checks=()):
+    """Bronze에서 Silver · Gold를 만들고, 층 사이 대사를 통과하면 결과 CSV를 내보냅니다.
+
+    run_pipeline의 뒷부분이지만 따로 떼어 둔 이유: Airflow DAG는 Bronze 적재 · 객체 저장소 · raw 적재를
+    각각 다른 단계로 돌린 뒤 이 부분만 한 단계로 부릅니다 (실패한 단계만 다시 돌릴 수 있게).
+
+    Args:
+        extra_checks: 앞 단계(객체 저장소 왕복 지문, raw 적재 대사)에서 만든 대사 줄. 보고서 맨 앞에 붙입니다.
+    """
+    output_dir = Path(output_dir)
     silver = build_silver(bronze_dir, silver_dir)
     gold = build_gold(silver_dir, gold_dir)
 
     quality_report = run_quality_checks(bronze_dir, silver, gold)
-    if store_checks:
-        quality_report = pd.concat([pd.DataFrame(store_checks), quality_report], ignore_index=True)
-    save_csv(quality_report, gold_dir / "_quality_report.csv")
+    if extra_checks:
+        quality_report = pd.concat([pd.DataFrame(list(extra_checks)), quality_report], ignore_index=True)
+    save_csv(quality_report, Path(gold_dir) / "_quality_report.csv")
     save_csv(quality_report, output_dir / "quality_report.csv")
     failed = quality_report[quality_report["결과"] == "실패"]
     if not failed.empty:

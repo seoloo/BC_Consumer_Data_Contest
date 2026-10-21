@@ -119,7 +119,8 @@ Future Stress가 음수이면 현재 소비구조가 미래 인구감소에 더 
 | 원본 보관 | SeaweedFS (S3 호환, boto3), Docker Compose | 사용 중 |
 | 저장 · 변환 · 품질 | PostgreSQL (raw · silver · gold 스키마), dbt (Docker), dbt tests | 사용 중 |
 | 자동 검사 | GitHub Actions (PR · main마다 합성 데이터로 전체 실행) | 사용 중 |
-| 운영 · 제공 | Airflow, Streamlit | Phase 4 |
+| 스케줄링 | Airflow 3.1 (월 배치 DAG, backfill) | 사용 중 |
+| 조회 화면 | Streamlit | Phase 4 |
 
 ## 실행 방법
 
@@ -195,6 +196,16 @@ docker compose run --rm dbt build
 .venv\Scripts\python -m future_stress.pipeline --compare
 ```
 
+매달 순서대로 돌리는 Airflow DAG도 있습니다. 메모리를 많이 써서 평소에는 띄우지 않고, 필요할 때만 띄웁니다(화면: http://127.0.0.1:58280).
+
+```powershell
+docker compose --profile airflow up -d
+```
+
+```powershell
+docker compose exec airflow airflow dags test future_stress_monthly -c '{\"batch_month\":202606}'
+```
+
 GitHub에서는 PR과 main에 올릴 때마다 [CI](.github/workflows/ci.yml)가 합성 데이터로 위 과정(테스트 → 파이프라인 → dbt → 파이썬 비교)을 처음부터 자동으로 돌립니다.
 
 ## 저장소 구성
@@ -202,7 +213,9 @@ GitHub에서는 PR과 main에 올릴 때마다 [CI](.github/workflows/ci.yml)가
 ```text
 src/          분석 로직 패키지 (future_stress)
 dbt/          SQL 모델 (silver · gold), 기준표(seeds), 테스트
-docker-compose.yml  로컬 서비스: 객체 저장소(SeaweedFS) · PostgreSQL · dbt
+airflow/dags/ 월 배치 DAG (일은 src/future_stress/orchestration.py)
+docker/       Airflow 이미지 (Dockerfile)
+docker-compose.yml  로컬 서비스: 객체 저장소(SeaweedFS) · PostgreSQL · dbt · Airflow
 tests/        단위 테스트와 전체 실행 테스트
 notebooks/    실행 출력과 인증정보를 제거한 원래 분석 노트북 (보존용)
 assets/       발표에 쓴 결과 이미지
