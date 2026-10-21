@@ -43,3 +43,6 @@ data/synthetic/
 dbt/target/
 dbt/logs/
 dbt/dbt_packages/
+dbt/.user.yml
+# dbt 기준표(seed)는 원본 데이터가 아니라 코드표라서 올립니다 (위의 *.csv 제외 규칙의 예외)
+!dbt/seeds/*.csv
