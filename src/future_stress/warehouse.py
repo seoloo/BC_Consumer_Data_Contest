@@ -168,8 +168,11 @@ class Warehouse:
         self.schema = schema
 
     @classmethod
-    def from_environment(cls, env_file=None, schema=RAW_SCHEMA):
-        """.env의 POSTGRES_* 값으로 로컬 PostgreSQL(docker compose의 warehouse)에 연결합니다."""
+    def from_environment(cls, env_file=None, schema=RAW_SCHEMA, dbname=None):
+        """.env의 POSTGRES_* 값으로 로컬 PostgreSQL(docker compose의 warehouse)에 연결합니다.
+
+        dbname: 같은 서버의 다른 데이터베이스 (예: Airflow 기록용 'airflow'). 없으면 POSTGRES_DB.
+        """
         def optional(name, default):
             try:
                 return read_env_value(name, env_file)
@@ -181,7 +184,7 @@ class Warehouse:
         params = {
             "host": os.getenv("WAREHOUSE_HOST", "127.0.0.1"),
             "port": os.getenv("WAREHOUSE_PORT") or optional("POSTGRES_PORT", DEFAULT_POSTGRES_PORT),
-            "dbname": optional("POSTGRES_DB", DEFAULT_POSTGRES_DB),
+            "dbname": dbname or optional("POSTGRES_DB", DEFAULT_POSTGRES_DB),
             "user": optional("POSTGRES_USER", DEFAULT_POSTGRES_USER),
             "password": read_env_value("POSTGRES_PASSWORD", env_file),
             "connect_timeout": 5,

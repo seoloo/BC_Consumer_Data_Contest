@@ -76,10 +76,10 @@
     <div class="finish">
       <b>완성되면 이렇게 돌아갑니다</b>
       <ol>
-        <li><code>docker compose up</code> 한 번으로 DB, 저장소, Airflow, 대시보드가 함께 실행</li>
+        <li><code>docker compose up</code>으로 DB와 저장소를 띄우고, 필요할 때 Airflow까지</li>
         <li>Airflow가 매달 데이터를 받아 원본 그대로 보관</li>
         <li>dbt가 Bronze → Silver → Gold로 정리하면서 층마다 숫자를 맞춰 봄</li>
-        <li>검사를 통과하면 대시보드에 반영, 틀리면 알림</li>
+        <li>검사를 통과한 결과만 대시보드에 보이고, 틀리면 그 단계에서 멈춤</li>
         <li>코드를 올리면 GitHub Actions가 가짜 데이터로 처음부터 끝까지 실행</li>
       </ol>
     </div>
