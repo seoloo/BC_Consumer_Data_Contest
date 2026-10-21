@@ -16,6 +16,8 @@
 | API 인증키 | 환경변수 또는 저장소 루트의 `.env`에서만 읽음. `.env.example`에는 이름만 적음 (`KOSIS_API_KEY=`) |
 | `.env` | `.gitignore`에 등록 (`.env`, `.env.*`, 단 `.env.example`은 올림) |
 | 다른 프로젝트와 같은 키 | 복사하지 않고 `--env-file`로 그 프로젝트의 `.env`를 가리킴 |
+| 로컬 저장소 계정 키 | `object_store init-env`가 무작위로 만들어 `.env`에만 저장. 화면에 출력하지 않음. 컨테이너는 시작할 때 환경변수로 받음 (이미지 · compose 파일에 키 없음) |
+| 저장소 접속 범위 | `127.0.0.1:59100`에만 열어 이 PC 밖에서는 접속 불가 |
 | 오류 메시지 | requests 오류의 URL에 인증키가 들어 있어 그대로 올리지 않음 (08 참고) |
 | 원본 · 층 데이터 | `data/raw`, `data/bronze`, `data/silver`, `data/gold`, `data/synthetic`, `output/`, `*.csv` · `*.xlsx` 모두 git 제외. `results/*.csv`(발표에 공개한 집계)만 예외로 올림 |
 | 원본이 없는 사람 | 합성 데이터로 같은 과정을 돌릴 수 있게 함 (11 참고). 숫자는 원본에서 가져오지 않음 |
@@ -37,7 +39,7 @@
 ## 앞으로
 
 - Phase 4 GitHub Actions에서는 키를 GitHub Secrets에 두고, 테스트는 키 없이 가짜 응답으로 돌립니다.
-- Docker Compose에서는 `.env`를 `env_file`로 넘기고 이미지 안에 키를 넣지 않습니다.
+- ~~Docker Compose에서 키를 이미지에 넣지 않기~~ → 2026-10-21 SeaweedFS에 적용 (`${S3_ACCESS_KEY}`로 받음).
 
 ## 스스로 점검할 질문
 

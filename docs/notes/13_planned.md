@@ -5,17 +5,15 @@
 
 ## Phase 2 · 수집과 저장
 
-### MinIO (Bronze 저장소)
+### ~~MinIO (Bronze 저장소)~~ → 2026-10-21 SeaweedFS로 완료
 
-- **왜:** 지금 Bronze는 로컬 폴더라 이 PC에서만 보입니다. 실무의 데이터 레이크는 S3 같은 오브젝트 저장소에 원본을 쌓습니다. MinIO는 S3와 같은 API를 쓰는 저장소를 로컬에서 띄울 수 있어, 코드를 거의 바꾸지 않고 나중에 S3로 옮길 수 있습니다.
-- **어떻게:** 원본을 `bronze/<원본 종류>/<기준년월>/파일`처럼 달별 폴더에 둡니다. 영수증(지문)도 함께 둡니다.
-- **확인할 것:** 같은 달을 두 번 올려도 '변경 없음'인지, 한 달만 다시 올리고 그 달만 다시 처리할 수 있는지.
-- **다른 선택지:** 로컬 폴더 유지(다른 서비스와 공유 불가), 실제 AWS S3(비용 · 계정 필요, 로컬 재현 어려움).
+MinIO 무료판 이미지가 Docker Hub에서 지워져 같은 S3 API의 SeaweedFS를 썼습니다. 결과는 [14 객체 저장소](14_object_storage.md).
 
-### Docker Compose
+### Docker Compose (시작함)
 
-- **왜:** MinIO, PostgreSQL, Airflow를 각자 설치하면 PC마다 버전 · 설정이 달라집니다. Compose 파일 하나로 같은 환경을 띄우고 지울 수 있습니다.
-- **확인할 것:** 새 PC에서 `docker compose up` 한 번으로 전체가 뜨는지, 인증키가 이미지에 들어가지 않는지.
+- **왜:** 저장소, PostgreSQL, Airflow를 각자 설치하면 PC마다 버전 · 설정이 달라집니다. Compose 파일 하나로 같은 환경을 띄우고 지울 수 있습니다.
+- **지금:** `docker-compose.yml`에 SeaweedFS 하나. 버전 고정, 키는 `.env`에서만, healthcheck로 준비 확인 (2026-10-21).
+- **확인할 것:** PostgreSQL · Airflow를 더한 뒤에도 새 PC에서 `docker compose up -d` 한 번으로 전체가 뜨는지.
 
 ## Phase 3 · 데이터 마트와 품질
 

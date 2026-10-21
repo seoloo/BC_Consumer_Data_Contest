@@ -1,0 +1,45 @@
+# 이 프로젝트를 돌리는 데 필요한 로컬 서비스.
+# 지금은 Bronze 원본을 보관할 S3 호환 객체 저장소(SeaweedFS) 하나입니다. (기록: docs/notes/14_object_storage.md)
+#
+# 처음 한 번 (저장소 루트에서, PowerShell은 한 줄씩)
+#   .venv\Scripts\python -m future_stress.object_store init-env    # .env에 로컬 전용 S3 계정 키 만들기
+#   docker compose up -d                                           # 저장소 띄우기
+#   docker compose ps                                              # STATUS가 healthy인지 확인
+#
+# 끄기: docker compose down   (데이터는 볼륨에 남음, 지우려면 docker compose down -v)
+
+name: bc-consumer-data
+
+services:
+  object-store:
+    # MinIO는 2025-10 무료판 이미지 배포를 멈추고 2026-09 Docker Hub에서 이미지가 지워져,
+    # 같은 S3 API를 쓰는 SeaweedFS로 정했습니다. 언제 띄워도 같은 환경이 되도록 버전을 고정합니다.
+    image: chrislusf/seaweedfs:4.48
+    environment:
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY:?먼저 python -m future_stress.object_store init-env 를 실행해 주세요}
+      S3_SECRET_KEY: ${S3_SECRET_KEY:?먼저 python -m future_stress.object_store init-env 를 실행해 주세요}
+    # 시작할 때 환경변수로 S3 계정 설정 파일을 만든 뒤, master · volume · filer · S3를 한 컨테이너로 띄웁니다.
+    # 키를 이미지나 이 파일에 적지 않고 .env에서만 받기 위해서입니다.
+    # 볼륨 수는 디스크 여유에 맞춰 자동(-volume.max=0), 볼륨 하나는 256MB로 작게 둡니다
+    # (기본 상한이면 버킷을 여러 개 만들 때 쓰기가 실패할 수 있음).
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - >
+        printf '{"identities":[{"name":"pipeline","credentials":[{"accessKey":"%s","secretKey":"%s"}],"actions":["Admin","Read","List","Tagging","Write"]}]}'
+        "$$S3_ACCESS_KEY" "$$S3_SECRET_KEY" > /tmp/s3.json &&
+        exec weed server -dir=/data -volume.max=0 -master.volumeSizeLimitMB=256
+        -s3 -s3.port=8333 -s3.config=/tmp/s3.json
+    ports:
+      # 이 PC에서만 접속 가능(127.0.0.1). 다른 프로젝트가 쓰는 59000번과 겹치지 않게 59100번을 씁니다.
+      - "127.0.0.1:${S3_PORT:-59100}:8333"
+    volumes:
+      - object-store-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:9333/cluster/status"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+
+volumes:
+  object-store-data:

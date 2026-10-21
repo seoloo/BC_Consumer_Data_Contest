@@ -19,6 +19,7 @@
 |---|---|---|
 | Bronze 적재 | 원본과 Bronze 복사본의 SHA-256이 같으면 복사하지 않고 '변경 없음'으로 영수증에 기록 | `medallion.build_bronze()`, `file_fingerprint()` |
 | KOSIS 수집 | 응답 행을 정렬해서 저장하고, 내용이 같으면 파일을 다시 쓰지 않음. 받은 시각은 데이터 파일이 아니라 기록 파일에 | `kosis.landing_json()`, `write_if_changed()` |
+| 객체 저장소 업로드 | 객체 메타데이터에 SHA-256을 적고, 다음에 같으면 올리지 않음. 받을 때 영수증 지문과 다시 맞춤 | `object_store.upload_if_changed()`, `download_bronze()` |
 | 합성 데이터 | 시드 고정 (`numpy.random.default_rng(seed)`), 엑셀 안에 저장되는 시각을 고정 | `synthetic.save_excel()` |
 | 분석 결과 | 노트북과 같은 반올림 규칙 유지 (연령 비중을 소수 첫째 자리로 반올림한 뒤 계산) | `card_spending.build_age_spending_structure()` |
 
@@ -30,6 +31,7 @@
 - 같은 원본으로 Bronze를 다시 적재하면 모든 파일이 '변경 없음'으로 기록됩니다 (`test_bronze_is_idempotent`).
 - **엑셀 파일은 같은 시드로 만들어도 해시가 매번 달랐습니다.** xlsx는 압축 파일이라 안쪽 파일마다 저장 시각이 들어가고, `docProps/core.xml`에도 작성 · 수정 시각이 남기 때문입니다. 저장 시각을 고정한 뒤에는 CSV · 엑셀 모두 같은 시드 → 같은 SHA-256이 됩니다 (`test_same_seed_gives_identical_files`).
 - KOSIS 응답을 순서만 바꿔 두 번 저장해도 같은 파일이 되고, 두 번째는 '변경 없음'으로 기록됩니다 (`test_collect_twice_gives_same_file`).
+- 객체 저장소에 두 번째 올릴 때 데이터 파일 60개가 모두 '변경 없음'이었고, 저장소를 거쳐도 1초 정도만 더 걸렸습니다 (14 참고).
 - 반올림 규칙까지 노트북과 맞췄기 때문에 발표 결과 6/6이 소수점까지 그대로 나옵니다.
 
 ## 다른 방법과 고르지 않은 이유

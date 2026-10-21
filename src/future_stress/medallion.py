@@ -19,8 +19,8 @@
     함께 저장되어 다시 읽을 때 '업종코드가 숫자로 바뀌는' 식의 문제가 생기지 않습니다.
 
 앞으로의 계획 (docs/diagrams/07_medallion.png)
-    Bronze → MinIO(S3 호환 저장소), Silver · Gold → PostgreSQL 스키마 + dbt 모델로 옮깁니다.
-    지금은 같은 구조를 로컬 폴더로 먼저 만들어 둔 단계입니다.
+    Bronze는 SeaweedFS(S3 호환 저장소)로 옮겼습니다 (object_store.py, pipeline --object-store).
+    Silver · Gold는 Phase 3에 PostgreSQL 스키마 + dbt 모델로 옮깁니다.
 """
 
 import hashlib

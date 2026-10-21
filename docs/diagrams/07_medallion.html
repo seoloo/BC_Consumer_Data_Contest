@@ -65,7 +65,7 @@
     <h1>데이터를 세 층으로 나눠 쌓았습니다</h1>
     <p class="lede">원본을 그대로 두는 층(Bronze), 정리한 층(Silver), 분석 결과를 담는 층(Gold)으로 나눴습니다. 각 층은 <b>바로 앞 층만</b> 읽습니다.<br>층을 넘어갈 때마다 건수와 금액이 맞는지 확인해서, 정리하다가 데이터를 잃어버리지 않았는지 숫자로 보여줍니다.</p>
   </div>
-  <div class="version"><b>2026-10-21 로컬에 구성</b><br>medallion.py · Phase 2~3에 MinIO, PostgreSQL로 이전 예정</div>
+  <div class="version"><b>2026-10-21 로컬에 구성</b><br>medallion.py · Bronze는 SeaweedFS로 옮김, Silver · Gold는 Phase 3에 PostgreSQL로</div>
 </div>
 
 <!-- 1 -->
@@ -165,7 +165,7 @@
       <div class="card pad stack" style="gap:10px">
         <h3>확인 장치도 테스트했습니다</h3>
         <p>Silver에서 일부러 한 줄을 지웠을 때 '카드 행 수' 확인이 <b style="color:var(--red)">틀렸다고</b> 알려 주는지 테스트로 만들어 두었습니다.</p>
-        <p class="small"><code>test_quality_check_detects_lost_rows</code> · 테스트 42개 모두 통과</p>
+        <p class="small"><code>test_quality_check_detects_lost_rows</code> · 테스트 59개 모두 통과</p>
       </div>
     </div>
   </div>
@@ -193,7 +193,7 @@
   <div class="card pad">
     <table class="next">
       <tr><th>층</th><th>지금 (Phase 1.5)</th><th>앞으로</th><th>언제</th></tr>
-      <tr><td><b style="color:var(--bronze)">Bronze</b></td><td><code>data/bronze/</code> 폴더 + <code>_manifest.json</code></td><td>MinIO 버킷에 달별로 <code>bronze/card_spending/yyyymm=202601/</code></td><td><span class="tag t-primary">Phase 2</span></td></tr>
+      <tr><td><b style="color:var(--bronze)">Bronze</b></td><td><code>data/bronze/</code> 폴더 + <code>_manifest.json</code></td><td>SeaweedFS 버킷에 배치 월별로 <code>bronze/batch_month=202606/card_spending/</code> (옮김)</td><td><span class="tag t-green">Phase 2 완료</span></td></tr>
       <tr><td><b style="color:var(--silver)">Silver</b></td><td><code>data/silver/*.parquet</code>, 파이썬 정리 함수</td><td>PostgreSQL <code>silver</code> 스키마, dbt 모델 (<code>stg_card_spending</code> 등)</td><td><span class="tag t-violet">Phase 3</span></td></tr>
       <tr><td><b style="color:var(--gold)">Gold</b></td><td><code>data/gold/*.parquet</code>, 파이썬 분석 함수</td><td>PostgreSQL <code>gold</code> 스키마, dbt 모델 (<code>mart_future_stress</code> 등)</td><td><span class="tag t-violet">Phase 3</span></td></tr>
       <tr><td><b>숫자 확인</b></td><td><code>run_quality_checks()</code> 10개</td><td>dbt tests와 확인용 SQL을 Airflow에서 층마다 실행</td><td><span class="tag t-violet">Phase 3</span> <span class="tag t-amber">Phase 4</span></td></tr>
