@@ -34,3 +34,6 @@ data/gold/
 
 # 합성 데이터 (시드로 언제든 다시 만들 수 있음)
 data/synthetic/
+
+# Claude Code 개인 설정
+.claude/settings.local.json

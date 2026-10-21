@@ -67,7 +67,7 @@
     <h1>공모전 노트북에서 데이터 파이프라인까지</h1>
     <p class="lede">공모전 노트북을 데이터 파이프라인으로 옮겨 가는 과정입니다. 단계가 하나 끝날 때마다 이 그림도 고칩니다.</p>
   </div>
-  <div class="version"><b>로드맵 v4</b><br>2026-10-21 합성 데이터</div>
+  <div class="version"><b>로드맵 v5</b><br>2026-10-21 KOSIS 수집기</div>
 </div>
 
 <div data-part="1" class="goal">
@@ -125,7 +125,7 @@
         <p class="p-goal">원본 없이도 누구나 돌려 볼 수 있게 하고, 인구 데이터는 API로 직접 받습니다.</p>
         <div><div class="block-label">할 일</div><ul class="todo">
           <li class="ok">원본 8종과 같은 형식의 합성 데이터</li>
-          <li>KOSIS 인구 수집기 (재시도, 두 번 받아도 같게)</li>
+          <li>KOSIS 인구 수집기 (코드 완료, 실제 호출 확인 전)</li>
           <li>MinIO를 Bronze 저장소로 (달별 폴더)</li>
           <li>Docker Compose 기본 틀</li></ul></div>
         <div class="techs"><span class="tech">NumPy</span><span class="tech">requests</span><span class="tech">KOSIS</span><span class="tech">MinIO</span><span class="tech">Docker</span></div>
@@ -171,7 +171,8 @@
         <div class="log-row"><span class="date">2026-10-20</span><span class="dot" style="background:var(--green)"></span><div><b>Phase 1 리팩토링</b><p>모듈 13개, 테스트 38개로 정리하고 발표 숫자 6/6을 그대로 다시 냈습니다. 정리하다가 서울 90세 이상 누락 같은 문제를 새로 찾았습니다.</p></div></div>
         <div class="log-row"><span class="date">2026-10-21</span><span class="dot" style="background:var(--green)"></span><div><b>Bronze · Silver · Gold 구성</b><p>원본 보관, Parquet 6개, Parquet 16개로 나누고, 층 사이 숫자 확인 10개를 통과했습니다. 발표 숫자도 그대로입니다.</p></div></div>
         <div class="log-row"><span class="date">2026-10-21</span><span class="dot" style="background:var(--green)"></span><div><b>합성 데이터 생성기</b><p>원본 8종과 형식이 같은 파일을 만들어, 원본 없이도 숫자 확인 10개를 통과했습니다. 성별 코드 x, 업종명 공백처럼 원본에서 애먹었던 부분도 그대로 넣었습니다.</p></div></div>
-        <div class="log-row"><span class="date">다음</span><span class="dot" style="background:var(--primary)"></span><div><b>Phase 2 · KOSIS 인구 수집기</b><p>부산 · 경기 장래인구를 사이트에서 내려받는 대신 API로 직접 받을 계획입니다.</p></div></div>
+        <div class="log-row"><span class="date">2026-10-21</span><span class="dot" style="background:var(--amber)"></span><div><b>KOSIS 인구 수집기</b><p>서울 · 경기 장래인구를 API로 받는 코드와 테스트를 만들었습니다. 인증키를 넣고 예전 파일과 값이 같은지 확인하는 일이 남았습니다.</p></div></div>
+        <div class="log-row"><span class="date">다음</span><span class="dot" style="background:var(--primary)"></span><div><b>MinIO를 Bronze 저장소로</b><p>원본을 로컬 폴더 대신 S3와 같은 방식의 저장소에 달별로 넣을 계획입니다.</p></div></div>
       </div>
     </div>
     <div class="card pad stack" style="gap:12px">

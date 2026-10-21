@@ -51,7 +51,7 @@
 | Phase 0 | 공모전 분석 (노트북) | 완료 |
 | Phase 1 | 리팩토링: 노트북 → `src/future_stress` 모듈 + 테스트, 발표 결과 6/6 재현 ([리팩토링 노트](docs/refactoring_notes.md)) | 완료 |
 | Phase 1.5 | 메달리온 아키텍처 로컬 세팅: Bronze → Silver → Gold, 계층 사이 대사 10개 | 완료 |
-| Phase 2 | 합성 데이터 생성기 (완료) · 공공 API 수집 | 진행 중 |
+| Phase 2 | 합성 데이터 생성기 (완료) · KOSIS 수집기 (코드 완료, 실제 호출 확인 전) · MinIO · Docker | 진행 중 |
 | Phase 3 | PostgreSQL + dbt 데이터 마트 · 품질 검사 | 예정 |
 | Phase 4 | Airflow 배치 · CI · 대시보드 | 예정 |
 
@@ -104,7 +104,7 @@ Future Stress가 음수이면 현재 소비구조가 미래 인구감소에 더 
 
 ## 기술 스택
 
-선택 이유는 [00 목표 · 기술 선택](docs/diagrams/00_goal_and_stack.png)에 정리했습니다.
+선택 이유는 [00 목표 · 기술 선택](docs/diagrams/00_goal_and_stack.png)에 정리했습니다. 기술마다 왜 골랐고 써 보니 무엇이 좋아졌는지는 [기술 · 설계 기록](docs/notes/README.md)에 주제별로 쌓고 있습니다 (메달리온, 품질 검사, 멱등성, 예외 처리, API 수집 등 13개 주제).
 
 | 구분 | 기술 | 상태 |
 |---|---|---|
@@ -112,7 +112,7 @@ Future Stress가 음수이면 현재 소비구조가 미래 인구감소에 더 
 | 데이터 구조 · 저장 | 메달리온 아키텍처 (Bronze · Silver · Gold), Parquet (pyarrow) | 사용 중 |
 | 테스트 | pytest | 사용 중 |
 | 합성 데이터 | NumPy 생성기 (원본 8종과 같은 형식, 시드 고정) | 사용 중 |
-| 수집 | requests (KOSIS · NAVER API) | Phase 2 |
+| 수집 | requests (KOSIS 장래인구 수집기 · NAVER API) | 코드 완료, KOSIS 실제 호출 확인 전 |
 | 원본 보관 | MinIO (S3 호환) | Phase 2 |
 | 저장 · 변환 · 품질 | PostgreSQL, dbt, dbt tests | Phase 3 |
 | 운영 · 제공 | Airflow, Docker Compose, GitHub Actions, Streamlit | Phase 2 ~ 4 |
@@ -139,6 +139,16 @@ python -m venv .venv
 .venv\Scripts\python -m future_stress.pipeline --synthetic
 ```
 
+서울 · 경기 장래인구는 KOSIS API로 직접 받을 수 있습니다. 인증키는 저장소 루트의 `.env`에 `KOSIS_API_KEY=발급받은키`로 넣습니다 (`.env`는 git에 올라가지 않습니다). 받은 응답은 `data/raw/kosis/`에 연도별 JSON으로 저장되고, 두 번째 명령은 예전에 내려받은 파일 값과 같은지 비교합니다.
+
+```powershell
+.venv\Scripts\python -m future_stress.kosis collect
+```
+
+```powershell
+.venv\Scripts\python -m future_stress.kosis compare
+```
+
 원본 데이터를 `data/raw/`에 넣었다면 전체 분석을 실행하고 발표 수치와 비교할 수 있습니다. 실행하면 `data/bronze` (원본 + 적재 영수증) → `data/silver` (정제 Parquet) → `data/gold` (분석 Parquet) 순서로 계층이 만들어지고, 계층 사이 건수 · 금액 대사를 통과해야 `output/`에 결과 CSV가 저장됩니다.
 
 ```powershell
@@ -152,7 +162,7 @@ src/          분석 로직 패키지 (future_stress)
 tests/        단위 테스트와 전체 실행 테스트
 notebooks/    실행 출력과 인증정보를 제거한 원래 분석 노트북 (보존용)
 assets/       발표에 쓴 결과 이미지
-docs/         최종 발표자료, 흐름도 시리즈(diagrams/), 리팩토링 노트
+docs/         최종 발표자료, 흐름도 시리즈(diagrams/), 리팩토링 노트, 기술 · 설계 기록(notes/)
 data/         데이터 비공개 사유와 재현 안내 (실행하면 raw · bronze · silver · gold · synthetic이 생기며 모두 git 제외)
 results/      발표자료에 사용한 소규모 집계 결과 CSV
 scripts/      공개용 노트북 정리 스크립트

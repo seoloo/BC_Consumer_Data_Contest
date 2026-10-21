@@ -17,6 +17,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DATA_DIR = PROJECT_ROOT / "data"
 RAW_DATA_DIR = DATA_DIR / "raw"                         # 공모전 원본을 처음 넣어 두는 곳 (저장소에 올리지 않음)
+KOSIS_RAW_DIR = RAW_DATA_DIR / "kosis"                  # KOSIS API로 받은 장래인구 원본 응답 (kosis.py)
 OUTPUT_DIR = PROJECT_ROOT / "output"                    # 발표 결과와 같은 형식의 CSV
 PUBLISHED_RESULTS_DIR = PROJECT_ROOT / "results"        # 발표자료에 실린 결과 (비교 기준)
 
