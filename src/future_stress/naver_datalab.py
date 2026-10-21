@@ -84,7 +84,7 @@ class NaverDataLabClient:
                 return response.json()
             if response.status_code not in RETRYABLE_STATUS_CODES or attempt == self.max_retries:
                 raise RuntimeError(f"NAVER API 오류 {response.status_code}: {response.text[:200]}")
-            # 2초 → 4초 → 8초: 호출 제한에 걸렸을 때 바로 다시 보내면 또 막히기 때문입니다.
+            # 2초 → 4초 (최대 3번 시도): 호출 제한에 걸렸을 때 바로 다시 보내면 또 막히기 때문입니다.
             time.sleep(self.retry_wait_seconds * 2 ** (attempt - 1))
         return None
 

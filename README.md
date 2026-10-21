@@ -104,7 +104,7 @@ Future Stress가 음수이면 현재 소비구조가 미래 인구감소에 더 
 
 ## 기술 스택
 
-선택 이유는 [00 목표 · 기술 선택](docs/diagrams/00_goal_and_stack.png)에 정리했습니다.
+선택 이유는 [00 목표 · 기술 선택](docs/diagrams/00_goal_and_stack.png)에 정리했습니다. 기술마다 왜 골랐고 써 보니 무엇이 좋아졌는지는 [기술 · 설계 기록](docs/notes/README.md)에 주제별로 쌓고 있습니다 (메달리온, 품질 검사, 멱등성, 예외 처리, API 수집 등 13개 주제).
 
 | 구분 | 기술 | 상태 |
 |---|---|---|
@@ -162,7 +162,7 @@ src/          분석 로직 패키지 (future_stress)
 tests/        단위 테스트와 전체 실행 테스트
 notebooks/    실행 출력과 인증정보를 제거한 원래 분석 노트북 (보존용)
 assets/       발표에 쓴 결과 이미지
-docs/         최종 발표자료, 흐름도 시리즈(diagrams/), 리팩토링 노트
+docs/         최종 발표자료, 흐름도 시리즈(diagrams/), 리팩토링 노트, 기술 · 설계 기록(notes/)
 data/         데이터 비공개 사유와 재현 안내 (실행하면 raw · bronze · silver · gold · synthetic이 생기며 모두 git 제외)
 results/      발표자료에 사용한 소규모 집계 결과 CSV
 scripts/      공개용 노트북 정리 스크립트
