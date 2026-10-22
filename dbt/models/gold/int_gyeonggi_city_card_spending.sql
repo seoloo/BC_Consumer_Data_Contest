@@ -7,5 +7,5 @@
 
 select base_month, province, {{ to_parent_city('district') }} as district,
        sex, age_group, industry_code, industry_name, amount, payment_count
-from {{ ref('silver_card_spending') }}
+from {{ ref('int_card_spending_in_window') }}   -- 분석 기간(최근 6개월)만
 where province = '경기도'

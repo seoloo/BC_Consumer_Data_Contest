@@ -34,14 +34,16 @@ import pandas as pd
 from . import config
 from .age_groups import ADULT_AGE_GROUPS, AGE_GROUP_ORDER, BC_AGE_CODE_TO_GROUP, BC_GENDER_CODE_TO_NAME
 from .card_spending import (
+    analysis_months,
     build_age_spending_structure,
     build_region_industry_profile,
+    card_file_end_month,
     clean_card_spending,
-    load_card_spending,
+    load_card_files,
     merge_gyeonggi_districts_into_cities,
 )
 from .diagnosis import MARKET_TYPE_STRATEGY, add_market_type, select_analysis_targets, size_cutoff
-from .io_utils import read_csv_with_encoding_fallback, read_parquet, save_parquet
+from .io_utils import read_parquet, save_parquet
 from .population import (
     POPULATION_YEARS,
     calculate_resident_age_shares,
@@ -76,7 +78,8 @@ from .validation import (
 # 원본 이름 → (Bronze 안의 폴더, data/raw 안의 파일 이름 또는 패턴)
 # 원본 파일명이 바뀌면 여기만 고치면 됩니다.
 RAW_SOURCES = {
-    "card": ("card_spending", "bc_card_202601_202606.csv"),
+    # 배치마다 한 파일씩 도착 (bc_card_<시작월>_<끝월>.csv). 같은 달이 겹치면 늦게 온 파일이 이김 (load_card_files)
+    "card": ("card_spending", "bc_card_*.csv"),
     "resident_population": ("resident_population", "population_2026*.csv"),
     "seoul_future": ("future_population", "seoul_future_population_2022_2042.csv"),
     "busan_future": ("future_population", "busan_future_population_2015_2040.xlsx"),
@@ -117,6 +120,12 @@ def find_raw_files(raw_dir, name):
     if path.is_dir():
         return sorted(path.rglob("*.csv"))
     return [path] if path.exists() else []
+
+
+def latest_card_batch(raw_dir):
+    """원본 폴더에 있는 BC카드 파일의 가장 최근 배치 월 (파일 이름의 끝월). 파일이 없으면 None."""
+    months = [card_file_end_month(path) for path in find_raw_files(raw_dir, RAW_SOURCES["card"][1])]
+    return max(months) if months else None
 
 
 def check_raw_files(raw_dir):
@@ -228,7 +237,8 @@ def build_silver(bronze_dir=None, silver_dir=None):
     ).rename(columns={year: f"{year}년 인구" for year in POPULATION_YEARS})
 
     tables = {
-        "card_spending": clean_card_spending(load_card_spending(bronze_path(bronze_dir, "card"))),
+        # Silver에는 도착한 모든 달을 쌓고, 분석 기간(최근 6개월)은 Gold에서 고릅니다.
+        "card_spending": clean_card_spending(load_card_files(bronze_path(bronze_dir, "card"))),
         "future_population": future_population,
         "resident_population": load_resident_population(bronze_path(bronze_dir, "resident_population")),
         "seoul_living_share": load_seoul_living_population_shares(bronze_path(bronze_dir, "seoul_living")),
@@ -250,6 +260,16 @@ def read_silver(silver_dir=None):
 # Gold · 분석 결과
 # ===========================================================================
 
+def analysis_window_table(months, silver_card):
+    """분석 기간 한 줄 (Gold). 화면 · 비교 · 대사가 '몇 월부터 몇 월까지로 계산했는지'를 같은 값으로 보게 합니다."""
+    available = sorted(int(month) for month in silver_card["기준년월"].unique())
+    return pd.DataFrame([{
+        "시작월": months[0], "끝월": months[-1], "개월수": len(months),
+        "결제가있는달수": sum(month in available for month in months),
+        "Silver전체기간": f"{available[0]} ~ {available[-1]} ({len(available)}개월)",
+    }])
+
+
 def future_population_of(silver, province):
     """Silver의 통합 장래인구에서 한 시도만 꺼냅니다."""
     future = silver["future_population"]
@@ -266,17 +286,19 @@ def build_gold(silver_dir=None, gold_dir=None):
     """
     silver = read_silver(silver_dir)
     gold_dir = Path(gold_dir or config.GOLD_DIR)
-    card = silver["card_spending"]
-    gold = {}
+    # [분석 기간] Silver의 마지막 달에서 거꾸로 6개월. 소비구조 · 성장 · Stress는 모두 이 기간의 결제로만 계산합니다.
+    months = analysis_months(silver["card_spending"])
+    card = silver["card_spending"][silver["card_spending"]["기준년월"].isin(months)]
+    gold = {"analysis_window": analysis_window_table(months, silver["card_spending"])}
 
     # [STEP 1] 연령별 소비구조 · 프로필
     # 전국(시군구 단위): 서울 · 부산 분석과 '전국 상위 25%' 기준에 사용
     national_structure = build_age_spending_structure(card)
-    national_profile = build_region_industry_profile(card, national_structure)
+    national_profile = build_region_industry_profile(card, national_structure, months)
     # 경기는 장래인구가 시 단위라서 일반구를 시로 합친 뒤 따로 만듭니다.
     gyeonggi_card = merge_gyeonggi_districts_into_cities(card[card["시도"] == "경기도"])
     gyeonggi_structure = build_age_spending_structure(gyeonggi_card)
-    gyeonggi_profile = build_region_industry_profile(gyeonggi_card, gyeonggi_structure)
+    gyeonggi_profile = build_region_industry_profile(gyeonggi_card, gyeonggi_structure, months)
     gold["age_spending_structure"] = national_structure
     gold["region_industry_profile"] = national_profile
     gold["gyeonggi_city_age_spending_structure"] = gyeonggi_structure
@@ -327,7 +349,7 @@ def build_gold(silver_dir=None, gold_dir=None):
 
     # [검증] 외부유입 보정 (서울 생활인구 · 부산 생활인구 · 경기 유동인구)
     resident = silver["resident_population"]
-    all_months = [str(month) for month in config.ANALYSIS_MONTHS]
+    all_months = [str(month) for month in months]   # 주민등록인구는 분석 기간 중 있는 달만 평균
     robustness_rows = []
 
     seoul_living = silver["seoul_living_share"]
@@ -352,7 +374,7 @@ def build_gold(silver_dir=None, gold_dir=None):
     gyeonggi_comparison = reweight_stress_by_external_population(
         gyeonggi_structure,
         renormalize_shares(flow_shares, "유동인구비중", ADULT_AGE_GROUPS), "유동인구비중",
-        calculate_resident_age_shares(resident, "경기도", all_months[:3], ADULT_AGE_GROUPS,
+        calculate_resident_age_shares(resident, "경기도", config.GYEONGGI_FLOW_MONTHS, ADULT_AGE_GROUPS,
                                       regions=flow_shares["시군구"].unique()),
         future_population_of(silver, "경기도"), ADULT_AGE_GROUPS,
     )
@@ -409,7 +431,7 @@ def run_quality_checks(bronze_dir=None, silver=None, gold=None):
     rows = []
 
     # 1~2. Bronze → Silver: 개인 결제 필터로 빠진 만큼만 줄었는가
-    raw_card = read_csv_with_encoding_fallback(bronze_path(bronze_dir, "card"), dtype={"GENDER_CD": str, "AGE_CD": str})
+    raw_card = load_card_files(bronze_path(bronze_dir, "card"))
     is_personal = (
         raw_card["GENDER_CD"].astype(str).str.strip().isin(BC_GENDER_CODE_TO_NAME)
         & raw_card["AGE_CD"].astype(str).str.strip().isin(BC_AGE_CODE_TO_GROUP)
@@ -443,13 +465,17 @@ def run_quality_checks(bronze_dir=None, silver=None, gold=None):
         not unknown_future_ages, "20대미만 → 20대이하 같은 별칭이 모두 표준화됐는지",
     ))
 
-    # 4~5. Silver → Gold: 집계 과정에서 금액이 새거나 늘지 않았는가
+    # 4~5. Silver → Gold: 집계 과정에서 금액이 새거나 늘지 않았는가 (Gold는 분석 기간의 결제만 씀)
+    window = gold["analysis_window"].iloc[0]
+    window_card = silver_card[silver_card["기준년월"].between(int(window["시작월"]), int(window["끝월"]))]
+    window_amount = int(window_card["이용금액"].sum())
     gold_amount = int(gold["age_spending_structure"]["이용금액"].sum())
     rows.append(check_row(
-        "전국 소비구조 금액 대사", "Silver → Gold", f"{silver_amount:,}", f"{gold_amount:,}",
-        silver_amount == gold_amount, "연령별 소비구조의 이용금액 합계 = Silver 카드 금액 합계",
+        "전국 소비구조 금액 대사", "Silver → Gold", f"{window_amount:,}", f"{gold_amount:,}",
+        window_amount == gold_amount,
+        f"연령별 소비구조의 이용금액 합계 = 분석 기간({int(window['시작월'])} ~ {int(window['끝월'])}) Silver 카드 금액 합계",
     ))
-    gyeonggi_silver = int(silver_card.loc[silver_card["시도"] == "경기도", "이용금액"].sum())
+    gyeonggi_silver = int(window_card.loc[window_card["시도"] == "경기도", "이용금액"].sum())
     gyeonggi_gold = int(gold["gyeonggi_city_age_spending_structure"]["이용금액"].sum())
     rows.append(check_row(
         "경기 시 단위 통합 대사", "Silver → Gold", f"{gyeonggi_silver:,}", f"{gyeonggi_gold:,}",

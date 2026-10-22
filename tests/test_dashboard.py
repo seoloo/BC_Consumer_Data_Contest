@@ -39,7 +39,8 @@ def fake_gold():
                                        is_stable_2040=[False, True], market_type=["착시성장형", "회복기회형"])
     counts = pd.DataFrame({"market_type": ["착시성장형", "지속성장형", "구조취약형", "회복기회형"],
                            "seoul": [1, 0, 0, 0], "busan": [0, 0, 0, 1], "gyeonggi": [0, 0, 0, 0]})
-    return {"gold_future_stress": future_stress, "gold_age_stress": age_stress,
+    window = pd.DataFrame([{"start_month": 202602, "end_month": 202607, "month_count": 6, "months_with_payments": 6}])
+    return {"gold_analysis_window": window, "gold_future_stress": future_stress, "gold_age_stress": age_stress,
             "gold_market_type": market_type, "gold_market_type_counts": counts}
 
 
@@ -127,6 +128,7 @@ def test_app_renders_every_tab_without_error(app):
     assert metrics["분석 대상 (지역별 상위 25%)"] == "2건"
     assert metrics["착시성장형 (지금 성장 · 미래 취약)"] == "1건"
     assert any("gold_market_type_counts와 같습니다" in caption.value for caption in app.caption)
+    assert any("2026.02 ~ 2026.07 (6개월)" in caption.value for caption in app.caption)   # 분석 기간
     assert any("Future Stress 2040" in caption.value and "같습니다" in caption.value for caption in app.caption)
 
 

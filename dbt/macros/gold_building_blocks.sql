@@ -29,7 +29,7 @@
 
 {# 지역 × 업종 한 건마다 핵심 연령대 · 연령 집중도 · 현재 성장 지표 · build_region_industry_profile() #}
 {% macro region_industry_profile(card_relation, structure_relation) -%}
-    {% set months = var('analysis_months') %}
+    {% set months = analysis_months() %}   {# 최근 6개월 · macros/analysis_window.sql #}
     with main_customer as (
         -- 비중이 가장 큰 연령대 = 핵심 고객. 비중이 같으면 파이썬 idxmax처럼 '먼저 나온 행'(업종명 · 연령대의 문자 코드 순)을 고릅니다.
         -- collate "C": 글자를 문자 코드 순서로 비교 (파이썬 문자열 정렬과 같음). 기본 정렬은 언어 규칙을 따라 다를 수 있음.

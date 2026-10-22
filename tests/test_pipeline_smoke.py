@@ -37,7 +37,7 @@ def pipeline_run(tmp_path_factory, synthetic_raw_dir):
 
 
 def test_missing_raw_files_are_reported_at_once(tmp_path):
-    with pytest.raises(FileNotFoundError, match="bc_card_202601_202606.csv"):
+    with pytest.raises(FileNotFoundError, match=r"bc_card_\*\.csv"):
         check_raw_files(tmp_path)
 
 

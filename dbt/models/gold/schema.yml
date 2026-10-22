@@ -4,6 +4,14 @@ version: 2
 # composite_relationships: 여러 열을 합친 열쇠가 다른 표에 반드시 있는지 (검사 + 데이터 사전 ERD의 연결선)
 
 models:
+  - name: gold_analysis_window
+    description: 분석 기간 한 줄. raw 결제의 마지막 달에서 거꾸로 6개월이며, 새 달 원본이 오면 옮겨 감 (파이썬 Gold analysis_window)
+    columns:
+      - {name: start_month, description: 분석 기간 첫 달 (예 202601), data_tests: [not_null]}
+      - {name: end_month, description: 분석 기간 마지막 달 = raw의 마지막 달, data_tests: [not_null]}
+      - {name: month_count, description: 분석 기간 개월 수 (6)}
+      - {name: months_with_payments, description: 분석 기간 중 결제가 한 건이라도 있는 달 수. 6보다 작으면 통째로 빈 달이 있음}
+
   - name: gold_age_spending_structure
     description: 전국 시군구 × 업종 × 연령대 이용금액과 비중(%) (파이썬 Gold age_spending_structure)
     data_tests:

@@ -7,7 +7,7 @@ sources:
     schema: "{{ var('raw_schema') }}"
     tables:
       - name: card_spending
-        description: BC카드 결제 원본 (공모전 제공, 2026.01 ~ 06). CSV 그대로, 열 이름만 소문자. 개인이 아닌 결제(성별 3 · x) 포함
+        description: BC카드 결제 원본 (공모전 제공 2026.01 ~ 06, 이후 배치마다 한 파일). 파일들을 합친 것(같은 달은 늦게 온 파일). CSV 그대로, 열 이름만 소문자. 개인이 아닌 결제(성별 3 · x) 포함
         columns:
           - name: strd_yymm
             description: 기준년월 (원본 STRD_YYMM)
@@ -28,7 +28,9 @@ sources:
             description: 이용금액 (원)
             data_tests: [not_null]
           - name: cnt
-            description: 이용건수
+            description: 이용건수. 원본 제공처가 10건 이하 칸을 빼고 제공 (tests/assert_card_cells_meet_minimum_count.sql)
+          - name: source_file
+            description: 이 행이 온 원본 파일 이름 (예 bc_card_202601_202606.csv). 값이 이상하면 원본 파일까지 거슬러 가기 위해
       - name: future_population
         description: 서울 · 부산 · 경기 장래인구 원본. 5세 · 1세 · 합계 행과 원본 표기 그대로, 연도 열만 세로로
         columns:

@@ -48,7 +48,7 @@ def test_raw_needs_every_table_logged():
 
 
 def test_gold_needs_every_dbt_model_with_rows():
-    assert len(health.GOLD_TABLES) == 9                                 # dbt/models/gold/gold_*.sql
+    assert len(health.GOLD_TABLES) == 10                                # dbt/models/gold/gold_*.sql (분석 기간 표 포함)
     counts = {table: 5 for table in health.GOLD_TABLES}
     assert health.judge_gold(counts, "gold").status == OK
     counts[health.GOLD_TABLES[0]] = 0

@@ -12,8 +12,10 @@
 """
 
 import warnings
+from pathlib import Path
 
 import numpy as np
+import pandas as pd
 
 from . import config
 from .age_groups import BC_AGE_CODE_TO_GROUP, BC_GENDER_CODE_TO_NAME
@@ -44,6 +46,44 @@ def load_card_spending(path):
         파일마다 달라질 수 있습니다. 문자열로 고정해 '1', '2' 비교가 항상 같게 동작하게 합니다.
     """
     return read_csv_with_encoding_fallback(path, dtype={"GENDER_CD": str, "AGE_CD": str})
+
+
+def card_file_end_month(path):
+    """bc_card_<시작월>_<끝월>.csv → 끝월 (= 그 파일이 도착한 배치 월). 이름이 규칙과 다르면 0."""
+    parts = Path(path).stem.split("_")
+    return int(parts[-1]) if len(parts) >= 4 and parts[-1].isdigit() else 0
+
+
+def load_card_files(paths, read=load_card_spending):
+    """BC카드 원본 여러 개(배치마다 한 파일)를 한 표로 합칩니다.
+
+    같은 달이 두 파일에 있으면 늦게 온 묶음(끝월이 큰 파일)의 그 달 행만 씁니다.
+    원본 제공처가 지난달 값을 고쳐 다시 보내도, 같은 달이 두 번 더해지지 않고 '그 달 통째로 교체'되게 하기 위해서입니다.
+
+    Args:
+        paths: 원본 경로 하나 또는 목록
+        read: 파일 하나를 읽는 함수 (raw 적재는 모든 열을 문자로 읽는 함수를 넘김)
+    """
+    paths = [paths] if isinstance(paths, (str, Path)) else list(paths)
+    frames = []
+    for path in sorted(paths, key=card_file_end_month):
+        frame = read(path)
+        frames.append((card_file_end_month(path), frame))
+    month_owner = {}
+    for end_month, frame in frames:                        # 끝월이 작은 파일부터 → 큰 파일이 덮어씀
+        for month in pd.unique(frame["STRD_YYMM"].astype(int)):
+            month_owner[int(month)] = end_month
+    kept = [frame[frame["STRD_YYMM"].astype(int).map(month_owner) == end_month] for end_month, frame in frames]
+    return pd.concat(kept, ignore_index=True)
+
+
+def analysis_months(card_spending, length=None):
+    """분석 기간 = 데이터의 마지막 달에서 거꾸로 length개월 (config.ANALYSIS_LENGTH).
+
+    마지막 달 기준으로 정하는 이유: 새 달 원본이 오면 기간이 그만큼 옮겨 가야 '지금의 성장'을 볼 수 있습니다.
+    중간 달이 통째로 비어 있어도 달력 기준으로 세므로, 빈 달은 '결제 없음'으로 남아 성장 판정에서 빠집니다.
+    """
+    return config.months_ending(int(card_spending["기준년월"].max()), length or config.ANALYSIS_LENGTH)
 
 
 def clean_card_spending(raw_card_spending):
@@ -147,14 +187,16 @@ def calculate_monthly_growth(card_spending, months=None):
     결과 열
         데이터보유개월수    6개월 중 결제가 있었던 달 수
         6개월완전          6개월 모두 결제가 있었는지
-        1월대비6월증감률    (6월 - 1월) / 1월 × 100
+        1월대비6월증감률    (마지막 달 - 첫 달) / 첫 달 × 100. 발표 결과(1 ~ 6월)와 같은 열 이름을 그대로 씁니다
         월평균증감률        5번의 전월 대비 증감률 평균
         상승개월수          전월보다 이용금액이 늘어난 달 수 (0~5)
 
     6개월이 다 있지 않으면 성장 지표를 NaN으로 둡니다.
         중간 달이 빠지면 증감률이 실제와 다르게 계산되므로, 판정에서 아예 제외하기 위해서입니다.
+
+    months: 분석 기간. 없으면 데이터의 마지막 달부터 거꾸로 6개월 (analysis_months)
     """
-    months = months or config.ANALYSIS_MONTHS
+    months = months or analysis_months(card_spending)
 
     monthly_amount = (
         card_spending
@@ -185,7 +227,7 @@ def calculate_monthly_growth(card_spending, months=None):
     return growth
 
 
-def build_region_industry_profile(card_spending, age_structure):
+def build_region_industry_profile(card_spending, age_structure, months=None):
     """지역 × 업종 한 건마다 분석에 필요한 정보를 한 행으로 모읍니다.
 
     합치는 정보
@@ -196,5 +238,5 @@ def build_region_industry_profile(card_spending, age_structure):
     return (
         find_main_customer_age(age_structure)
         .merge(calculate_age_concentration(age_structure), on=CASE_KEYS, how="left")
-        .merge(calculate_monthly_growth(card_spending), on=CASE_KEYS, how="left")
+        .merge(calculate_monthly_growth(card_spending, months), on=CASE_KEYS, how="left")
     )
