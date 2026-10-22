@@ -41,6 +41,7 @@ import psycopg
 from psycopg import sql
 
 from . import config
+from .card_spending import load_card_files
 from .io_utils import read_csv_with_encoding_fallback, read_env_value, read_parquet
 from .local_env import DEFAULT_POSTGRES_DB, DEFAULT_POSTGRES_PORT, DEFAULT_POSTGRES_USER
 from .medallion import DataQualityError, bronze_path, file_fingerprint
@@ -62,9 +63,10 @@ class RawTable:
 CARD_TABLE = RawTable(
     "card_spending",
     (("strd_yymm", "integer"), ("sido_nm", "text"), ("ccg_nm", "text"), ("gender_cd", "text"),
-     ("age_cd", "text"), ("tp_buz_no", "text"), ("tp_buz_nm", "text"), ("amt", "bigint"), ("cnt", "bigint")),
+     ("age_cd", "text"), ("tp_buz_no", "text"), ("tp_buz_nm", "text"), ("amt", "bigint"), ("cnt", "bigint"),
+     ("source_file", "text")),
     "amt",
-    "BC카드 결제 원본 (CSV 그대로, 열 이름만 소문자). 개인이 아닌 결제(성별 3 · x) 포함",
+    "BC카드 결제 원본 (CSV 그대로, 열 이름만 소문자). 배치마다 온 파일을 합침(같은 달은 늦게 온 파일). 개인이 아닌 결제(성별 3 · x) 포함",
 )
 FUTURE_TABLE = RawTable(
     "future_population",
@@ -83,11 +85,16 @@ FUTURE_POPULATION_SOURCES = {"seoul_future": "서울특별시", "busan_future": 
 # ===========================================================================
 
 def card_spending_frame(bronze_dir):
-    """BC카드 CSV를 raw.card_spending 모양으로. 모두 문자로 읽은 뒤 숫자 열만 바꿉니다.
+    """BC카드 CSV(배치마다 한 파일)를 raw.card_spending 모양으로. 모두 문자로 읽은 뒤 숫자 열만 바꿉니다.
 
     왜 모두 문자로 읽나요? 성별 · 연령 코드에 'x'가 섞여 있어, 숫자로 읽으면 열 타입이 흔들리기 때문입니다 (07 참고).
+    같은 달이 두 파일에 있으면 늦게 온 파일의 그 달만 씁니다 (card_spending.load_card_files, 파이썬 Silver와 같은 규칙).
+    source_file: 행마다 어느 파일에서 왔는지 남겨, 나중에 값이 이상하면 원본 파일까지 거슬러 갈 수 있게 합니다.
     """
-    raw = read_csv_with_encoding_fallback(bronze_path(bronze_dir, "card"), dtype=str)
+    def read_text_columns(path):
+        return read_csv_with_encoding_fallback(path, dtype=str).assign(source_file=Path(path).name)
+
+    raw = load_card_files(bronze_path(bronze_dir, "card"), read=read_text_columns)
     frame = raw.rename(columns=str.lower)[[name for name, _ in CARD_TABLE.columns]].copy()
     for column in ("strd_yymm", "amt", "cnt"):
         frame[column] = pd.to_numeric(frame[column], errors="raise").astype("Int64")
@@ -148,7 +155,7 @@ def raw_sources(bronze_dir):
     """적재할 표 · 그 표를 만드는 함수 · 원본 지문."""
     future_paths = [bronze_path(bronze_dir, key) for key in FUTURE_POPULATION_SOURCES]
     return [
-        (CARD_TABLE, lambda: card_spending_frame(bronze_dir), file_fingerprint(bronze_path(bronze_dir, "card"))),
+        (CARD_TABLE, lambda: card_spending_frame(bronze_dir), combined_fingerprint(bronze_path(bronze_dir, "card"))),
         (FUTURE_TABLE, lambda: future_population_frame(bronze_dir), combined_fingerprint(future_paths)),
     ]
 
@@ -347,6 +354,12 @@ _PROFILE_VALUES = {"이용금액비중": "main_age_share", "업종총이용금�
 _STRESS_VALUES = {f"{year} 순인구효과": f"stress_{year}" for year in config.STRESS_YEARS}
 
 GOLD_COLUMN_MAPS = {
+    # 분석 기간이 같아야 아래 표들이 같은 결제로 계산된 것 (최근 6개월, 새 달이 오면 옮겨 감)
+    "analysis_window": {
+        "dbt_table": "gold_analysis_window",
+        "keys": {"시작월": "start_month", "끝월": "end_month"},
+        "values": {"개월수": "month_count", "결제가있는달수": "months_with_payments"},
+    },
     "age_spending_structure": {
         "dbt_table": "gold_age_spending_structure",
         "keys": {**_CASE_KEYS, "연령대": "age_group"}, "values": _STRUCTURE_VALUES,

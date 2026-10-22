@@ -98,6 +98,9 @@
 | **short_circuit** | False를 돌려주면 뒤 단계를 '건너뜀'으로 두는 단계. 실패가 아님. | `has_new_batch` |
 | **backfill** | 지난 기간을 골라 다시 돌리는 것. 멱등해야 안전함. | `airflow backfill create` |
 | **XCom** | 단계 사이에 작은 값을 넘기는 Airflow 저장소. 큰 표는 넘기지 않음. | 단계별 요약 dict |
+| **분석 기간** | 성장 · Stress를 계산하는 6개월. 결제 데이터의 마지막 달에서 거꾸로 6개월이라 새 달이 오면 옮겨 감. | Gold `analysis_window`, [21](21_monthly_batch.md) |
+| **월 단위 교체** | 같은 달이 두 파일에 있으면 늦게 온 파일의 그 달만 쓰는 것. 두 번 더해지지 않고, 다시 돌려도 같음. | `load_card_files()` |
+| **작은 칸 (최소 건수)** | 결제가 몇 건 안 되는 칸은 개인이 드러날 수 있어 제공하지 않는 기준. BC카드 원본은 10건 이하 칸이 없음. | dbt `assert_card_cells_meet_minimum_count` |
 | **배치 월** | 한 번에 도착한 원본 묶음의 이름(BC카드 파일 이름의 끝월). DAG는 실행 시각(한국 시간)의 지난달을 처리. | `batch_month=202606` |
 | **브랜치 · 병합** | 작업을 main과 떼어 따로 하는 갈래 · 다 확인한 뒤 main에 합치는 것. | `feature/*`, [12](12_docs_and_git.md) |
 

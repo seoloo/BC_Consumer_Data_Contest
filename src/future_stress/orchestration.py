@@ -10,25 +10,23 @@
     DAG는 매달 1일(한국 시간)에 '지난달' 배치를 처리합니다 (7월 1일 실행 → 202606).
     공모전 데이터는 2026.01 ~ 06이 한 번에 온 묶음 하나라서 배치 월은 202606 하나뿐입니다.
     그래서 2 ~ 6월 1일 실행(배치 202601 ~ 202605)은 '새 원본 없음'으로 건너뛰고, 7월 1일 실행만 실제로 처리합니다.
-    다음 달 원본(예: bc_card_202607_202607.csv)이 오면 같은 DAG가 그 달을 처리합니다.
+    다음 달 원본(예: bc_card_202607_202607.csv)이 오면 8월 1일 실행이 그 달을 처리합니다. 앞의 파일과 합쳐
+    분석 기간이 최근 6개월(2 ~ 7월)로 옮겨 갑니다 (card_spending.load_card_files · analysis_months, 2026-10-22부터).
 
 모든 단계는 다시 돌려도 결과가 같습니다 (지문이 같으면 '변경 없음', 05 멱등성).
 각 함수는 Airflow 화면에서 보기 좋은 작은 dict를 돌려줍니다 (XCom에 저장되므로 큰 표를 돌려주지 않음).
 """
 
-import re
 import subprocess
 from datetime import timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from . import config
-from .medallion import DataQualityError, build_bronze, check_row
+from .medallion import DataQualityError, build_bronze, check_row, latest_card_batch
 from .object_store import ObjectStore, download_bronze, upload_bronze
 from .pipeline import build_layers_and_export
 from .warehouse import Warehouse, compare_gold, compare_silver, load_raw
-
-CARD_FILE_PATTERN = re.compile(r"bc_card_(\d{6})_(\d{6})\.csv$")
 
 
 def batch_month_of(date):
@@ -54,9 +52,7 @@ def raw_batch_month(raw_dir=None):
 
     파일이 여러 개면 가장 최근 끝월을 돌려줍니다.
     """
-    months = [int(match.group(2)) for path in Path(raw_dir or config.RAW_DATA_DIR).glob("bc_card_*.csv")
-              if (match := CARD_FILE_PATTERN.search(path.name))]
-    return max(months) if months else None
+    return latest_card_batch(raw_dir or config.RAW_DATA_DIR)
 
 
 def layer_paths():

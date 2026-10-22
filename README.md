@@ -204,7 +204,7 @@ docker compose --profile airflow up -d
 ```
 
 ```powershell
-docker compose exec airflow airflow dags test future_stress_monthly -c '{\"batch_month\":202606}'
+docker compose exec airflow airflow dags trigger future_stress_monthly -c '{\"batch_month\":202606}'
 ```
 
 결과를 고르고 눌러 보는 화면도 있습니다. warehouse가 떠 있고 dbt build까지 끝난 상태에서 띄웁니다(화면: http://127.0.0.1:58501).

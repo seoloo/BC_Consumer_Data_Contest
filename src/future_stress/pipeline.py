@@ -34,6 +34,7 @@ from .medallion import (
     build_silver,
     check_raw_files,  # noqa: F401  (예전처럼 pipeline에서도 import할 수 있게 유지)
     check_row,
+    latest_card_batch,
     run_quality_checks,
 )
 from .object_store import DEFAULT_BUCKET, SYNTHETIC_BUCKET, ObjectStore, download_bronze, upload_bronze
@@ -61,7 +62,7 @@ def run_pipeline(raw_dir=None, output_dir=None, data_dir=None, object_store=None
         data_dir: bronze · silver · gold를 만들 폴더 (기본 data/). 테스트에서는 임시 폴더를 넘깁니다.
         object_store: ObjectStore를 넘기면 Bronze를 객체 저장소에 올리고, 저장소에서 다시 받은 파일로 Silver를 만듭니다.
             None이면 지금처럼 로컬 폴더만 씁니다 (Docker 없이도 돌아가게).
-        batch_month: 객체 저장소의 배치 월 폴더 (기본 분석 마지막 달 202606).
+        batch_month: 객체 저장소의 배치 월 폴더 (기본: 원본 폴더의 가장 최근 BC카드 파일 끝월).
         warehouse: Warehouse를 넘기면 Bronze 원본을 PostgreSQL raw 스키마에도 적재합니다 (Phase 3에서 dbt가 읽을 곳).
 
     Returns:
@@ -71,6 +72,7 @@ def run_pipeline(raw_dir=None, output_dir=None, data_dir=None, object_store=None
     bronze_dir, silver_dir, gold_dir = layer_dirs(data_dir)
 
     build_bronze(raw_dir, bronze_dir)
+    batch_month = batch_month or latest_card_batch(raw_dir or config.RAW_DATA_DIR)
     store_checks = []
     if object_store is not None:
         upload_report = upload_bronze(bronze_dir, object_store, batch_month)

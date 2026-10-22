@@ -28,9 +28,12 @@ vars:
   # 기준연도와 비교연도 (src/future_stress/config.py와 같은 값)
   base_year: 2026
   target_years: [2030, 2035, 2040]
-  # Future Stress를 계산하는 연도, 분석 기간, 판정 기준 (config.py의 STRESS_YEARS · ANALYSIS_MONTHS · MIN_RISING_MONTHS · SIZE_TOP_PERCENT)
+  # Future Stress를 계산하는 연도, 분석 기간, 판정 기준 (config.py의 STRESS_YEARS · ANALYSIS_LENGTH · MIN_RISING_MONTHS · SIZE_TOP_PERCENT)
   stress_years: [2035, 2040]
-  analysis_months: [202601, 202602, 202603, 202604, 202605, 202606]
+  # 분석 기간 = raw 결제의 마지막 달에서 거꾸로 이 개월 수 (macros/analysis_window.sql). 손으로 정하려면 --vars로 analysis_months를 넘김
+  analysis_length: 6
+  # 원본 제공처가 결제 10건 이하 칸을 빼고 제공함. 새 원본도 지키는지 검사 (config.MIN_CARD_PAYMENT_COUNT)
+  min_card_payment_count: 11
   min_rising_months: 3
   size_top_percent: 25
 

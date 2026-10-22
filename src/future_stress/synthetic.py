@@ -384,7 +384,7 @@ def card_regions():
     return regions
 
 
-def write_card_csv(path, rng):
+def write_card_csv(path, rng, months=None):
     """BC카드 결제 CSV (월 × 시도 × 시군구 × 성별 × 연령 × 업종).
 
     만드는 방법
@@ -393,16 +393,20 @@ def write_card_csv(path, rng):
         3. 월별로 추세(평균 -0.3%, 표준편차 1.5%)와 잡음을 곱해 성장하는 곳과 아닌 곳이 섞이게 합니다.
         4. 지역 × 업종의 3%는 한 달을 통째로 빼서 '6개월이 다 없는' 사례를 만듭니다.
         5. 개인이 아닌 결제(성별 3, 성별 · 연령 x)를 전체 금액의 약 12%로 섞습니다 (Silver에서 빠져야 하는 행).
+        6. 원본처럼 결제 10건 이하인 칸은 빼고 씁니다 (원본 제공처가 작은 칸을 빼고 제공함, config.MIN_CARD_PAYMENT_COUNT).
+
+    months: 만들 달 (기본 2026.01 ~ 06). 다음 달 원본을 시험할 때는 그 달 하나만 넘깁니다 (write_synthetic_next_month).
     """
+    months = months or config.ANALYSIS_MONTHS
     rows = []
     for province, district in card_regions():
         region_scale = rng.lognormal(0.3 if province == "서울특별시" else 0.0, 0.6)
         for code, (name, base_amount, ticket, age_profile) in INDUSTRIES.items():
             age_shares = rng.dirichlet(np.array(age_profile) * 60)
             monthly_trend = rng.normal(-0.003, 0.015)
-            missing_month = rng.choice(config.ANALYSIS_MONTHS) if rng.random() < 0.03 else None
+            missing_month = rng.choice(months) if rng.random() < 0.03 else None
             level = base_amount * region_scale * rng.uniform(0.5, 1.5)
-            for month_index, month in enumerate(config.ANALYSIS_MONTHS):
+            for month_index, month in enumerate(months):
                 if month == missing_month:
                     continue
                 month_total = level * (1 + monthly_trend) ** month_index * (1 + rng.normal(0, 0.015))
@@ -416,8 +420,9 @@ def write_card_csv(path, rng):
                                          month_total * share * 0.10, ticket))
                 # 성별 · 연령을 알 수 없는 결제
                 rows.append(card_row(rng, month, province, district, "x", "x", code, name, month_total * 0.04, ticket))
-    pd.DataFrame(rows, columns=["STRD_YYMM", "SIDO_NM", "CCG_NM", "GENDER_CD", "AGE_CD",
-                                "TP_BUZ_NO", "TP_BUZ_NM", "amt", "cnt"]).to_csv(path, index=False, encoding="utf-8-sig")
+    table = pd.DataFrame(rows, columns=["STRD_YYMM", "SIDO_NM", "CCG_NM", "GENDER_CD", "AGE_CD",
+                                        "TP_BUZ_NO", "TP_BUZ_NM", "amt", "cnt"])
+    table[table["cnt"] >= config.MIN_CARD_PAYMENT_COUNT].to_csv(path, index=False, encoding="utf-8-sig")
 
 
 def card_row(rng, month, province, district, gender, age, code, name, amount, ticket):
@@ -479,11 +484,28 @@ def write_synthetic_raw_files(raw_dir, seed=42):
     return raw_dir
 
 
+def write_synthetic_next_month(raw_dir, month, seed=42):
+    """다음 달 BC카드 원본 하나(bc_card_<월>_<월>.csv)를 만듭니다. 월 배치가 새 달을 처리하는지 시험하는 용도.
+
+    시드에 달을 섞어(seed, month) 같은 달은 언제 만들어도 같은 파일이 됩니다. 기존 6개월 파일은 건드리지 않습니다.
+    지역 × 업종의 매출 규모를 새로 뽑으므로 앞 달과 이어지지는 않습니다 (숫자에는 뜻이 없고, 흐름만 시험).
+    """
+    path = Path(raw_dir) / f"bc_card_{month}_{month}.csv"
+    write_card_csv(path, np.random.default_rng([seed, month]), months=[month])
+    return path
+
+
 def main():
     parser = argparse.ArgumentParser(description="원본과 같은 형식의 합성 원본 데이터 생성")
     parser.add_argument("--output", default=config.SYNTHETIC_RAW_DIR, help="저장 폴더 (기본: data/synthetic/raw)")
     parser.add_argument("--seed", type=int, default=42, help="같은 시드면 같은 데이터가 나옵니다")
+    parser.add_argument("--next-month", type=int, default=None,
+                        help="이 달(예: 202607)의 BC카드 원본 하나만 더 만듦 (월 배치 시험)")
     arguments = parser.parse_args()
+    if arguments.next_month:
+        path = write_synthetic_next_month(arguments.output, arguments.next_month, arguments.seed)
+        print(f"다음 달 합성 원본을 만들었습니다: {path}")
+        return
     folder = write_synthetic_raw_files(arguments.output, arguments.seed)
     print(f"합성 원본을 {folder}에 만들었습니다.")
 

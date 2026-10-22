@@ -81,6 +81,9 @@ except Exception as error:  # noqa: BLE001  (어떤 이유든 화면에는 안�
     st.error(data.connection_problem(error))
     st.stop()
 
+st.caption(f"**분석 기간** {data.window_label(tables['gold_analysis_window'])} · 결제 데이터의 마지막 달에서 거꾸로 "
+           "6개월이며, 새 달 원본이 오면 옮겨 갑니다.")
+
 future_stress = tables["gold_future_stress"]
 age_stress = tables["gold_age_stress"]
 market_type = tables["gold_market_type"]
@@ -108,7 +111,7 @@ with overview:
     else:
         st.warning("화면에서 센 건수가 gold_market_type_counts와 다릅니다. dbt build를 다시 확인해 주세요.")
     st.caption(" · ".join(f"**{name}** {strategy}" for name, strategy in MARKET_TYPE_STRATEGY.items())
-               + " — 현재 성장(1→6월 증감률 > 0, 월평균 증감률 > 0, 오른 달 ≥ 3) × 미래(Stress 2040)로 나눕니다.")
+               + " — 현재 성장(첫 달→마지막 달 증감률 > 0, 월평균 증감률 > 0, 오른 달 ≥ 3) × 미래(Stress 2040)로 나눕니다.")
 
     with st.expander("데이터 기준 (raw 적재 기록)"):
         log = tables["load_log"].copy()
@@ -161,21 +164,21 @@ with ranking_tab:
 # 4유형 지도
 # ---------------------------------------------------------------------------
 with types_tab:
-    st.caption("가로는 지금(1월 대비 6월 이용금액 증감률), 세로는 미래(Stress 2040)입니다. "
+    st.caption("가로는 지금(분석 기간 첫 달 대비 마지막 달 이용금액 증감률), 세로는 미래(Stress 2040)입니다. "
                "점선 아래가 취약입니다. 성장 판정은 증감률 세 가지를 함께 보므로 가로 0과 정확히 같지는 않습니다.")
     scatter_region = st.selectbox("지역", ["전체", *[r for r in data.REGION_LABELS.values()
                                                     if r in set(data.with_region_label(market_type)["region"])]],
                                   key="scatter_region")
     points = data.scatter_frame(market_type, None if scatter_region == "전체" else scatter_region)
     scatter = alt.Chart(points).mark_point(filled=True, size=90, opacity=0.85).encode(
-        x=alt.X("change_first_to_last_month:Q", title="1월 대비 6월 증감률 (%)"),
+        x=alt.X("change_first_to_last_month:Q", title="첫 달 대비 마지막 달 증감률 (%)"),
         y=alt.Y("stress_2040:Q", title="Future Stress 2040"),
         color=alt.Color("future:N", title="미래", scale=alt.Scale(
             domain=["취약 (Stress < 0)", "안정 (Stress ≥ 0)"], range=[RED, BLUE])),
         shape=alt.Shape("present:N", title="현재", scale=alt.Scale(
             domain=["성장", "비성장"], range=["triangle-up", "circle"])),
         tooltip=[alt.Tooltip("case_name:N", title="지역 · 업종"), alt.Tooltip("market_type:N", title="유형"),
-                 alt.Tooltip("change_first_to_last_month:Q", title="1→6월 증감률(%)", format=".1f"),
+                 alt.Tooltip("change_first_to_last_month:Q", title="첫 달→마지막 달 증감률(%)", format=".1f"),
                  alt.Tooltip("avg_monthly_change:Q", title="월평균 증감률(%)", format=".1f"),
                  alt.Tooltip("rising_months:Q", title="오른 달"),
                  alt.Tooltip("stress_2040:Q", title="Stress 2040", format=".2f")],

@@ -32,7 +32,8 @@ DATASETS = {
 }
 
 # 화면이 읽을 수 있는 표. 이 밖의 이름은 받지 않습니다 (표 이름을 SQL에 넣기 전에 한 번 더 막기).
-GOLD_TABLES = {"gold_future_stress", "gold_age_stress", "gold_market_type", "gold_market_type_counts"}
+GOLD_TABLES = {"gold_analysis_window", "gold_future_stress", "gold_age_stress", "gold_market_type",
+               "gold_market_type_counts"}
 
 REGION_LABELS = {"서울특별시": "서울", "부산광역시": "부산", "경기도": "경기"}
 
@@ -96,6 +97,13 @@ def connection_problem(error):
 # 화면에 보여 줄 모양으로 고르기 (DB 없이 테스트하는 순수 함수)
 # ===========================================================================
 
+def window_label(analysis_window):
+    """분석 기간 표 한 줄 → '2026.02 ~ 2026.07 (6개월)'. 새 달이 오면 옮겨 가므로 화면 맨 위에 보여 줍니다."""
+    row = analysis_window.iloc[0]
+    start, end = int(row["start_month"]), int(row["end_month"])
+    return f"{start // 100}.{start % 100:02d} ~ {end // 100}.{end % 100:02d} ({int(row['month_count'])}개월)"
+
+
 def stress_column(year):
     if year not in config.STRESS_YEARS:
         raise ValueError(f"Stress 연도는 {config.STRESS_YEARS} 중 하나입니다: {year}")
@@ -152,7 +160,7 @@ def counts_match(market_type, market_type_counts):
 
 
 def scatter_frame(market_type, region=None):
-    """4유형 그림용: 가로 = 1월 대비 6월 증감률(현재 성장), 세로 = Stress 2040(미래). 유형은 2040 기준."""
+    """4유형 그림용: 가로 = 첫 달 대비 마지막 달 증감률(현재 성장), 세로 = Stress 2040(미래). 유형은 2040 기준."""
     frame = with_region_label(market_type)
     if region:
         frame = frame[frame["region"] == region]

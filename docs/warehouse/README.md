@@ -1,6 +1,6 @@
 # 데이터 웨어하우스 데이터 사전
 
-> **자동 생성 문서입니다. 손으로 고치지 마세요.** 만든 시각 2026-10-21 21:20 · `python -m future_stress.warehouse_docs` (설명은 `dbt/models/*.yml` · `dbt/models/docs.md`에서 고칩니다)
+> **자동 생성 문서입니다. 손으로 고치지 마세요.** 만든 시각 2026-10-22 19:02 · `python -m future_stress.warehouse_docs` (설명은 `dbt/models/*.yml` · `dbt/models/docs.md`에서 고칩니다)
 
 PostgreSQL `future_stress` 데이터베이스의 스키마 · 표 · 열을 정리한 문서입니다. 원본이 어디서 왔는지는 [데이터 출처](../data_sources.md), 왜 이렇게 만들었는지는 [15 PostgreSQL](../notes/15_postgresql.md) · [16 dbt](../notes/16_dbt.md)에 있습니다.
 
@@ -8,7 +8,7 @@ PostgreSQL `future_stress` 데이터베이스의 스키마 · 표 · 열을 정�
 
 | 스키마 | 표 | 종류 | 행 수 | 테스트 | 설명 |
 |---|---|---|---:|---:|---|
-| `raw` | [`card_spending`](#rawcard_spending) | 원본 (파이썬 적재) | 242,574 | 2 | BC카드 결제 원본 (공모전 제공, 2026.01 ~ 06). CSV 그대로, 열 이름만 소문자. 개인이 아닌 결제(성별 3 · x) 포함 |
+| `raw` | [`card_spending`](#rawcard_spending) | 원본 (파이썬 적재) | 242,574 | 3 | BC카드 결제 원본 (공모전 제공 2026.01 ~ 06, 이후 배치마다 한 파일). 파일들을 합친 것(같은 달은 늦게 온 파일). CSV 그대로, 열 이름만 소문자. 개인이 아닌 결제(성별 3 · x) 포함 |
 | `raw` | [`future_population`](#rawfuture_population) | 원본 (파이썬 적재) | 577,680 | 2 | 서울 · 부산 · 경기 장래인구 원본. 5세 · 1세 · 합계 행과 원본 표기 그대로, 연도 열만 세로로 |
 | `ref` | [`age_groups`](#refage_groups) | 기준표 (seed) | 6 | 2 | 분석에서 쓰는 6개 연령대와 순서 |
 | `ref` | [`bc_age_codes`](#refbc_age_codes) | 기준표 (seed) | 6 | 3 | BC카드 AGE_CD → 연령대. 이 표에 없는 코드(x 등)는 Silver에서 빠짐 |
@@ -19,6 +19,7 @@ PostgreSQL `future_stress` 데이터베이스의 스키마 · 표 · 열을 정�
 | `silver` | [`silver_future_population`](#silversilver_future_population) | dbt 모델 | 432 | 4 | 시도 × 시군구 × 연령대 장래인구와 2026년 대비 증감률 (파이썬 Silver future_population과 같은 내용) |
 | `gold` | [`gold_age_spending_structure`](#goldgold_age_spending_structure) | dbt 모델 | 13,676 | 4 | 전국 시군구 × 업종 × 연령대 이용금액과 비중(%) (파이썬 Gold age_spending_structure) |
 | `gold` | [`gold_age_stress`](#goldgold_age_stress) | dbt 모델 | 4,053 | 2 | 연령대별 Stress 기여도 · 서울 · 부산은 시군구, 경기는 시 단위 (파이썬 Gold age_stress) |
+| `gold` | [`gold_analysis_window`](#goldgold_analysis_window) | dbt 모델 | 1 | 2 | 분석 기간 한 줄. raw 결제의 마지막 달에서 거꾸로 6개월이며, 새 달 원본이 오면 옮겨 감 (파이썬 Gold analysis_window) |
 | `gold` | [`gold_future_stress`](#goldgold_future_stress) | dbt 모델 | 698 | 2 | 지역 × 업종 Future Stress 2035 · 2040 (파이썬 Gold future_stress). 서울 · 부산은 전국 프로필, 경기는 시 단위 프로필 |
 | `gold` | [`gold_gyeonggi_city_age_spending_structure`](#goldgold_gyeonggi_city_age_spending_structure) | dbt 모델 | 1,710 | 2 | 경기 시 × 업종 × 연령대 이용금액과 비중(%) (일반구를 시로 합친 뒤 · 파이썬 Gold gyeonggi_city_age_spending_structure) |
 | `gold` | [`gold_gyeonggi_city_region_industry_profile`](#goldgold_gyeonggi_city_region_industry_profile) | dbt 모델 | 293 | 3 | 경기 시 × 업종 한 건에 한 줄 (경기 Future Stress의 바탕) |
@@ -27,7 +28,7 @@ PostgreSQL `future_stress` 데이터베이스의 스키마 · 표 · 열을 정�
 | `gold` | [`gold_region_industry_profile`](#goldgold_region_industry_profile) | dbt 모델 | 2,379 | 3 | 전국 지역 × 업종 한 건에 한 줄 · 핵심 연령대, 연령 집중도, 현재 성장 지표 (파이썬 Gold region_industry_profile) |
 | `gold` | [`gold_seoul_analysis_targets`](#goldgold_seoul_analysis_targets) | dbt 모델 | 114 | 1 | 발표 기준(전국 상위 25%) 서울 분석 대상과 성장 판정. 통계 검정은 파이썬이 이 대상으로 계산 |
 
-표 18개 · 테스트 49개 (dbt build가 매번 모두 실행). 이 중 2개는 여러 표를 함께 보는 직접 만든 SQL 테스트(대사 등, `dbt/tests/`)입니다.
+표 19개 · 테스트 52개 (dbt build가 매번 모두 실행). 이 중 2개는 여러 표를 함께 보는 직접 만든 SQL 테스트(대사 등, `dbt/tests/`)입니다.
 
 ## 2. 계보 (lineage)
 
@@ -53,6 +54,7 @@ flowchart LR
   subgraph gold["gold · 소비구조 · 프로필 · Future Stress · 4유형 (dbt 모델)"]
     gold_age_spending_structure["gold_age_spending_structure<br/>13,676행"]
     gold_age_stress["gold_age_stress<br/>4,053행"]
+    gold_analysis_window["gold_analysis_window<br/>1행"]
     gold_future_stress["gold_future_stress<br/>698행"]
     gold_gyeonggi_city_age_spending_structure["gold_gyeonggi_city_age_spending_structure<br/>1,710행"]
     gold_gyeonggi_city_region_industry_profile["gold_gyeonggi_city_region_industry_profile<br/>293행"]
@@ -65,6 +67,7 @@ flowchart LR
   gold_age_spending_structure --> gold_age_stress
   gold_gyeonggi_city_age_spending_structure --> gold_age_stress
   silver_future_population --> gold_age_stress
+  silver_card_spending --> gold_analysis_window
   gold_region_industry_profile --> gold_future_stress
   gold_gyeonggi_city_region_industry_profile --> gold_future_stress
   gold_age_stress --> gold_future_stress
@@ -181,9 +184,9 @@ erDiagram
 
 ### raw.card_spending
 
-BC카드 결제 원본 (공모전 제공, 2026.01 ~ 06). CSV 그대로, 열 이름만 소문자. 개인이 아닌 결제(성별 3 · x) 포함
+BC카드 결제 원본 (공모전 제공 2026.01 ~ 06, 이후 배치마다 한 파일). 파일들을 합친 것(같은 달은 늦게 온 파일). CSV 그대로, 열 이름만 소문자. 개인이 아닌 결제(성별 3 · x) 포함
 
-행 242,574 · 테스트: not_null 2
+행 242,574 · 테스트: not_null 2, 직접 만든 SQL 테스트 1
 
 | 열 | 타입 | 설명 |
 |---|---|---|
@@ -196,6 +199,7 @@ BC카드 결제 원본 (공모전 제공, 2026.01 ~ 06). CSV 그대로, 열 이�
 | `tp_buz_nm` | text |  |
 | `amt` | bigint |  |
 | `cnt` | bigint |  |
+| `source_file` | text |  |
 
 ### raw.future_population
 
@@ -346,6 +350,19 @@ BC카드 GENDER_CD → 성별. 이 표에 없는 코드(3 · x)는 개인이 아
 | `change_rate_2040` | double precision | 2026년 대비 그 해의 인구 증감률 (%), 소수 첫째 자리. 양수면 늘고 음수면 줄어듦 · 2040년. 장래인구가 없는 시군구 · 연령대는 비어 Stress에서 빠짐 |
 | `stress_2035` | double precision | 이 연령대의 Stress 기여도 = 비중 ÷ 100 × 인구 증감률. 지역 × 업종으로 더하면 Future Stress · 2035년 |
 | `stress_2040` | double precision | 이 연령대의 Stress 기여도 = 비중 ÷ 100 × 인구 증감률. 지역 × 업종으로 더하면 Future Stress · 2040년 |
+
+### gold.gold_analysis_window
+
+분석 기간 한 줄. raw 결제의 마지막 달에서 거꾸로 6개월이며, 새 달 원본이 오면 옮겨 감 (파이썬 Gold analysis_window)
+
+행 1 · 테스트: not_null 2
+
+| 열 | 타입 | 설명 |
+|---|---|---|
+| `start_month` | integer | 분석 기간 첫 달 (예 202601) |
+| `end_month` | integer | 분석 기간 마지막 달 = raw의 마지막 달 |
+| `month_count` | integer | 분석 기간 개월 수 (6) |
+| `months_with_payments` | bigint | 분석 기간 중 결제가 한 건이라도 있는 달 수. 6보다 작으면 통째로 빈 달이 있음 |
 
 ### gold.gold_future_stress
 
