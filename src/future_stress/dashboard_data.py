@@ -85,7 +85,7 @@ class GoldReader:
 def connection_problem(error):
     """연결 · 표 없음 오류를 사람이 읽을 안내로. 비밀번호 같은 값은 담지 않습니다."""
     if isinstance(error, psycopg.errors.UndefinedTable):
-        return "gold 표가 없습니다. 파이프라인과 dbt build를 먼저 돌려 주세요 (README '실행')."
+        return "gold 표가 없습니다. 파이프라인과 dbt build를 먼저 돌려 주세요 (docs/getting_started.md)."
     if isinstance(error, psycopg.OperationalError):
         return "PostgreSQL에 연결할 수 없습니다. `docker compose up -d`로 warehouse를 띄웠는지 확인해 주세요."
     if isinstance(error, ValueError):

@@ -6,9 +6,9 @@ Bronze 원본을 이 PC 폴더 대신 **S3 호환 객체 저장소(SeaweedFS)** 
 
 ## 결정 기록
 
-| 날짜 | 결정 | 이유 · 사용자 말 |
+| 날짜 | 결정 | 이유 |
 |---|---|---|
-| 2026-10-21 | MinIO 대신 SeaweedFS | 계획은 MinIO였지만 `minio/minio` 이미지를 받으려 하자 "접근 거부"가 나왔습니다. MinIO는 2025-10 무료판 이미지 배포를 멈췄고 2026-09 Docker Hub에서 이미지가 지워졌습니다. 후보(SeaweedFS · RustFS · Garage · Chainguard MinIO)를 비교해 추천했고, 사용자 "seaweedFS로 진행하되, 왜 이 기술을 사용했는지 … 기록해줘" |
+| 2026-10-21 | MinIO 대신 SeaweedFS | 계획은 MinIO였지만 `minio/minio` 이미지를 받으려 하자 "접근 거부"가 나왔습니다. MinIO는 2025-10 무료판 이미지 배포를 멈췄고 2026-09 Docker Hub에서 이미지가 지워졌습니다. 후보(SeaweedFS · RustFS · Garage · Chainguard MinIO)를 비교해 SeaweedFS로 정했습니다 (아래 비교). |
 | 2026-10-21 | 다른 프로젝트 컨테이너와 따로 띄움 | 같은 PC의 `Sports_Prediction`도 SeaweedFS를 쓰지만, 데이터가 섞이지 않고 한쪽을 지워도 다른 쪽이 영향받지 않게 컨테이너 · 볼륨 · 포트(59100)를 나눔 |
 | 2026-10-21 | 합성 데이터는 별도 버킷(`bronze-synthetic`) | 합성 데이터로 실행했더니 원본과 파일 이름이 같아 원본 객체를 덮어썼음(아래 '써 보고 확인한 것'). 버킷을 나눔 |
 
