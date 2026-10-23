@@ -1,5 +1,5 @@
 {#
-  [Gold · STEP 2 · 3] 발표 기준 서울 분석 대상 · select_analysis_targets(서울, 전국 상위 25%)
+  [Gold · STEP 2 · 3] 중간 분석 기준 서울 분석 대상 · select_analysis_targets(서울, 전국 상위 25%)
 
   발표자료의 '서울 성장 14건 vs 비성장 100건'은 지역 안이 아니라 '전국' 상위 25%를 기준으로 했습니다
   (지역별 4유형은 지역 안 기준 · gold_market_type). 두 기준을 섞지 않도록 표를 따로 둡니다.

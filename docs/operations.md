@@ -63,7 +63,7 @@ docker compose run --rm dbt build
 .venv\Scripts\python -m future_stress.ops.health
 ```
 
-`--compare`는 발표 숫자 6/6, `compare-gold`는 dbt = 파이썬 7개 표가 '일치'여야 합니다. `health`는 Airflow를 아직 안 띄웠으면 Airflow만 '경고'입니다.
+`--compare`는 공모전 결과표 6/6, `compare-gold`는 dbt = 파이썬 7개 표가 '일치'여야 합니다. `health`는 Airflow를 아직 안 띄웠으면 Airflow만 '경고'입니다.
 
 ## 3. 평소 띄우기 · 끄기
 

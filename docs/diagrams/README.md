@@ -22,7 +22,7 @@
 | 단계 | 내용 | 상태 |
 |---|---|---|
 | Phase 0 | 공모전 분석 (노트북) | 완료 |
-| Phase 1 | 리팩토링: 노트북 → `src/future_stress` 모듈 + 테스트, 발표 결과 6/6 재현 ([리팩토링 노트](../refactoring_notes.md)) | 완료 |
+| Phase 1 | 리팩토링: 노트북 → `src/future_stress` 모듈 + 테스트, 공모전 결과표 6/6 재현 ([리팩토링 노트](../refactoring_notes.md)) | 완료 |
 | Phase 1.5 | 메달리온 아키텍처: Bronze → Silver → Gold, 층 사이 대사 10개 | 완료 |
 | Phase 2 | 합성 데이터 생성기 · KOSIS 수집기 · SeaweedFS Bronze 저장소 · Docker Compose | 완료 |
 | Phase 3 | PostgreSQL + dbt 데이터 마트 · 품질 검사 · 데이터 사전 · ERD · 출처 문서 | 완료 |

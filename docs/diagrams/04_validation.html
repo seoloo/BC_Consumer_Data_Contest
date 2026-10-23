@@ -41,74 +41,67 @@
   <div>
     <div class="eyebrow"><span class="no">04</span>검증</div>
     <h1>우연히 나온 결과가 아닌지 세 번 확인했습니다</h1>
-    <p class="lede">성장하는 곳이 오히려 더 위험하다는 결과가 나와서, 정말 그런지 의심해 봤습니다.<br>통계적으로 의미가 있는지, 기준을 바꿔도 같은지, 방문객까지 넣어도 같은지 차례로 확인했습니다.</p>
+    <p class="lede">서울에서는 성장하는 곳이 오히려 더 위험하다는 결과가 나와서, 정말 그런지 의심해 봤습니다.<br>통계적으로 의미가 있는지, 기준을 바꿔도 같은지, 방문객까지 넣어도 같은지 차례로 확인했습니다.</p>
   </div>
   <div class="version"><b>validation.py, robustness.py</b><br>원본 데이터로 다시 계산한 값</div>
 </div>
 
 <!-- 1 -->
 <div data-part="1" class="section">
-  <div class="section-label"><span class="num">1</span><span class="title">성장하는 곳 vs 아닌 곳</span><span class="desc">서울 분석 대상 114건 (성장 14 / 비성장 100)</span></div>
+  <div class="section-label"><span class="num">1</span><span class="title">성장하는 곳 vs 아닌 곳</span><span class="desc">지역별 상위 25% 176건 · 지역마다 따로 비교 (제출 발표자료 기준)</span></div>
   <div class="grid" style="grid-template-columns: 1.1fr 1fr;">
     <div class="card pad stack" style="gap:16px">
-      <h3>지금 잘되는 곳의 미래 위험이 더 컸습니다</h3>
+      <h3>같은 성장도 지역에 따라 미래가 달랐습니다</h3>
       <div class="compare-bars">
-        <div class="cb-row"><div class="cb-label">2035년 위험한 곳<span>2035 Stress가 마이너스</span></div>
+        <div class="cb-row"><div class="cb-label">서울<span>성장 9 / 비성장 52</span></div>
           <div class="cb-pair">
-            <div class="cb-line"><span class="who">성장 14</span><div class="cb-track"><div class="cb-fill" style="width:100%;background:var(--t-illusion)"></div></div><span class="v">100%</span></div>
-            <div class="cb-line"><span class="who">비성장 100</span><div class="cb-track"><div class="cb-fill" style="width:74%;background:#AEB6C4"></div></div><span class="v">74%</span></div>
+            <div class="cb-line"><span class="who">성장</span><div class="cb-track"><div class="cb-fill" style="width:59.1%;background:var(--t-illusion)"></div></div><span class="v">-9.46</span></div>
+            <div class="cb-line"><span class="who">비성장</span><div class="cb-track"><div class="cb-fill" style="width:35.6%;background:#AEB6C4"></div></div><span class="v">-5.69</span></div>
           </div></div>
-        <div class="cb-row"><div class="cb-label">2040년에 더 나빠지는 곳<span>2040이 2035보다 낮음</span></div>
+        <div class="cb-row"><div class="cb-label">부산<span>성장 4 / 비성장 37</span></div>
           <div class="cb-pair">
-            <div class="cb-line"><span class="who">성장 14</span><div class="cb-track"><div class="cb-fill" style="width:100%;background:var(--t-illusion)"></div></div><span class="v">100%</span></div>
-            <div class="cb-line"><span class="who">비성장 100</span><div class="cb-track"><div class="cb-fill" style="width:84%;background:#AEB6C4"></div></div><span class="v">84%</span></div>
+            <div class="cb-line"><span class="who">성장</span><div class="cb-track"><div class="cb-fill" style="width:99.7%;background:var(--t-illusion)"></div></div><span class="v">-15.95</span></div>
+            <div class="cb-line"><span class="who">비성장</span><div class="cb-track"><div class="cb-fill" style="width:69.1%;background:#AEB6C4"></div></div><span class="v">-11.05</span></div>
           </div></div>
-        <div class="cb-row"><div class="cb-label">2035 Stress 중앙값<span>낮을수록 위험</span></div>
+        <div class="cb-row"><div class="cb-label">경기<span>성장 13 / 비성장 61</span></div>
           <div class="cb-pair">
-            <div class="cb-line"><span class="who">성장 14</span><div class="cb-track"><div class="cb-fill" style="width:64%;background:var(--t-illusion)"></div></div><span class="v">-7.70</span></div>
-            <div class="cb-line"><span class="who">비성장 100</span><div class="cb-track"><div class="cb-fill" style="width:32%;background:#AEB6C4"></div></div><span class="v">-3.89</span></div>
-          </div></div>
-        <div class="cb-row"><div class="cb-label">2040 Stress 중앙값<span>낮을수록 위험</span></div>
-          <div class="cb-pair">
-            <div class="cb-line"><span class="who">성장 14</span><div class="cb-track"><div class="cb-fill" style="width:96.8%;background:var(--t-illusion)"></div></div><span class="v">-11.61</span></div>
-            <div class="cb-line"><span class="who">비성장 100</span><div class="cb-track"><div class="cb-fill" style="width:55.6%;background:#AEB6C4"></div></div><span class="v">-6.67</span></div>
+            <div class="cb-line"><span class="who">성장</span><div class="cb-track"><div class="cb-fill" style="width:63.6%;background:var(--green)"></div></div><span class="v">+10.18</span></div>
+            <div class="cb-line"><span class="who">비성장</span><div class="cb-track"><div class="cb-fill" style="width:45.1%;background:#AEB6C4"></div></div><span class="v">+7.22</span></div>
           </div></div>
       </div>
-      <p class="small">중앙값 막대는 |Stress| ÷ 12 길이로 그렸습니다. 평균 대신 중앙값을 쓴 건, 유난히 튀는 몇 곳 때문에 값이 끌려가지 않게 하려고서입니다.</p>
+      <p class="small">2040 Stress 중앙값. 막대는 |Stress| ÷ 16 길이이고, 경기는 두 쪽 모두 양수(안정)라 초록으로 그렸습니다. 평균 대신 중앙값을 쓴 건, 유난히 튀는 몇 곳 때문에 값이 끌려가지 않게 하려고서입니다.</p>
     </div>
-
     <div class="card pad stack" style="gap:12px">
       <h3>통계 검정</h3>
       <div class="test-card">
-        <div class="t-head"><h4>Fisher 정확검정</h4><span class="p">0.0206<small> p-value</small></span></div>
-        <p><b style="color:var(--ink)">확인한 것</b> · 2035년 위험 비율(14/14 vs 74/100)이 정말 성장 쪽에서 더 높은지</p>
-        <p><b style="color:var(--ink)">이 검정을 쓴 이유</b> · 성장 쪽이 14건뿐이라, 표본이 작아도 정확한 확률을 주는 방법이 필요했습니다.</p>
+        <div class="t-head"><h4>Mann-Whitney U 검정 (2040)</h4><span class="p">0.0014<small> 서울</small></span></div>
+        <p><b style="color:var(--ink)">확인한 것</b> · 성장 쪽 Stress 값이 비성장 쪽보다 전체적으로 더 낮은지(더 위험한지). 부산 0.1186, 경기 0.3146</p>
+        <p><b style="color:var(--ink)">이 검정을 쓴 이유</b> · Stress가 정규분포를 따른다고 보기 어려워서, 평균 대신 순위로 비교했습니다. '성장 쪽이 더 낮다'만 보는 단측 검정입니다.</p>
       </div>
       <div class="test-card">
-        <div class="t-head"><h4>Mann-Whitney U 검정</h4><span class="p">0.0008 · 0.0006<small> 2035 · 2040</small></span></div>
-        <p><b style="color:var(--ink)">확인한 것</b> · 성장 쪽 Stress 값이 전체적으로 더 낮은지(더 위험한지)</p>
-        <p><b style="color:var(--ink)">이 검정을 쓴 이유</b> · Stress가 정규분포를 따른다고 보기 어려워서, 평균 대신 순위로 비교했습니다.</p>
+        <div class="t-head"><h4>2035년으로 바꿔도</h4><span class="p">0.0024<small> 서울</small></span></div>
+        <p><b style="color:var(--ink)">확인한 것</b> · 비교 연도를 2035년으로 당겨도 서울은 같은 방향으로 유의한지</p>
       </div>
-      <div class="callout info"><span class="ico">i</span><span>보통 p-value가 0.05보다 작으면 "우연히 이런 차이가 나기는 어렵다"고 봅니다. 세 검정 모두 0.05보다 작았습니다.</span></div>
+      <div class="callout info"><span class="ico">i</span><span>서울만 0.05보다 작았습니다. 부산은 같은 방향이지만 성장 쪽이 4건뿐이고, 경기는 두 쪽 모두 안정이라 '성장 = 위험'으로 일반화하지 않았습니다.</span></div>
     </div>
   </div>
 </div>
 
 <!-- 2 -->
 <div data-part="1" class="section">
-  <div class="section-label"><span class="num">2</span><span class="title">기준을 바꿔도 같을까</span><span class="desc">'상위 25%'를 20%, 30%로 바꿔서 다시 계산</span></div>
+  <div class="section-label"><span class="num">2</span><span class="title">기준을 바꿔도 같을까 · 중간 분석</span><span class="desc">노트북 중간 분석(서울, 전국 공통 상위 25%)에서 '상위 25%'를 20%, 30%로 바꿔서 다시 계산 · 제출본에는 싣지 않음</span></div>
   <div class="grid" style="grid-template-columns: 1.4fr 1fr;">
     <div class="card pad">
       <table>
         <tr><th>규모 기준</th><th class="num">성장 중인 곳</th><th class="num">2035 위험</th><th class="num">2035 위험 비율</th><th class="num">2040 더 나빠지는 비율</th></tr>
         <tr><td>상위 20%</td><td class="num">11건</td><td class="num">11건</td><td class="num">100%</td><td class="num">100%</td></tr>
-        <tr style="background:var(--primary-soft)"><td><b>상위 25%</b> <span class="tag t-primary">발표 때 기준</span></td><td class="num">14건</td><td class="num">14건</td><td class="num">100%</td><td class="num">100%</td></tr>
+        <tr style="background:var(--primary-soft)"><td><b>상위 25%</b> <span class="tag t-primary">중간 분석 기준</span></td><td class="num">14건</td><td class="num">14건</td><td class="num">100%</td><td class="num">100%</td></tr>
         <tr><td>상위 30%</td><td class="num">16건</td><td class="num">16건</td><td class="num">100%</td><td class="num">100%</td></tr>
       </table>
     </div>
     <div class="card pad stack" style="gap:10px; justify-content:center">
       <h3>건수만 달라지고 결론은 같았습니다</h3>
-      <p>11건, 14건, 16건으로 대상은 바뀌어도 성장 중인 곳은 모두 2035년에 위험했고 2040년에 더 나빠졌습니다. 기준을 유리하게 골라서 나온 결과는 아니라고 판단했습니다.</p>
+      <p>서울을 전국 공통 기준으로 고른 중간 분석에서, 11건, 14건, 16건으로 대상은 바뀌어도 성장 중인 곳은 모두 2035년에 위험했고 2040년에 더 나빠졌습니다. 최종 분석(지역 안 상위 25%)에서도 서울은 같은 방향이었습니다.</p>
       <p class="small"><code>run_size_sensitivity()</code> · validation.py</p>
     </div>
   </div>
@@ -153,15 +146,15 @@
 
 <!-- 4 -->
 <div data-part="2" class="section">
-  <div class="section-label"><span class="num">4</span><span class="title">코드를 다시 짠 뒤에도 같은 결과인지</span><span class="desc">리팩토링한 코드로 원본을 다시 돌려 발표 숫자와 비교했습니다 (2026-10-20)</span></div>
+  <div class="section-label"><span class="num">4</span><span class="title">코드를 다시 짠 뒤에도 같은 결과인지</span><span class="desc">리팩토링한 코드로 원본을 다시 돌려 공모전 결과표와 비교했습니다 (2026-10-20)</span></div>
   <div class="card pad repro">
     <div><div class="big">6 / 6<small> 표 일치</small></div><p class="small" style="margin-top:10px">실행 명령<br><code>python -m future_stress.pipeline</code><br><code style="margin-top:4px;display:inline-block">--compare</code></p></div>
     <div class="stack" style="gap:10px">
       <div class="check-list">
         <div>성장 vs 비성장 비교</div><div>통계 검정 p-value</div><div>규모 기준 바꿔 보기</div>
-        <div>착시성장 14건</div><div>대표 사례 3곳</div><div>3개 지역 방문객 보정</div>
+        <div>현재 성장 14건 (중간 분석)</div><div>대표 사례 3곳</div><div>3개 지역 방문객 보정</div>
       </div>
-      <p>공모전 노트북에서는 결과표 숫자를 손으로 옮겨 적었는데, 다시 계산해 보니 <b style="color:var(--ink)">그 숫자들이 실제 계산 결과와 같았습니다.</b> 4유형 건수도 원래 중간 결과와 3개 지역 모두 같았습니다.</p>
+      <p>공모전 노트북에서는 결과표 숫자를 손으로 옮겨 적었는데, 다시 계산해 보니 <b style="color:var(--ink)">그 숫자들이 실제 계산 결과와 같았습니다.</b> 제출 발표자료의 핵심 숫자(4유형 17 · 9 · 92 · 58, 서울 p = 0.0014)도 그대로 나왔습니다.</p>
     </div>
   </div>
 </div>

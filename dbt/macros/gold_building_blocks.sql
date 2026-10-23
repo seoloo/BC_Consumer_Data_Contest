@@ -21,7 +21,7 @@
     )
 
     select province, district, industry_code, industry_name, age_group, amount, payment_count, industry_total_amount,
-           -- 비중(%)을 소수 첫째 자리로 반올림한 값으로 Stress를 계산합니다 (발표 결과 재현). 파이썬과 같은 반올림.
+           -- 비중(%)을 소수 첫째 자리로 반올림한 값으로 Stress를 계산합니다 (공모전 결과표 재현). 파이썬과 같은 반올림.
            {{ round_half_even('amount::double precision / industry_total_amount::double precision * 100', 1) }} as amount_share
     from with_total
 {%- endmacro %}

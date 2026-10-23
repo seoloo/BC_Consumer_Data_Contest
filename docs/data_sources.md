@@ -55,7 +55,7 @@
 | 들어가는 곳 | Bronze `future_population/` → `raw.future_population` → `silver.silver_future_population` → `gold_age_stress` | 같음 | 같음 |
 
 - 2026년(기준연도) 대비 2030 · 2035 · 2040년 증감률을 Future Stress에 씁니다.
-- 서울 90세 이상 인구는 발표 결과 재현을 위해 지금도 빠져 있습니다 ([리팩토링 노트 4절](refactoring_notes.md)).
+- 서울 90세 이상 인구는 공모전 결과표 재현을 위해 지금도 빠져 있습니다 ([리팩토링 노트 4절](refactoring_notes.md)).
 
 ### 5. 주민등록인구 (월별)
 

@@ -48,7 +48,7 @@ def test_select_analysis_targets_by_size_and_completeness():
 
 def test_fisher_p_value_is_computed_from_data():
     """원래 노트북에 손으로 적혀 있던 14/0, 74/26 표를 데이터에서 직접 만들어도
-    발표 수치(p = 0.0206)가 그대로 나오는지 확인합니다."""
+    결과표 수치(p = 0.0206)가 그대로 나오는지 확인합니다."""
     growth = make_cases([(5, 1, 3)] * 14, [-1.0] * 14, [-2.0] * 14)
     non_growth = make_cases([(-5, -1, 1)] * 100, [-1.0] * 74 + [1.0] * 26, [-2.0] * 74 + [1.0] * 26)
     cases = pd.concat([growth, non_growth], ignore_index=True)

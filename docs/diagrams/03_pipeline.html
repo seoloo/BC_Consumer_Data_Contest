@@ -49,15 +49,15 @@
 </div>
 
 <div data-part="1" class="section">
-  <div class="section-label"><span class="num">1</span><span class="title">서울 사례가 줄어드는 과정</span><span class="desc">발표 기준(전국 상위 25%) · 막대는 로그 눈금이고, 중간에 단위가 '행'에서 '건'으로 바뀝니다</span></div>
+  <div class="section-label"><span class="num">1</span><span class="title">서울 사례가 줄어드는 과정</span><span class="desc">제출 발표자료 기준(지역 안 상위 25%) · 막대는 로그 눈금이고, 중간에 단위가 '행'에서 '건'으로 바뀝니다</span></div>
   <div class="card pad funnel">
     <div class="f-row"><div class="f-label">원본 결제 행<span>전국, 2026.01–06</span></div><div class="f-bar"><div style="width:100.0%"></div></div><div class="f-num">242,574</div></div>
     <div class="f-row"><div class="f-label">개인 결제만<span>성별 1·2, 연령 코드 1~6</span></div><div class="f-bar"><div style="width:96.6%"></div></div><div class="f-num">159,235</div></div>
     <div class="f-row"><div class="f-label">전국 지역 × 업종<span>17개 시도, 11개 업종</span></div><div class="f-bar"><div style="width:62.7%"></div></div><div class="f-num">2,379건</div></div>
     <div class="f-row"><div class="f-label">서울만<span>25개 자치구</span></div><div class="f-bar"><div style="width:44.2%"></div></div><div class="f-num">241건</div></div>
     <div class="f-row"><div class="f-label">6개월이 다 있는 곳<span>STEP 2 조건 ①</span></div><div class="f-bar"><div style="width:44.1%"></div></div><div class="f-num">236건</div></div>
-    <div class="f-row"><div class="f-label">이용금액 상위 25%<span>STEP 2 조건 ②, 여기부터 분석 대상</span></div><div class="f-bar"><div style="width:38.2%"></div></div><div class="f-num">114건</div></div>
-    <div class="f-row hot"><div class="f-label">지금 성장 중<span>STEP 3 조건 세 개 모두</span></div><div class="f-bar"><div style="width:21.3%"></div></div><div class="f-num">14건</div></div>
+    <div class="f-row"><div class="f-label">서울 안에서 상위 25%<span>STEP 2 조건 ②, 여기부터 분석 대상</span></div><div class="f-bar"><div style="width:33.2%"></div></div><div class="f-num">61건</div></div>
+    <div class="f-row hot"><div class="f-label">지금 성장 중<span>STEP 3 조건 세 개 모두</span></div><div class="f-bar"><div style="width:17.7%"></div></div><div class="f-num">9건</div></div>
   </div>
 </div>
 
@@ -86,12 +86,12 @@
       <div><div class="col-label">기준</div>
         <ul class="rules">
           <li>① 6개월 모두 결제가 있는 곳</li>
-          <li>② 업종 전체 이용금액이 <b>상위 25%</b> 안 (전국 75분위수 이상)</li>
-          <li>20%, 30%로 바꿔도 결론이 같은지는 따로 확인했습니다 (04 검증)</li>
+          <li>② 업종 전체 이용금액이 <b>그 지역 안에서 상위 25%</b> (지역별 75분위수 이상)</li>
+          <li>전국 공통 기준 대신 지역 안 기준을 쓴 이유: 서울 · 부산 · 경기의 거래 규모 차이를 보정하려고</li>
         </ul></div>
       <div><div class="col-label">결과 · 서울</div>
-        <div class="result-big">241 → 114건</div>
-        <p class="small" style="margin-top:6px">3개 지역을 비교할 때는 지역마다 규모가 달라서 '그 지역 안에서 상위 25%'를 썼습니다.</p></div>
+        <div class="result-big">236 → 61건</div>
+        <p class="small" style="margin-top:6px">부산 162 → 41건, 경기 288 → 74건 (일반구를 시로 합침). 3개 지역 합계 176건</p></div>
       <div><div class="col-label">코드</div><div class="codes">
         <code>size_cutoff()</code><code>select_analysis_targets()</code><span class="file">diagnosis.py</span></div></div>
     </div>
@@ -105,8 +105,8 @@
           <li>전월보다 오른 달이 <b>3개월 이상</b></li>
         </ul></div>
       <div><div class="col-label">결과 · 서울</div>
-        <div class="result-big" style="color:var(--t-illusion)">114 → 14건</div>
-        <p class="small" style="margin-top:6px">6개월이 다 있지 않은 곳은 값을 비워 두어서 자연스럽게 '성장 아님'이 됩니다.</p></div>
+        <div class="result-big" style="color:var(--t-illusion)">61 → 9건</div>
+        <p class="small" style="margin-top:6px">부산 4건, 경기 13건, 합계 26건. 6개월이 다 있지 않은 곳은 값을 비워 두어서 자연스럽게 '성장 아님'이 됩니다.</p></div>
       <div><div class="col-label">코드</div><div class="codes">
         <code>calculate_monthly_growth()</code><code>is_strictly_growing()</code><span class="file">card_spending.py, diagnosis.py</span></div></div>
     </div>
@@ -122,8 +122,8 @@
           <tr><td>60대이상</td><td class="num">10%</td><td class="num">+30%</td><td class="num" style="color:var(--green)">+3.0</td></tr>
         </table></div>
       <div><div class="col-label">결과 · 서울</div>
-        <div class="result-big">92 / 114건</div>
-        <p class="small" style="margin-top:6px">2040 Stress가 마이너스인 곳입니다. 2035년도 같이 계산해서 시간이 갈수록 나빠지는지 봤습니다.</p></div>
+        <div class="result-big">50 / 61건</div>
+        <p class="small" style="margin-top:6px">2040 Stress가 마이너스인 곳입니다(3개 지역 176건 중 109건). 2035년도 같이 계산해서 시간이 갈수록 나빠지는지 봤습니다.</p></div>
       <div><div class="col-label">코드</div><div class="codes">
         <code>attach_population_change()</code><code>add_age_stress_contributions()</code><code>sum_stress_by_case()</code><code>build_region_result()</code><span class="file">stress.py</span></div></div>
     </div>
@@ -135,10 +135,10 @@
           <li>STEP 3의 성장 여부 × STEP 4의 2040 Stress 부호</li>
           <li>Stress가 정확히 0이면 '안정'으로 봤습니다</li>
         </ul></div>
-      <div><div class="col-label">결과 · 서울 114건</div>
+      <div><div class="col-label">결과 · 3개 지역 176건</div>
         <div class="types">
-          <div class="illusion">착시성장형<span>14</span></div><div class="sustain">지속성장형<span>0</span></div>
-          <div class="fragile">구조취약형<span>78</span></div><div class="recover">회복기회형<span>22</span></div>
+          <div class="illusion">착시성장형<span>17</span></div><div class="sustain">지속성장형<span>9</span></div>
+          <div class="fragile">구조취약형<span>92</span></div><div class="recover">회복기회형<span>58</span></div>
         </div></div>
       <div><div class="col-label">코드</div><div class="codes">
         <code>classify_market_type()</code><code>add_market_type()</code><span class="file">diagnosis.py</span></div></div>
@@ -148,7 +148,7 @@
 
 <div data-part="3" class="callout info" style="margin-bottom:10px"><span class="ico">i</span><span>STEP 1의 정리 작업은 <b>Silver</b>, 연령별 비중 계산부터 STEP 5까지는 <b>Gold</b> 층에서 돌아갑니다. Gold는 저장된 Silver만 읽습니다 (07 참고).</span></div>
 
-<div data-part="3" class="callout info"><span class="ico">i</span><span>여기 숫자는 발표 때 쓴 기준(전국 상위 25%)입니다. 01번의 4유형 숫자(서울 9 · 0 · 41 · 11)는 지역끼리 비교하려고 <b>지역 안에서 상위 25%</b>를 다시 골라 센 것이라 서로 다릅니다.</span></div>
+<div data-part="3" class="callout info"><span class="ico">i</span><span>여기 숫자는 제출 발표자료 기준(<b>지역 안 상위 25%</b>)입니다. 노트북 중간 분석에서는 서울을 전국 공통 상위 25%로 골라 114건 · 성장 14건이었습니다 (docs/analysis.md '중간 분석').</span></div>
 
 <div class="footer">
   <span>미래 소비기반 스트레스 테스트 · 흐름도 시리즈</span>

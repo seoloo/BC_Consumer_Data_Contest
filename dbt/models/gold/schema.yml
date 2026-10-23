@@ -160,7 +160,7 @@ models:
       - {name: gyeonggi, description: 경기 건수}
 
   - name: gold_seoul_analysis_targets
-    description: 발표 기준(전국 상위 25%) 서울 분석 대상과 성장 판정. 통계 검정은 파이썬이 이 대상으로 계산
+    description: 중간 분석 기준(서울, 전국 상위 25%) 서울 분석 대상과 성장 판정. 통계 검정은 파이썬이 이 대상으로 계산
     data_tests:
       - composite_relationships:
           columns: [province, district, industry_code, industry_name]

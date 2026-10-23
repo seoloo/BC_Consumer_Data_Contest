@@ -18,7 +18,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DATA_DIR = PROJECT_ROOT / "data"
 RAW_DATA_DIR = DATA_DIR / "raw"                         # 공모전 원본을 처음 넣어 두는 곳 (저장소에 올리지 않음)
 KOSIS_RAW_DIR = RAW_DATA_DIR / "kosis"                  # KOSIS API로 받은 장래인구 원본 응답 (kosis.py)
-OUTPUT_DIR = PROJECT_ROOT / "output"                    # 발표 결과와 같은 형식의 CSV
+OUTPUT_DIR = PROJECT_ROOT / "output"                    # 공모전 결과표와 같은 형식의 CSV
 PUBLISHED_RESULTS_DIR = PROJECT_ROOT / "contest" / "results"   # 발표자료에 실린 결과 (비교 기준)
 
 # ---------------------------------------------------------------------------
@@ -44,7 +44,7 @@ SYNTHETIC_OUTPUT_DIR = SYNTHETIC_DIR / "output"
 # 새 달 원본이 오면 기간이 한 달씩 옮겨 갑니다 (예: 7월이 오면 2 ~ 7월). card_spending.analysis_months()
 ANALYSIS_LENGTH = 6
 
-# 공모전 원본의 분석 기간 (발표 결과 · 합성 데이터의 기본 6개월). 원본의 마지막 달이 202606이라 위 규칙으로도 같은 기간이 됩니다.
+# 공모전 원본의 분석 기간 (공모전 결과표 · 합성 데이터의 기본 6개월). 원본의 마지막 달이 202606이라 위 규칙으로도 같은 기간이 됩니다.
 ANALYSIS_MONTHS = [202601, 202602, 202603, 202604, 202605, 202606]
 FIRST_MONTH = ANALYSIS_MONTHS[0]
 LAST_MONTH = ANALYSIS_MONTHS[-1]
