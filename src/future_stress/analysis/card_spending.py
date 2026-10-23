@@ -8,7 +8,7 @@
     3. 지역 × 업종 프로필        build_region_industry_profile()
        → 핵심 연령대, 연령 집중도, 현재 성장 지표를 한 행에 모은 표
 
-원래 위치: notebooks/03_bc_data.ipynb 셀 0~51, 220~223
+원래 위치: contest/notebooks/03_bc_data.ipynb 셀 0~51, 220~223
 """
 
 import warnings
@@ -17,9 +17,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from . import config
+from .. import config
 from .age_groups import BC_AGE_CODE_TO_GROUP, BC_GENDER_CODE_TO_NAME
-from .io_utils import read_csv_with_encoding_fallback
+from ..io_utils import read_csv_with_encoding_fallback
 from .regions import to_parent_city
 
 # 분석의 기본 단위인 "지역 × 업종" 한 건을 구분하는 열.

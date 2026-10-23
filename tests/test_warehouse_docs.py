@@ -3,7 +3,7 @@
 dbt manifest에서 열쇠(PK) · 연결(FK) · 계보를 제대로 읽는지, 문서에 그 결과가 들어가는지 확인합니다.
 """
 
-from future_stress.warehouse_docs import (
+from future_stress.storage.warehouse_docs import (
     MULTI_TABLE,
     build_document,
     keys_and_links,

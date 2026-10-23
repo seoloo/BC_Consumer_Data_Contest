@@ -8,7 +8,7 @@
 # Airflow 띄우기 (메모리를 많이 써서 따로):  docker compose --profile airflow up -d
 #
 # 처음 한 번 (저장소 루트에서, PowerShell은 한 줄씩)
-#   .venv\Scripts\python -m future_stress.local_env               # .env에 로컬 전용 계정 만들기 (S3 · PostgreSQL)
+#   .venv\Scripts\python -m future_stress.storage.local_env       # .env에 로컬 전용 계정 만들기 (S3 · PostgreSQL)
 #   docker compose up -d                                           # 저장소 띄우기
 #   docker compose ps                                              # STATUS가 healthy인지 확인
 #
@@ -22,8 +22,8 @@ services:
     # 같은 S3 API를 쓰는 SeaweedFS로 정했습니다. 언제 띄워도 같은 환경이 되도록 버전을 고정합니다.
     image: chrislusf/seaweedfs:4.48
     environment:
-      S3_ACCESS_KEY: ${S3_ACCESS_KEY:?먼저 python -m future_stress.local_env 를 실행해 주세요}
-      S3_SECRET_KEY: ${S3_SECRET_KEY:?먼저 python -m future_stress.local_env 를 실행해 주세요}
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY:?먼저 python -m future_stress.storage.local_env 를 실행해 주세요}
+      S3_SECRET_KEY: ${S3_SECRET_KEY:?먼저 python -m future_stress.storage.local_env 를 실행해 주세요}
     # 시작할 때 환경변수로 S3 계정 설정 파일을 만든 뒤, master · volume · filer · S3를 한 컨테이너로 띄웁니다.
     # 키를 이미지나 이 파일에 적지 않고 .env에서만 받기 위해서입니다.
     # 볼륨 수는 디스크 여유에 맞춰 자동(-volume.max=0), 볼륨 하나는 256MB로 작게 둡니다
@@ -51,8 +51,8 @@ services:
     # 이 PC에 이미 받아 둔 버전으로 고정합니다. 다른 프로젝트도 같은 이미지를 쓰지만 컨테이너 · 볼륨 · 포트는 따로입니다.
     image: postgres:16.4
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:?먼저 python -m future_stress.local_env 를 실행해 주세요}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?먼저 python -m future_stress.local_env 를 실행해 주세요}
+      POSTGRES_USER: ${POSTGRES_USER:?먼저 python -m future_stress.storage.local_env 를 실행해 주세요}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?먼저 python -m future_stress.storage.local_env 를 실행해 주세요}
       POSTGRES_DB: ${POSTGRES_DB:-future_stress}
     ports:
       # 이 PC에서만 접속 가능. 다른 프로젝트가 쓰는 55432번과 겹치지 않게 55532번을 씁니다.
@@ -76,8 +76,8 @@ services:
       warehouse:
         condition: service_healthy
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:?먼저 python -m future_stress.local_env 를 실행해 주세요}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?먼저 python -m future_stress.local_env 를 실행해 주세요}
+      POSTGRES_USER: ${POSTGRES_USER:?먼저 python -m future_stress.storage.local_env 를 실행해 주세요}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?먼저 python -m future_stress.storage.local_env 를 실행해 주세요}
       POSTGRES_DB: ${POSTGRES_DB:-future_stress}
       POSTGRES_HOST: warehouse          # 컨테이너끼리는 서비스 이름으로 접속
       DBT_PROFILES_DIR: /usr/app/dbt    # 저장소의 dbt/profiles.yml (비밀번호는 위 환경변수에서)
@@ -97,8 +97,8 @@ services:
       object-store:
         condition: service_healthy
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:?먼저 python -m future_stress.local_env 를 실행해 주세요}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?먼저 python -m future_stress.local_env 를 실행해 주세요}
+      POSTGRES_USER: ${POSTGRES_USER:?먼저 python -m future_stress.storage.local_env 를 실행해 주세요}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?먼저 python -m future_stress.storage.local_env 를 실행해 주세요}
       POSTGRES_DB: ${POSTGRES_DB:-future_stress}
       # 컨테이너 안에서는 127.0.0.1이 아니라 서비스 이름으로 접속합니다 (warehouse.py · object_store.py가 읽음)
       WAREHOUSE_HOST: warehouse

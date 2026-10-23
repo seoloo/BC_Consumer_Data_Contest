@@ -17,7 +17,7 @@
 
 실행 방법 (저장소 루트에서, docker compose up -d 와 dbt build 뒤)
     docker compose run --rm dbt build                     # manifest.json을 원본 기준(dev)으로 새로 만듦
-    .venv\\Scripts\\python -m future_stress.warehouse_docs
+    .venv\\Scripts\\python -m future_stress.storage.warehouse_docs
 """
 
 import argparse
@@ -28,7 +28,7 @@ from pathlib import Path
 
 import psycopg
 
-from . import config
+from .. import config
 from .warehouse import Warehouse
 
 MANIFEST_PATH = config.PROJECT_ROOT / "dbt" / "target" / "manifest.json"
@@ -246,7 +246,7 @@ def build_document(manifest, tables, generated_at):
         "# 데이터 웨어하우스 데이터 사전",
         "",
         f"> **자동 생성 문서입니다. 손으로 고치지 마세요.** 만든 시각 {generated_at} · "
-        "`python -m future_stress.warehouse_docs` (설명은 `dbt/models/*.yml` · `dbt/models/docs.md`에서 고칩니다)",
+        "`python -m future_stress.storage.warehouse_docs` (설명은 `dbt/models/*.yml` · `dbt/models/docs.md`에서 고칩니다)",
         "",
         "PostgreSQL `future_stress` 데이터베이스의 스키마 · 표 · 열을 정리한 문서입니다. "
         "원본이 어디서 왔는지는 [데이터 출처](../data_sources.md), 왜 이렇게 만들었는지는 "

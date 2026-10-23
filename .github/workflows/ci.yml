@@ -41,7 +41,7 @@ jobs:
         run: python -m pip install -e ".[dev,dashboard]"
 
       - name: 로컬 서비스 계정 만들기 (.env, 실행마다 새 무작위 값)
-        run: python -m future_stress.local_env
+        run: python -m future_stress.storage.local_env
 
       - name: 객체 저장소 · PostgreSQL 띄우기
         # --wait: healthcheck가 healthy가 될 때까지 기다림 (준비 안 된 DB에 붙어 실패하지 않게)
@@ -59,10 +59,10 @@ jobs:
           docker compose run --rm dbt build --target synthetic --vars "{raw_schema: raw_synthetic}"
 
       - name: dbt Silver = 파이썬 Silver
-        run: python -m future_stress.warehouse compare-silver --silver-dir data/synthetic/silver --silver-schema synthetic_silver
+        run: python -m future_stress.storage.warehouse compare-silver --silver-dir data/synthetic/silver --silver-schema synthetic_silver
 
       - name: dbt Gold = 파이썬 Gold
-        run: python -m future_stress.warehouse compare-gold --gold-dir data/synthetic/gold --gold-schema synthetic_gold
+        run: python -m future_stress.storage.warehouse compare-gold --gold-dir data/synthetic/gold --gold-schema synthetic_gold
 
       - name: 대시보드가 합성 gold를 읽기 전용으로 읽는지
         # 앞의 pytest 때는 합성 gold가 아직 없어 건너뛴 통합 테스트를, dbt build 뒤에 다시 돌림
@@ -70,7 +70,7 @@ jobs:
 
       - name: 운영 상태 점검 (합성)
         # 저장소 · raw · gold가 모두 있는지 마지막으로 한 번에 확인. 실패가 있으면 종료 코드 1 (docs/operations.md)
-        run: python -m future_stress.health --synthetic
+        run: python -m future_stress.ops.health --synthetic
 
       - name: 실패하면 컨테이너 기록 남기기
         if: failure()

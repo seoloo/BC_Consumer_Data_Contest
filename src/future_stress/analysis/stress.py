@@ -16,10 +16,10 @@
 
 노트북에서는 컬럼 이름이 '순인구효과'였습니다. 발표 결과 CSV와 맞추기 위해 같은 이름을 씁니다.
 
-원래 위치: notebooks/03_bc_data.ipynb 셀 62~63, 192, 204, 211~212, 224~225, 232
+원래 위치: contest/notebooks/03_bc_data.ipynb 셀 62~63, 192, 204, 211~212, 224~225, 232
 """
 
-from . import config
+from .. import config
 from .card_spending import CASE_KEYS
 
 

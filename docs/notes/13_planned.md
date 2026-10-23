@@ -53,7 +53,7 @@ MinIO 무료판 이미지가 Docker Hub에서 지워져 같은 S3 API의 Seaweed
 
 ### 실패 알림 (나중에)
 
-- **왜:** 지금은 실패를 Airflow 화면과 `python -m future_stress.health`로 직접 봐야 압니다. 매달 1일 실행이 실패하면 메시지가 오게 하면 놓치지 않습니다.
+- **왜:** 지금은 실패를 Airflow 화면과 `python -m future_stress.ops.health`로 직접 봐야 압니다. 매달 1일 실행이 실패하면 메시지가 오게 하면 놓치지 않습니다.
 - **확인할 것:** Airflow의 실패 콜백(`on_failure_callback`)으로 Slack 웹훅 · 이메일을 보내되, 주소 · 토큰은 `.env`에만 두기.
 
 ## 일부러 쓰지 않는 것

@@ -11,13 +11,13 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from future_stress.card_spending import (
+from future_stress.analysis.card_spending import (
     build_age_spending_structure,
     build_region_industry_profile,
     calculate_age_concentration,
     clean_card_spending,
 )
-from future_stress.stress import build_region_result
+from future_stress.analysis.stress import build_region_result
 
 
 @pytest.fixture

@@ -6,7 +6,7 @@
 > **문제가 생기면 먼저 이것부터.** 무엇이 멈췄는지와 할 일을 한 번에 보여 줍니다. 실패가 있으면 종료 코드 1로 끝납니다.
 >
 > ```powershell
-> .venv\Scripts\python -m future_stress.health
+> .venv\Scripts\python -m future_stress.ops.health
 > ```
 
 ## 1. 구성
@@ -34,7 +34,7 @@ python -m venv .venv
 ```
 
 ```powershell
-.venv\Scripts\python -m future_stress.local_env
+.venv\Scripts\python -m future_stress.storage.local_env
 ```
 
 ```powershell
@@ -56,11 +56,11 @@ docker compose run --rm dbt build
 ```
 
 ```powershell
-.venv\Scripts\python -m future_stress.warehouse compare-gold
+.venv\Scripts\python -m future_stress.storage.warehouse compare-gold
 ```
 
 ```powershell
-.venv\Scripts\python -m future_stress.health
+.venv\Scripts\python -m future_stress.ops.health
 ```
 
 `--compare`는 발표 숫자 6/6, `compare-gold`는 dbt = 파이썬 7개 표가 '일치'여야 합니다. `health`는 Airflow를 아직 안 띄웠으면 Airflow만 '경고'입니다.
@@ -114,7 +114,7 @@ backfill의 날짜는 **실행 날짜**입니다. 7월 1일 실행이 6월 배�
 
 | 단계 | 이렇게 보이면 | 원인 | 할 일 |
 |---|---|---|---|
-| (모든 단계) | `.env 계정 실패` 또는 compose가 '먼저 local_env를 실행해 주세요' | `.env`에 계정 없음 | `python -m future_stress.local_env` |
+| (모든 단계) | `.env 계정 실패` 또는 compose가 '먼저 local_env를 실행해 주세요' | `.env`에 계정 없음 | `python -m future_stress.storage.local_env` |
 | `build_bronze` | `FileNotFoundError: ...에 다음 원본이 없습니다` | `data/raw/`에 원본 8종 중 일부가 없음 | 빠진 파일을 넣고 다시 실행 |
 | `upload` · `download` | `EndpointConnectionError` (1분 뒤 한 번 더 시도 후 실패), health `객체 저장소 실패` | object-store가 꺼짐 | `docker compose up -d` → 아래 '그 단계부터 다시' |
 | `download` | `DataQualityError: 지문이 영수증과 다릅니다` | 저장소의 파일이 올린 것과 다름 (덮어씀 · 손상) | `pipeline --object-store`로 다시 올린 뒤 다시 실행. 계속되면 원본 원래 위치와 비교 |
@@ -122,7 +122,7 @@ backfill의 날짜는 **실행 날짜**입니다. 7월 1일 실행이 6월 배�
 | `load_raw` · `dbt_build` · `compare` | `OperationalError` / `connection refused` | warehouse가 꺼짐 | `docker compose up -d` |
 | `dbt_build` | `dbt build 실패` + `FAIL`/`ERROR` 줄 | dbt 테스트 실패(키 중복 · 관계 · 대사) 또는 SQL 오류 | 기록에서 실패한 테스트 이름을 찾아 `docker compose run --rm dbt build --select <이름>`으로 따로 확인 |
 | `python_layers` | `DataQualityError: 계층 사이 대사 실패` | 층 사이 숫자 확인 중 '실패' 항목 | 기록의 표에서 실패 항목 확인 (`data/gold/_quality_report.csv`). 경고는 멈추지 않음 |
-| `compare` | `DataQualityError: dbt 결과와 파이썬 결과가 다릅니다` | dbt와 파이썬 규칙이 어긋남 | `python -m future_stress.warehouse compare-gold`로 다른 표 · 칸 확인 |
+| `compare` | `DataQualityError: dbt 결과와 파이썬 결과가 다릅니다` | dbt와 파이썬 규칙이 어긋남 | `python -m future_stress.storage.warehouse compare-gold`로 다른 표 · 칸 확인 |
 | 대시보드 | 'PostgreSQL에 연결할 수 없습니다' / 'gold 표가 없습니다' | warehouse 꺼짐 / dbt build 전 | 화면에 나온 안내대로 |
 
 **그 단계부터 다시 (실제로 해 봄: 저장소를 끄고 실행 → `upload` 실패 → 저장소를 켜고 다시)**
@@ -152,11 +152,11 @@ PostgreSQL은 비밀번호를 볼륨을 처음 만들 때만 정합니다. 그�
 
 | 일 | 언제 | 명령 |
 |---|---|---|
-| KOSIS 장래인구 다시 받기 | 통계청이 새 추계를 낼 때 | `python -m future_stress.kosis collect` → `python -m future_stress.kosis compare` |
-| 데이터 사전 · ERD 다시 만들기 | dbt 모델 · 설명을 고친 뒤 | `docker compose run --rm dbt build` → `python -m future_stress.warehouse_docs` |
+| KOSIS 장래인구 다시 받기 | 통계청이 새 추계를 낼 때 | `python -m future_stress.ingest.kosis collect` → `python -m future_stress.ingest.kosis compare` |
+| 데이터 사전 · ERD 다시 만들기 | dbt 모델 · 설명을 고친 뒤 | `docker compose run --rm dbt build` → `python -m future_stress.storage.warehouse_docs` |
 | 흐름도 다시 그리기 | `docs/diagrams/*.html`을 고친 뒤 | `python docs\diagrams\render.py` |
 | 대시보드 캡처 | 화면을 고친 뒤 (합성 데이터로만 찍음) | `python dashboard\capture.py` (playwright 필요) |
-| 합성 데이터로 전체 확인 | 코드를 고친 뒤 (CI와 같은 순서) | [ci.yml](../.github/workflows/ci.yml)의 단계 순서대로, 마지막에 `python -m future_stress.health --synthetic` |
+| 합성 데이터로 전체 확인 | 코드를 고친 뒤 (CI와 같은 순서) | [ci.yml](../.github/workflows/ci.yml)의 단계 순서대로, 마지막에 `python -m future_stress.ops.health --synthetic` |
 
 ## 9. 매달 점검표
 

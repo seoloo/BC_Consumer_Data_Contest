@@ -11,7 +11,7 @@ import csv
 import pandas as pd
 
 from future_stress.medallion import file_fingerprint
-from future_stress.synthetic import write_synthetic_raw_files
+from future_stress.ingest.synthetic import write_synthetic_raw_files
 
 
 def fingerprints(folder):

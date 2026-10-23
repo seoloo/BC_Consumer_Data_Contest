@@ -11,7 +11,7 @@
     인구비중:  시군구 | 연령대 | (주민등록/생활/유동)인구비중
 지역마다 원본 형식이 달라도, 이 모듈을 통과하면 다음 단계는 지역을 구분할 필요가 없습니다.
 
-원래 위치: notebooks/01_population.ipynb 셀 6~55, 81~141, 252
+원래 위치: contest/notebooks/01_population.ipynb 셀 6~55, 81~141, 252
 """
 
 import csv
@@ -20,13 +20,13 @@ from pathlib import Path
 
 import pandas as pd
 
-from . import config
+from .. import config
 from .age_groups import (
     AGE_GROUP_ORDER,
     age_group_from_label,
     standardize_age_group_name,
 )
-from .io_utils import read_csv_with_encoding_fallback, to_number
+from ..io_utils import read_csv_with_encoding_fallback, to_number
 from .regions import SEOUL_DISTRICT_CODE_TO_NAME, fix_region_name
 
 # ===========================================================================

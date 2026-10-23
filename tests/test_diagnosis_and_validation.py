@@ -3,8 +3,8 @@
 import pandas as pd
 import pytest
 
-from future_stress.diagnosis import add_market_type, is_strictly_growing, select_analysis_targets, size_cutoff
-from future_stress.validation import build_growth_comparison_table, run_statistical_tests, split_by_growth
+from future_stress.analysis.diagnosis import add_market_type, is_strictly_growing, select_analysis_targets, size_cutoff
+from future_stress.analysis.validation import build_growth_comparison_table, run_statistical_tests, split_by_growth
 
 
 def make_cases(growth_rows, stress_2035, stress_2040):

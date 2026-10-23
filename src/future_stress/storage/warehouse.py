@@ -23,8 +23,8 @@ raw에 넣는 표 (Stress · 4유형을 만드는 데 필요한 원본 두 가�
     4. 합성 데이터는 raw_synthetic 스키마에 넣습니다 (같은 표에 넣으면 원본을 덮어쓰기 때문).
 
 실행 방법 (저장소 루트에서, docker compose up -d 뒤)
-    .venv\\Scripts\\python -m future_stress.warehouse load-raw     # data/bronze → raw 스키마
-    .venv\\Scripts\\python -m future_stress.warehouse status       # 표마다 행 수와 마지막 적재
+    .venv\\Scripts\\python -m future_stress.storage.warehouse load-raw     # data/bronze → raw 스키마
+    .venv\\Scripts\\python -m future_stress.storage.warehouse status       # 표마다 행 수와 마지막 적재
     .venv\\Scripts\\python -m future_stress.pipeline --warehouse   # 파이프라인 실행 중에 함께 적재 + 대사 보고서에 기록
 """
 
@@ -40,12 +40,12 @@ import pandas as pd
 import psycopg
 from psycopg import sql
 
-from . import config
-from .card_spending import load_card_files
-from .io_utils import read_csv_with_encoding_fallback, read_env_value, read_parquet
+from .. import config
+from ..analysis.card_spending import load_card_files
+from ..io_utils import read_csv_with_encoding_fallback, read_env_value, read_parquet
 from .local_env import DEFAULT_POSTGRES_DB, DEFAULT_POSTGRES_PORT, DEFAULT_POSTGRES_USER
-from .medallion import DataQualityError, bronze_path, file_fingerprint
-from .population import POPULATION_YEARS
+from ..medallion import DataQualityError, bronze_path, file_fingerprint
+from ..analysis.population import POPULATION_YEARS
 
 RAW_SCHEMA = "raw"
 SYNTHETIC_RAW_SCHEMA = "raw_synthetic"

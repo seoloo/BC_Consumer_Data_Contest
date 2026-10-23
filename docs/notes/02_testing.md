@@ -18,7 +18,7 @@ pytest로 세 종류의 테스트를 둡니다. 손으로 계산한 값과 비�
 | API 테스트 | `test_naver_datalab.py`, `test_kosis.py` | 실제 서버 대신 가짜 응답으로 파싱 · 재시도 · 저장 동작 |
 | 전체 실행 테스트 | `test_pipeline_smoke.py` | 합성 원본으로 Bronze → Silver → Gold → 대사 → 내보내기가 끊기지 않는지, 결과 열 이름이 발표 CSV와 같은지 |
 | 합성 데이터 테스트 | `test_synthetic.py` | 같은 시드 → 같은 파일, 원본의 까다로운 형식이 들어 있는지 |
-| 결과 재현 확인 | `python -m future_stress.pipeline --compare` | 원본으로 돌린 결과가 `results/`의 발표 CSV와 같은지 (원본이 있는 PC에서만) |
+| 결과 재현 확인 | `python -m future_stress.pipeline --compare` | 원본으로 돌린 결과가 `contest/results/`의 발표 CSV와 같은지 (원본이 있는 PC에서만) |
 
 - **작은 데이터를 일부러 만듭니다** (`tests/conftest.py`). 예를 들어 "성동구 · 서양음식은 매달 늘어남", "도봉구는 4월 결제가 없음", "성별 코드 9인 행은 빠져야 함"처럼 확인할 상황을 하나씩 넣습니다.
 - **검사가 실제로 잡아내는지도 확인합니다.** `test_quality_check_detects_lost_rows`는 Silver에서 일부러 한 행을 지우고 대사가 '실패'를 내는지 봅니다. 통과만 확인하면 아무것도 안 하는 검사도 통과하기 때문입니다.

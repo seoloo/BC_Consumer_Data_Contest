@@ -21,19 +21,22 @@
 
 ## 어떻게 했나
 
-| 모듈 | 역할 |
-|---|---|
-| `config.py` | 경로, 분석 기간, 판정 기준값. 숫자는 여기만 고치면 됨 |
-| `io_utils.py` | CSV 인코딩 자동 판별, 쉼표 숫자 변환, Parquet 저장 · 읽기 |
-| `age_groups.py`, `regions.py` | 연령 · 지역 표기를 하나의 기준으로 맞추는 기준표 |
-| `card_spending.py` | BC카드 정제, 연령별 소비구조, 현재 성장 지표 |
-| `population.py` | 장래인구 · 주민등록인구 · 생활/유동인구 읽기 |
-| `stress.py`, `diagnosis.py` | Future Stress 계산, 4유형 분류 |
-| `validation.py`, `robustness.py` | 통계 검정, 민감도 분석, 생활/유동인구 보정 |
-| `strategy.py` | 방어형 고객, 고객 구성 최적화 |
-| `naver_datalab.py`, `kosis.py` | 외부 API 수집 |
-| `medallion.py`, `pipeline.py` | 층별 저장, 숫자 확인, 전체 실행 |
-| `synthetic.py` | 원본과 형식이 같은 합성 데이터 |
+처음(Phase 1)에는 모듈을 한 폴더에 두었고, 보관 · 적재 · 운영 모듈이 늘어난 뒤(2026-10-23) 역할별 폴더로 나눴습니다. 분석 규칙(`analysis/`)은 데이터를 어디에 저장하는지 모르고 표를 받아 표를 돌려주기만 해서, 저장소가 바뀌어도 고칠 필요가 없습니다.
+
+| 위치 | 모듈 | 역할 |
+|---|---|---|
+| 맨 위 | `config.py` | 경로, 분석 기간, 판정 기준값. 숫자는 여기만 고치면 됨 |
+| 맨 위 | `io_utils.py` | CSV 인코딩 자동 판별, 쉼표 숫자 변환, Parquet 저장 · 읽기, .env 읽기 |
+| 맨 위 | `medallion.py`, `pipeline.py` | 층별 저장, 숫자 확인, 전체 실행 |
+| `analysis/` | `age_groups.py`, `regions.py` | 연령 · 지역 표기를 하나의 기준으로 맞추는 기준표 |
+| `analysis/` | `card_spending.py` | BC카드 정제, 연령별 소비구조, 현재 성장 지표, 분석 기간 |
+| `analysis/` | `population.py` | 장래인구 · 주민등록인구 · 생활/유동인구 읽기 |
+| `analysis/` | `stress.py`, `diagnosis.py` | Future Stress 계산, 4유형 분류 |
+| `analysis/` | `validation.py`, `robustness.py` | 통계 검정, 민감도 분석, 생활/유동인구 보정 |
+| `analysis/` | `strategy.py`, `naver_datalab.py` | 방어형 고객, 고객 구성 최적화, NAVER 관심도 |
+| `ingest/` | `kosis.py`, `synthetic.py` | KOSIS 장래인구 수집, 원본과 형식이 같은 합성 데이터 |
+| `storage/` | `object_store.py`, `warehouse.py`, `warehouse_docs.py`, `local_env.py` | 객체 저장소, PostgreSQL 적재 · dbt 비교, 데이터 사전, 로컬 계정 |
+| `ops/` | `orchestration.py`, `health.py`, `dashboard_data.py` | Airflow 단계, 상태 점검, 대시보드 데이터 |
 
 - **함수 하나는 일 하나만 합니다.** 예를 들어 `clean_card_spending()`은 정제만 하고, 집계는 `build_age_spending_structure()`가 합니다. 그래서 함수마다 따로 테스트할 수 있습니다.
 - **이름만 보고 역할을 알 수 있게 했습니다.** `df2`, `tmp` 같은 이름 대신 `build_region_industry_profile`처럼 무엇을 만드는지 적었습니다.
@@ -52,7 +55,7 @@
 | **Adapter** | 바깥 API 응답을 우리 코드가 쓰는 모양으로 바꾼다 | `kosis.five_year_population_from_api()`, `NaverDataLabClient.search_interest_by_age()` | 응답 모양이 바뀌어도 고칠 곳을 한 함수로 |
 | **Repository** | 저장 · 읽기 방법을 한 곳에 모은다 | `io_utils.save_parquet()` · `read_parquet()`, `object_store.upload_bronze()` · `download_bronze()` | 저장 형식(Parquet, 버킷 경로)을 한 곳에서 지키려고 |
 | **기준표 (Lookup table)** | 바꿀 규칙을 코드가 아니라 표(딕셔너리)로 둔다 | `BC_AGE_CODE_TO_GROUP`, `AGE_GROUP_ALIASES`, `REGION_NAME_FIXES`, `RAW_SOURCES` | 규칙이 늘면 표에 한 줄만 더하면 되게 |
-| **결과 재현 비교 (Golden Master)** | 바꾸기 전 결과를 기준으로 두고, 바꾼 뒤 한 칸씩 비교 | `pipeline --compare` ↔ `results/*.csv` | 리팩토링이 결과를 안 바꿨다는 증거 |
+| **결과 재현 비교 (Golden Master)** | 바꾸기 전 결과를 기준으로 두고, 바꾼 뒤 한 칸씩 비교 | `pipeline --compare` ↔ `contest/results/*.csv` | 리팩토링이 결과를 안 바꿨다는 증거 |
 | ~~상속 · Template Method~~ | (안 씀) 부모 클래스가 순서를 정하고 자식이 칸을 채움 | — | 흐름을 따라가기 어려움. 대신 함수 + 단계 주석 |
 
 ## 써 보고 확인한 것

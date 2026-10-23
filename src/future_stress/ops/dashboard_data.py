@@ -21,10 +21,10 @@ import pandas as pd
 import psycopg
 from psycopg import sql
 
-from . import config
-from .age_groups import AGE_GROUP_ORDER
-from .diagnosis import MARKET_TYPE_STRATEGY
-from .warehouse import Warehouse
+from .. import config
+from ..analysis.age_groups import AGE_GROUP_ORDER
+from ..analysis.diagnosis import MARKET_TYPE_STRATEGY
+from ..storage.warehouse import Warehouse
 
 DATASETS = {
     "원본": {"gold": "gold", "raw": "raw"},

@@ -10,7 +10,7 @@ import psycopg
 import pytest
 
 from future_stress.medallion import build_bronze
-from future_stress.warehouse import (
+from future_stress.storage.warehouse import (
     CARD_TABLE,
     FUTURE_TABLE,
     Warehouse,
@@ -121,7 +121,7 @@ def test_compare_table_finds_differences():
     """같으면 '일치', 한 칸만 달라도 · 한쪽에만 있는 줄이 있어도 '불일치'를 내야 합니다."""
     import pandas as pd
 
-    from future_stress.warehouse import compare_table
+    from future_stress.storage.warehouse import compare_table
 
     dbt = pd.DataFrame({"district": ["종로구", "중구"], "age_group": ["20대", "20대"], "amount": [100, 200]})
     python = dbt.copy()

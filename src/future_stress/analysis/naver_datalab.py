@@ -11,7 +11,7 @@
       → 잠시 기다렸다가 다시 시도합니다.
     - 인증정보는 코드에 쓰지 않고 환경변수(NAVER_CLIENT_ID / NAVER_CLIENT_SECRET)에서 읽습니다.
 
-원래 위치: notebooks/02_naver_api.ipynb 전체
+원래 위치: contest/notebooks/02_naver_api.ipynb 전체
 """
 
 import os

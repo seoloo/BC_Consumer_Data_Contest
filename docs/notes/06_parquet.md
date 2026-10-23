@@ -46,5 +46,5 @@ Parquet은 열마다 하나의 타입을 정해야 하는데, 숫자와 '-' 같�
 
 <details><summary>Q3. 그럼 왜 output/에는 CSV를 남겼나?</summary>
 
-output/은 사람이 엑셀로 바로 열어 보는 결과물이고, 발표 결과(results/*.csv)와 같은 형식으로 비교하기 위해서입니다. 파이프라인 안쪽(Silver · Gold)은 Parquet, 사람에게 보여 주는 바깥쪽은 CSV로 나눴습니다.
+output/은 사람이 엑셀로 바로 열어 보는 결과물이고, 발표 결과(contest/results/*.csv)와 같은 형식으로 비교하기 위해서입니다. 파이프라인 안쪽(Silver · Gold)은 Parquet, 사람에게 보여 주는 바깥쪽은 CSV로 나눴습니다.
 </details>

@@ -8,8 +8,8 @@ from datetime import datetime, timezone
 
 import pytest
 
-from future_stress import health
-from future_stress.health import FAIL, OK, WARN
+from future_stress.ops import health
+from future_stress.ops.health import FAIL, OK, WARN
 
 
 def test_env_lists_only_missing_names():

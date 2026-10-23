@@ -15,14 +15,14 @@
     방어개선잠재력  확장여력 × 인구상대우위 / 100
                   그 연령대를 확장여력만큼 늘렸을 때 Stress가 개선되는 크기입니다.
 
-원래 위치: notebooks/03_bc_data.ipynb 셀 70~134, 172~179, 257~273
+원래 위치: contest/notebooks/03_bc_data.ipynb 셀 70~134, 172~179, 257~273
 """
 
 import numpy as np
 import pandas as pd
 from scipy.optimize import linprog, minimize
 
-from . import config
+from .. import config
 from .diagnosis import is_strictly_growing
 from .stress import stress_column
 
@@ -190,7 +190,7 @@ def describe_case(defense_status, defense_type):
 
 
 def build_representative_case_table(representative_cases, defense_strategy, year=2040):
-    """대표 사례 표 (results/representative_3_cases_table.csv와 같은 형식)."""
+    """대표 사례 표 (contest/results/representative_3_cases_table.csv와 같은 형식)."""
     table = representative_cases[["시군구", "업종명", "연령대", stress_column(year)]].rename(
         columns={"연령대": "현재핵심연령대"}
     ).merge(

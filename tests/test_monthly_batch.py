@@ -11,10 +11,10 @@ import pandas as pd
 import pytest
 
 from future_stress import config
-from future_stress.card_spending import analysis_months, card_file_end_month, load_card_files
+from future_stress.analysis.card_spending import analysis_months, card_file_end_month, load_card_files
 from future_stress.medallion import latest_card_batch
 from future_stress.pipeline import run_pipeline
-from future_stress.synthetic import write_synthetic_next_month
+from future_stress.ingest.synthetic import write_synthetic_next_month
 
 COLUMNS = ["STRD_YYMM", "SIDO_NM", "CCG_NM", "GENDER_CD", "AGE_CD", "TP_BUZ_NO", "TP_BUZ_NM", "amt", "cnt"]
 

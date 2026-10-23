@@ -3,7 +3,7 @@
 
   같은 열(시도, 시군구, 비중 …)이 여러 표에 나와서, 설명을 여기 한 번만 쓰고 schema.yml에서 {{ doc('이름') }}으로 가져다 씁니다.
   dbt_project.yml의 persist_docs 설정으로 이 설명이 PostgreSQL에도 COMMENT로 저장되고,
-  python -m future_stress.warehouse_docs 가 그 설명으로 데이터 사전(docs/warehouse/README.md)을 만듭니다.
+  python -m future_stress.storage.warehouse_docs 가 그 설명으로 데이터 사전(docs/warehouse/README.md)을 만듭니다.
 #}
 
 {% docs col_province %}시도 이름 (서울특별시 · 부산광역시 · 경기도 …){% enddocs %}

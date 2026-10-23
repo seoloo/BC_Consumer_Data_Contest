@@ -3,7 +3,7 @@
 실행 (저장소 루트에서, warehouse가 떠 있고 dbt build까지 끝난 상태)
     .venv\\Scripts\\streamlit run dashboard/app.py
 
-이 파일은 '어떻게 보여 줄지'만 적습니다. 데이터를 읽고 고르는 일은 future_stress.dashboard_data가 하고,
+이 파일은 '어떻게 보여 줄지'만 적습니다. 데이터를 읽고 고르는 일은 future_stress.ops.dashboard_data가 하고,
 그쪽은 Streamlit 없이 테스트합니다. (기록: docs/notes/19_dashboard.md)
 
 색은 뜻 하나에 하나만 씁니다.
@@ -16,9 +16,10 @@ from zoneinfo import ZoneInfo
 import altair as alt
 import streamlit as st
 
-from future_stress import config, dashboard_data as data
-from future_stress.age_groups import AGE_GROUP_ORDER
-from future_stress.diagnosis import MARKET_TYPE_STRATEGY
+from future_stress import config
+from future_stress.ops import dashboard_data as data
+from future_stress.analysis.age_groups import AGE_GROUP_ORDER
+from future_stress.analysis.diagnosis import MARKET_TYPE_STRATEGY
 
 st.set_page_config(page_title="미래 소비기반 스트레스 테스트", layout="wide")
 

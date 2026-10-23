@@ -1,11 +1,11 @@
 """분석 대상 선정 · 현재 성장 판정 · 4유형 분류 (흐름도 STEP 2, 3, 5).
 
-원래 위치: notebooks/03_bc_data.ipynb 셀 42~44, 193~194, 226, 230, 234~240
+원래 위치: contest/notebooks/03_bc_data.ipynb 셀 42~44, 193~194, 226, 230, 234~240
 """
 
 import numpy as np
 
-from . import config
+from .. import config
 from .stress import stress_column
 
 # 4유형 이름과 전략 방향 (README · 발표자료와 같은 표현)

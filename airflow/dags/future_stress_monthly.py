@@ -1,6 +1,6 @@
 """월 배치 DAG · 원본 도착 → Bronze → 객체 저장소 → raw → dbt · 파이썬 → 비교 (Phase 4-2)
 
-DAG(작업 흐름)는 '무엇을 어떤 순서로'만 적습니다. 실제 일은 src/future_stress/orchestration.py의 함수가 합니다.
+DAG(작업 흐름)는 '무엇을 어떤 순서로'만 적습니다. 실제 일은 src/future_stress/ops/orchestration.py의 함수가 합니다.
 기록: docs/notes/18_airflow.md
 
     has_new_batch ─▶ build_bronze ─▶ upload ─▶ download ─▶ load_raw ─┬▶ dbt_build ─────┬▶ compare
@@ -18,7 +18,7 @@ from datetime import datetime, timedelta
 
 from airflow.sdk import Param, dag, get_current_context, task
 
-from future_stress import orchestration
+from future_stress.ops import orchestration
 
 DBT_EXECUTABLE = os.getenv("DBT_EXECUTABLE", "dbt")
 

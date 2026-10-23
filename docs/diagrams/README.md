@@ -11,7 +11,7 @@
 | 03 | [분석 파이프라인](03_pipeline.png) | [1](parts/03_pipeline_1.png) · [2](parts/03_pipeline_2.png) · [3](parts/03_pipeline_3.png) | STEP 1~5 상세와 서울 실제 건수 |
 | 04 | [검증](04_validation.png) | [1](parts/04_validation_1.png) · [2](parts/04_validation_2.png) | 통계 검정, 규모 민감도, 외부유입 보정, 재현 검증 |
 | 05 | [전략](05_strategy.png) | [1](parts/05_strategy_1.png) · [2](parts/05_strategy_2.png) · [3](parts/05_strategy_3.png) | 방어형 고객, 고객 구성 최적화, 메뉴 · 상품 전략 |
-| 06 | [코드 구조](06_code_structure.png) | [1](parts/06_code_structure_1.png) · [2](parts/06_code_structure_2.png) · [3](parts/06_code_structure_3.png) | 리팩토링 결과, 모듈 지도, 테스트 |
+| 06 | [코드 구조](06_code_structure.png) | [1](parts/06_code_structure_1.png) · [2](parts/06_code_structure_2.png) · [3](parts/06_code_structure_3.png) | Phase 1 리팩토링 결과, 그때의 모듈 지도와 테스트 (지금 폴더 구조는 [01 코드 구조](../notes/01_code_structure.md)) |
 | 07 | [메달리온 아키텍처](07_medallion.png) | [1](parts/07_medallion_1.png) · [2](parts/07_medallion_2.png) · [3](parts/07_medallion_3.png) | Bronze → Silver → Gold 계층, 계층 사이 대사 |
 | 08 | [목표 아키텍처](08_target_architecture.png) | [1](parts/08_target_architecture_1.png) · [2](parts/08_target_architecture_2.png) · [3](parts/08_target_architecture_3.png) | 지금 구조: 전체 흐름, 파이썬 함수 ↔ dbt 모델, Airflow 단계, 자동으로 확인하는 것 |
 | 09 | [로드맵](09_roadmap.png) | [1](parts/09_roadmap_1.png) · [2](parts/09_roadmap_2.png) | 단계별 할 일과 완료 기준, 진행 기록 |
