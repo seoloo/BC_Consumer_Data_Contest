@@ -186,7 +186,7 @@ class Warehouse:
             except ValueError:
                 return default
 
-        # 이 PC에서는 127.0.0.1:55532, 컨테이너 안(Airflow)에서는 서비스 이름 warehouse:5432로 접속합니다.
+        # 이 PC에서는 127.0.0.1:35532, 컨테이너 안(Airflow)에서는 서비스 이름 warehouse:5432로 접속합니다.
         # WAREHOUSE_HOST · WAREHOUSE_PORT는 docker-compose.yml이 컨테이너에만 넣어 주는 값입니다.
         params = {
             "host": os.getenv("WAREHOUSE_HOST", "127.0.0.1"),

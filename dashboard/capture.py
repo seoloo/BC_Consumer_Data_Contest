@@ -14,7 +14,7 @@ from pathlib import Path
 
 from playwright.sync_api import sync_playwright
 
-URL = "http://127.0.0.1:58501/?data=synthetic&tab={tab}"
+URL = "http://127.0.0.1:38501/?data=synthetic&tab={tab}"
 OUTPUT_DIR = Path(__file__).resolve().parents[1] / "docs" / "dashboard"
 TABS = ["overview", "ranking", "types", "detail"]
 

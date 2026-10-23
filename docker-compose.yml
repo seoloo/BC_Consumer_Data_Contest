@@ -2,7 +2,7 @@
 #   object-store  Bronze 원본을 보관하는 S3 호환 객체 저장소(SeaweedFS)   기록: docs/notes/14_object_storage.md
 #   warehouse     raw · silver · gold 스키마를 둘 데이터 웨어하우스(PostgreSQL)  기록: docs/notes/15_postgresql.md
 #   dbt           raw → silver → gold SQL 모델 · 테스트 (필요할 때만 실행)        기록: docs/notes/16_dbt.md
-#   airflow       월 배치 작업 흐름(DAG) · 화면 127.0.0.1:58280 (필요할 때만 띄움)  기록: docs/notes/18_airflow.md
+#   airflow       월 배치 작업 흐름(DAG) · 화면 127.0.0.1:38280 (필요할 때만 띄움)  기록: docs/notes/18_airflow.md
 #
 # dbt 실행 (up으로는 뜨지 않고 run으로만):  docker compose run --rm dbt build
 # Airflow 띄우기 (메모리를 많이 써서 따로):  docker compose --profile airflow up -d
@@ -36,12 +36,15 @@ services:
         exec weed server -dir=/data -volume.max=0 -master.volumeSizeLimitMB=256
         -s3 -s3.port=8333 -s3.config=/tmp/s3.json
     ports:
-      # 이 PC에서만 접속 가능(127.0.0.1). 다른 프로젝트가 쓰는 59000번과 겹치지 않게 59100번을 씁니다.
-      - "127.0.0.1:${S3_PORT:-59100}:8333"
+      # 이 PC에서만 접속 가능(127.0.0.1). Windows가 예약하는 동적 포트 범위(49152 ~ 65535) 밖이고 다른 프로젝트와도 겹치지 않는 39100번.
+      # (39100번을 쓰다가 Docker Desktop을 다시 켤 때 Windows가 59065 ~ 59164를 예약해 저장소가 뜨지 못한 일이 있었음, 2026-10-23)
+      - "127.0.0.1:${S3_PORT:-39100}:8333"
     volumes:
       - object-store-data:/data
     healthcheck:
-      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:9333/cluster/status"]
+      # 관리 서버(9333)뿐 아니라 S3(8333)가 응답할 때 '정상'으로. 관리 서버만 보면 S3가 뜨기 몇 초 전에 정상이 되어,
+      # 그 사이 붙은 작업이 연결 오류로 실패할 수 있음 (2026-10-23 실제로 겪음). S3는 계정 없이 부르면 403이라 응답 여부만 봄.
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:9333/cluster/status && wget -S -q -O /dev/null http://127.0.0.1:8333/ 2>&1 | grep -q HTTP/"]
       interval: 5s
       timeout: 3s
       retries: 30
@@ -55,8 +58,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?먼저 python -m future_stress.storage.local_env 를 실행해 주세요}
       POSTGRES_DB: ${POSTGRES_DB:-future_stress}
     ports:
-      # 이 PC에서만 접속 가능. 다른 프로젝트가 쓰는 55432번과 겹치지 않게 55532번을 씁니다.
-      - "127.0.0.1:${POSTGRES_PORT:-55532}:5432"
+      # 이 PC에서만 접속 가능. 동적 포트 범위(49152 ~ 65535) 밖이고 다른 프로젝트(55432)와 겹치지 않는 35532번.
+      - "127.0.0.1:${POSTGRES_PORT:-35532}:5432"
     volumes:
       - warehouse-data:/var/lib/postgresql/data
     healthcheck:
@@ -123,7 +126,7 @@ services:
     # standalone: 스케줄러 · 화면(API 서버) · DAG 읽기를 한 컨테이너에서. 운영용은 아니지만 이 PC 메모리에 맞춤
     command: ["bash", "-c", "python /opt/project/docker/airflow/create_metadata_db.py && exec airflow standalone"]
     ports:
-      - "127.0.0.1:58280:8080"     # 다른 프로젝트의 Airflow(8080, 58080)와 겹치지 않게
+      - "127.0.0.1:38280:8080"     # 동적 포트 범위 밖, 다른 프로젝트의 Airflow(8080, 58080)와 겹치지 않게
     volumes:
       - .:/opt/project             # 코드 · dbt · data 폴더를 그대로 연결 (고치면 바로 반영)
       - airflow-logs:/opt/airflow/logs

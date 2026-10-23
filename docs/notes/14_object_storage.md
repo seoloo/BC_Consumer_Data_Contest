@@ -9,7 +9,7 @@ Bronze 원본을 이 PC 폴더 대신 **S3 호환 객체 저장소(SeaweedFS)** 
 | 날짜 | 결정 | 이유 |
 |---|---|---|
 | 2026-10-21 | MinIO 대신 SeaweedFS | 계획은 MinIO였지만 `minio/minio` 이미지를 받으려 하자 "접근 거부"가 나왔습니다. MinIO는 2025-10 무료판 이미지 배포를 멈췄고 2026-09 Docker Hub에서 이미지가 지워졌습니다. 후보(SeaweedFS · RustFS · Garage · Chainguard MinIO)를 비교해 SeaweedFS로 정했습니다 (아래 비교). |
-| 2026-10-21 | 다른 프로젝트 컨테이너와 따로 띄움 | 같은 PC의 `Sports_Prediction`도 SeaweedFS를 쓰지만, 데이터가 섞이지 않고 한쪽을 지워도 다른 쪽이 영향받지 않게 컨테이너 · 볼륨 · 포트(59100)를 나눔 |
+| 2026-10-21 | 다른 프로젝트 컨테이너와 따로 띄움 | 같은 PC의 `Sports_Prediction`도 SeaweedFS를 쓰지만, 데이터가 섞이지 않고 한쪽을 지워도 다른 쪽이 영향받지 않게 컨테이너 · 볼륨 · 포트(39100)를 나눔 |
 | 2026-10-21 | 합성 데이터는 별도 버킷(`bronze-synthetic`) | 합성 데이터로 실행했더니 원본과 파일 이름이 같아 원본 객체를 덮어썼음(아래 '써 보고 확인한 것'). 버킷을 나눔 |
 
 ## 왜 필요했나
@@ -22,7 +22,7 @@ Bronze 원본을 이 PC 폴더 대신 **S3 호환 객체 저장소(SeaweedFS)** 
 
 | 무엇 | 어디 | 핵심 |
 |---|---|---|
-| 저장소 띄우기 | `docker-compose.yml` | `chrislusf/seaweedfs:4.48` 버전 고정, `127.0.0.1:59100`(이 PC에서만 접속), 데이터는 Docker 볼륨, healthcheck |
+| 저장소 띄우기 | `docker-compose.yml` | `chrislusf/seaweedfs:4.48` 버전 고정, `127.0.0.1:39100`(이 PC에서만 접속), 데이터는 Docker 볼륨, healthcheck |
 | 계정 키 | `local_env.init_env()`(예전 `object_store init-env`도 같음), `.env` | 이 PC 전용 키를 무작위로 만들어 `.env`에만 저장(화면에 출력 안 함). 컨테이너는 시작할 때 이 키로 계정 설정 파일을 만듦 |
 | 저장소 창구 | `object_store.ObjectStore` | boto3 클라이언트를 밖에서 받음(의존성 주입) → 테스트는 가짜 클라이언트로 Docker 없이 |
 | 올리기 | `upload_bronze()` | 키 = `batch_month=202606/<원본 종류>/<파일>`. 객체 메타데이터에 SHA-256을 적고, 같으면 안 올림 |

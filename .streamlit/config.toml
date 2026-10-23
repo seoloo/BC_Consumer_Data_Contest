@@ -1,8 +1,8 @@
 # Streamlit 설정 (저장소 루트에서 streamlit run 할 때 읽음)
-# 이 PC 안에서만 열리게 127.0.0.1에 묶고, 다른 서비스(58280 Airflow · 55532 PostgreSQL)와 겹치지 않는 포트를 씁니다.
+# 이 PC 안에서만 열리게 127.0.0.1에 묶고, 다른 서비스(38280 Airflow · 35532 PostgreSQL)와 겹치지 않고 Windows 동적 포트 범위(49152 ~ 65535) 밖인 포트를 씁니다.
 [server]
 address = "127.0.0.1"
-port = 58501
+port = 38501
 headless = true
 
 [browser]
