@@ -2,7 +2,7 @@
 
 실행 방법 (저장소 루트에서)
     .venv/Scripts/python -m future_stress.pipeline              # 계층별 저장 + output/에 결과 CSV
-    .venv/Scripts/python -m future_stress.pipeline --compare    # 실행 후 results/의 발표 수치와 비교
+    .venv/Scripts/python -m future_stress.pipeline --compare    # 실행 후 contest/results/의 발표 수치와 비교
     .venv/Scripts/python -m future_stress.pipeline --synthetic  # 원본 없이 합성 데이터로 실행 (data/synthetic/)
     .venv/Scripts/python -m future_stress.pipeline --object-store  # Bronze를 SeaweedFS에 올리고, 거기서 받아 Silver부터
     .venv/Scripts/python -m future_stress.pipeline --warehouse     # Bronze 원본을 PostgreSQL raw 스키마에도 적재
@@ -37,9 +37,9 @@ from .medallion import (
     latest_card_batch,
     run_quality_checks,
 )
-from .object_store import DEFAULT_BUCKET, SYNTHETIC_BUCKET, ObjectStore, download_bronze, upload_bronze
-from .warehouse import RAW_SCHEMA, SYNTHETIC_RAW_SCHEMA, Warehouse, load_raw
-from .synthetic import write_synthetic_raw_files
+from .storage.object_store import DEFAULT_BUCKET, SYNTHETIC_BUCKET, ObjectStore, download_bronze, upload_bronze
+from .storage.warehouse import RAW_SCHEMA, SYNTHETIC_RAW_SCHEMA, Warehouse, load_raw
+from .ingest.synthetic import write_synthetic_raw_files
 
 # 발표 결과 외에 output/에 함께 내보내는 Gold 표 (사람이 엑셀로 열어 보기 위한 용도)
 EXTRA_OUTPUT_TABLES = ["region_validation", "market_type_counts", "seoul_defense_strategy", "illusion_rebalancing"]
@@ -123,7 +123,7 @@ def build_layers_and_export(bronze_dir, silver_dir, gold_dir, output_dir, extra_
 
 
 def compare_with_published(output_dir=None, published_dir=None, tolerance=0.01):
-    """새로 계산한 결과와 발표자료 결과(results/*.csv)를 비교합니다.
+    """새로 계산한 결과와 발표자료 결과(contest/results/*.csv)를 비교합니다.
 
     리팩토링으로 계산 결과가 바뀌지 않았는지 확인하는 용도입니다.
     숫자는 반올림 차이를 감안해 tolerance 이내면 같다고 봅니다.
@@ -170,7 +170,7 @@ def main():
     parser.add_argument("--raw-dir", default=config.RAW_DATA_DIR, help="원본 데이터 폴더 (기본: data/raw)")
     parser.add_argument("--output-dir", default=config.OUTPUT_DIR, help="결과 CSV 저장 폴더 (기본: output)")
     parser.add_argument("--data-dir", default=None, help="bronze · silver · gold를 만들 폴더 (기본: data)")
-    parser.add_argument("--compare", action="store_true", help="실행 후 results/의 발표 수치와 비교")
+    parser.add_argument("--compare", action="store_true", help="실행 후 contest/results/의 발표 수치와 비교")
     parser.add_argument("--synthetic", action="store_true",
                         help="합성 원본을 만들어 data/synthetic/ 아래에서 실행 (원본 데이터가 없을 때)")
     parser.add_argument("--seed", type=int, default=42, help="--synthetic에서 쓸 시드")

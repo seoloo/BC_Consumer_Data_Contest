@@ -3,7 +3,7 @@
 import pandas as pd
 import pytest
 
-from future_stress.naver_datalab import (
+from future_stress.analysis.naver_datalab import (
     NaverDataLabClient,
     calculate_payment_interest_gap,
     classify_menu_by_generation,

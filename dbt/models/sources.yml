@@ -1,6 +1,6 @@
 version: 2
 
-# raw 스키마: 파이썬(src/future_stress/warehouse.py)이 Bronze 원본을 표기 그대로 넣은 표. dbt는 읽기만 합니다.
+# raw 스키마: 파이썬(src/future_stress/storage/warehouse.py)이 Bronze 원본을 표기 그대로 넣은 표. dbt는 읽기만 합니다.
 # 출처 · 기간 · 형식 문제는 docs/data_sources.md
 sources:
   - name: raw

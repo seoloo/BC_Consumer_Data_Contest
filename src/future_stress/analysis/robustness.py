@@ -18,7 +18,7 @@
 
     두 방식의 결과 수치는 서로 직접 비교하지 않고, 각 지역 안에서 '보정 전 vs 후'만 비교합니다.
 
-원래 위치: notebooks/01_population.ipynb 셀 104~158, notebooks/03_bc_data.ipynb 셀 250~254
+원래 위치: contest/notebooks/01_population.ipynb 셀 104~158, contest/notebooks/03_bc_data.ipynb 셀 250~254
 """
 
 import pandas as pd
@@ -136,7 +136,7 @@ def summarize_robustness(comparison, region_name, note="", before_column="기존
                 값의 크기가 아니라 순위를 비교하므로, 보정 방식이 달라도 해석이 같습니다.
 
     Returns:
-        results/final_3region_robustness.csv의 한 행과 같은 형식의 dict
+        contest/results/final_3region_robustness.csv의 한 행과 같은 형식의 dict
     """
     classified = add_classification_columns(comparison, before_column, after_column)
     rho, _ = spearmanr(classified[before_column], classified[after_column])

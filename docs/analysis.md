@@ -59,11 +59,11 @@ Future Stress가 음수이면 지금의 소비구조가 미래 인구 감소에 
 
 서울, 부산, 경기는 외부유입 데이터의 기간과 구조, 보정 방식이 다릅니다. 각 지역 안에서 보정 전후를 비교했으며 지역 사이 수치를 직접 비교하지 않습니다.
 
-![성장군과 비성장군의 Stress 비교](../assets/growth_vs_nongrowth_stress.png)
+![성장군과 비성장군의 Stress 비교](../contest/assets/growth_vs_nongrowth_stress.png)
 
-![관심 고객과 미래 고객 분류](../assets/next_customer_status_14_cases.png)
+![관심 고객과 미래 고객 분류](../contest/assets/next_customer_status_14_cases.png)
 
-## 공개한 결과 CSV (`results/`)
+## 공개한 결과 CSV (`contest/results/`)
 
 발표자료에 이미 실은 집계 결과만 공개합니다. 파이프라인 결과와 비교하는 기준으로도 씁니다.
 
@@ -71,4 +71,4 @@ Future Stress가 음수이면 지금의 소비구조가 미래 인구 감소에 
 - 규모 기준 민감도 검증, 지역별 외부유입 민감도 검증 요약
 - 대표 사례와 4유형 고객 전략
 
-[최종 발표자료](bc_card_future_consumer_stress.pptx)
+[최종 발표자료](../contest/bc_card_future_consumer_stress.pptx)

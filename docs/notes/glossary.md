@@ -86,7 +86,7 @@
 | **PR (Pull Request)** | 브랜치의 변경을 main에 합쳐 달라는 요청. 여기서 CI 결과와 바뀐 내용을 함께 봄. | PR #2 |
 | **종료 코드** | 명령이 끝날 때 남기는 숫자. 0이면 성공, 그 밖은 실패. CI는 이것으로 판단. | `compare-gold` |
 | **운영 매뉴얼 (runbook)** | 띄우기 · 매달 할 일 · 실패했을 때 할 일을 순서대로 적은 문서. 명령은 실제로 돌려 본 것만. | `docs/operations.md`, [20](20_operations.md) |
-| **상태 점검 (health check)** | 서비스와 데이터가 지금 정상인지 한 번에 확인하는 것. 실패가 있으면 종료 코드 1. | `python -m future_stress.health` |
+| **상태 점검 (health check)** | 서비스와 데이터가 지금 정상인지 한 번에 확인하는 것. 실패가 있으면 종료 코드 1. | `python -m future_stress.ops.health` |
 | **종료 코드** | 프로그램이 끝날 때 남기는 숫자. 0이면 성공, 0이 아니면 실패. CI · 스크립트가 이 값으로 다음 단계를 정함. | `health`, `compare-gold` |
 | **업스트림 실패** | 앞 단계가 실패해서 이 단계는 시작도 하지 않은 상태 (Airflow). 앞 단계를 고치면 함께 다시 돎. | Airflow 화면 |
 | **Streamlit** | 파이썬 코드만으로 웹 화면(표 · 그래프 · 선택 상자)을 만드는 도구. 값을 바꿀 때마다 코드 전체를 다시 실행해 화면을 다시 그림. | `dashboard/app.py`, [19](19_dashboard.md) |
@@ -109,7 +109,7 @@
 | 말 | 뜻 (쉬운 말) | 어디서 |
 |---|---|---|
 | **Future Stress** | 지금 손님의 연령 구성이 2040년 인구 변화에 얼마나 노출됐는지. Σ(연령별 소비 비중 × 인구 증감률). 음수면 손님 연령층이 줄어드는 쪽. | `stress.py` |
-| **엄격 성장** | 월평균 증감률 > 0, 1월 대비 6월 > 0, 오른 달 3번 이상을 모두 만족. | `diagnosis.is_strictly_growing()` |
+| **엄격 성장** | 월평균 증감률 > 0, 첫 달 대비 마지막 달 > 0, 오른 달 3번 이상을 모두 만족. | `diagnosis.is_strictly_growing()` |
 | **4유형** | 지금 성장 여부 × Stress 부호로 나눈 상권 유형 (착시성장 · 지속성장 · 구조취약 · 회복기회). | `diagnosis.classify_market_type()` |
 | **HHI** | 한쪽으로 얼마나 쏠렸는지 재는 지수. 비중 제곱의 합. 클수록 한 연령대에 의존. | `calculate_age_concentration()` |
 | **Mann-Whitney U · Fisher · Spearman** | 두 집단 분포 비교 · 두 비율 비교 · 순위가 얼마나 같은지 보는 통계 방법. | `validation.py`, `robustness.py` |

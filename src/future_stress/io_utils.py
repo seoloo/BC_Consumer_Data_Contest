@@ -74,7 +74,7 @@ def read_parquet(path):
     return pd.read_parquet(path)
 
 
-def to_number(series):
+def parse_number_with_commas(series):
     """'1,234' 처럼 쉼표가 들어간 문자열을 숫자로 바꿉니다.
 
     행안부 인구 파일은 숫자에 천 단위 쉼표가 들어 있어 그대로 더하면

@@ -10,7 +10,7 @@ import pytest
 from botocore.exceptions import ClientError
 
 from future_stress.medallion import DataQualityError, build_bronze
-from future_stress.object_store import (
+from future_stress.storage.object_store import (
     MANIFEST_NAME,
     ObjectStore,
     batch_prefix,

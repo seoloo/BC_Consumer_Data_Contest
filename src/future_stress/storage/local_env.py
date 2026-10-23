@@ -5,7 +5,7 @@
     코드에 적으면 git에 올라가기 때문입니다. 이 PC 안(127.0.0.1)에서만 쓰는 값이라 무작위로 만들어도 됩니다.
 
 실행 방법 (저장소 루트에서, 처음 한 번)
-    .venv\\Scripts\\python -m future_stress.local_env
+    .venv\\Scripts\\python -m future_stress.storage.local_env
 
 이미 있는 값은 건드리지 않고, 없는 값만 덧붙입니다. 값은 화면에 출력하지 않습니다.
 """
@@ -13,7 +13,7 @@
 import secrets
 from pathlib import Path
 
-from . import config
+from .. import config
 
 DEFAULT_S3_PORT = "59100"          # 다른 프로젝트가 쓰는 59000번과 겹치지 않게
 DEFAULT_POSTGRES_PORT = "55532"    # 다른 프로젝트가 쓰는 55432번과 겹치지 않게

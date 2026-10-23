@@ -20,8 +20,8 @@
 
 ## 어떻게 했나
 
-- 코드: `src/future_stress/synthetic.py`
-- 실행: `python -m future_stress.synthetic` (생성만), `python -m future_stress.pipeline --synthetic` (생성 + 전체 실행)
+- 코드: `src/future_stress/ingest/synthetic.py`
+- 실행: `python -m future_stress.ingest.synthetic` (생성만), `python -m future_stress.pipeline --synthetic` (생성 + 전체 실행)
 - 결과는 `data/synthetic/` 아래(raw · bronze · silver · gold · output)에 따로 만들어 원본 결과와 섞이지 않게 했습니다.
 
 **원본과 같게 만든 것**

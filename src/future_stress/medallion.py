@@ -32,8 +32,8 @@ from pathlib import Path
 import pandas as pd
 
 from . import config
-from .age_groups import ADULT_AGE_GROUPS, AGE_GROUP_ORDER, BC_AGE_CODE_TO_GROUP, BC_GENDER_CODE_TO_NAME
-from .card_spending import (
+from .analysis.age_groups import ADULT_AGE_GROUPS, AGE_GROUP_ORDER, BC_AGE_CODE_TO_GROUP, BC_GENDER_CODE_TO_NAME
+from .analysis.card_spending import (
     analysis_months,
     build_age_spending_structure,
     build_region_industry_profile,
@@ -42,9 +42,9 @@ from .card_spending import (
     load_card_files,
     merge_gyeonggi_districts_into_cities,
 )
-from .diagnosis import MARKET_TYPE_STRATEGY, add_market_type, select_analysis_targets, size_cutoff
+from .analysis.diagnosis import MARKET_TYPE_STRATEGY, add_market_type, select_analysis_targets, size_cutoff
 from .io_utils import read_parquet, save_parquet
-from .population import (
+from .analysis.population import (
     POPULATION_YEARS,
     calculate_resident_age_shares,
     load_busan_living_exposure,
@@ -54,16 +54,16 @@ from .population import (
     load_seoul_future_population,
     load_seoul_living_population_shares,
 )
-from .robustness import (
+from .analysis.robustness import (
     adjust_stress_by_resident_exposure,
     build_busan_comparison,
     renormalize_shares,
     reweight_stress_by_external_population,
     summarize_robustness,
 )
-from .strategy import build_defense_strategy, build_representative_case_table, pick_representative_cases, run_rebalancing
-from .stress import build_region_result
-from .validation import (
+from .analysis.strategy import build_defense_strategy, build_representative_case_table, pick_representative_cases, run_rebalancing
+from .analysis.stress import build_region_result
+from .analysis.validation import (
     build_growth_comparison_table,
     build_stress_case_table,
     run_size_sensitivity,
@@ -92,7 +92,7 @@ RAW_SOURCES = {
 REGION_LABELS = {"서울특별시": "서울", "부산광역시": "부산", "경기도": "경기"}
 REGION_CASE_KEYS = ["시군구", "업종코드", "업종명"]
 
-# 발표 결과(results/)와 같은 이름 · 형식으로 output/에 내보낼 Gold 표
+# 발표 결과(contest/results/)와 같은 이름 · 형식으로 output/에 내보낼 Gold 표
 PUBLISHED_TABLES = [
     "growth_vs_nongrowth_validation",
     "statistical_validation",

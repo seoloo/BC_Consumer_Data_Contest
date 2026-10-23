@@ -4,12 +4,12 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from future_stress.robustness import (
+from future_stress.analysis.robustness import (
     renormalize_shares,
     reweight_stress_by_external_population,
     summarize_robustness,
 )
-from future_stress.strategy import (
+from future_stress.analysis.strategy import (
     optimize_mix_for_max_mitigation,
     optimize_mix_for_min_change,
     pick_representative_cases,

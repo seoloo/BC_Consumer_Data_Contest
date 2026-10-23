@@ -24,7 +24,7 @@
 같은 시드(seed)를 쓰면 언제 실행해도 같은 파일이 나옵니다.
 
 실행 방법 (저장소 루트에서)
-    .venv\\Scripts\\python -m future_stress.synthetic                 # data/synthetic/raw 에 생성
+    .venv\\Scripts\\python -m future_stress.ingest.synthetic                 # data/synthetic/raw 에 생성
     .venv\\Scripts\\python -m future_stress.pipeline --synthetic      # 생성 + 파이프라인 실행
 """
 
@@ -38,8 +38,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from . import config
-from .regions import SEOUL_DISTRICT_CODE_TO_NAME
+from .. import config
+from ..analysis.regions import SEOUL_DISTRICT_CODE_TO_NAME
 
 # ===========================================================================
 # 공개 기준 정보 (행정구역 이름, 업종 코드)

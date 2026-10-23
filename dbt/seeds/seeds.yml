@@ -1,7 +1,7 @@
 version: 2
 
 # 기준표 (ref 스키마). 코드를 바꾸는 규칙을 SQL 안에 숨기지 않고 표로 보이게 둡니다.
-# 파이썬 src/future_stress/age_groups.py의 딕셔너리와 같은 내용입니다.
+# 파이썬 src/future_stress/analysis/age_groups.py의 딕셔너리와 같은 내용입니다.
 seeds:
   - name: age_groups
     description: 분석에서 쓰는 6개 연령대와 순서

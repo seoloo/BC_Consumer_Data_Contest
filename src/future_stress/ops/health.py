@@ -1,8 +1,8 @@
 """운영 상태 한 번에 보기 (Phase 4-4).
 
 실행 (저장소 루트에서)
-    .venv\\Scripts\\python -m future_stress.health              # 원본
-    .venv\\Scripts\\python -m future_stress.health --synthetic  # 합성 데이터
+    .venv\\Scripts\\python -m future_stress.ops.health              # 원본
+    .venv\\Scripts\\python -m future_stress.ops.health --synthetic  # 합성 데이터
 
 무엇을 보나요? (위에서부터 차례로 기대고 있어서, 위가 실패하면 아래도 실패합니다)
     1. .env 계정          객체 저장소 · PostgreSQL 계정이 있나 (값은 출력하지 않음)
@@ -29,10 +29,10 @@ from zoneinfo import ZoneInfo
 
 import requests
 
-from . import config
-from .io_utils import read_env_value
-from .object_store import DEFAULT_BUCKET, SYNTHETIC_BUCKET, ObjectStore
-from .warehouse import CARD_TABLE, FUTURE_TABLE, RAW_SCHEMA, SYNTHETIC_RAW_SCHEMA, Warehouse
+from .. import config
+from ..io_utils import read_env_value
+from ..storage.object_store import DEFAULT_BUCKET, SYNTHETIC_BUCKET, ObjectStore
+from ..storage.warehouse import CARD_TABLE, FUTURE_TABLE, RAW_SCHEMA, SYNTHETIC_RAW_SCHEMA, Warehouse
 
 DATASETS = {
     "원본": {"bucket": DEFAULT_BUCKET, "raw": RAW_SCHEMA, "gold": "gold", "raw_dir": config.RAW_DATA_DIR},
@@ -74,7 +74,7 @@ def korea_time(moment):
 def judge_env(missing):
     if missing:
         return Check(".env 계정", FAIL, f"없음: {', '.join(missing)}",
-                     "python -m future_stress.local_env 로 만들기 (있는 값은 건드리지 않음)")
+                     "python -m future_stress.storage.local_env 로 만들기 (있는 값은 건드리지 않음)")
     return Check(".env 계정", OK, f"{len(REQUIRED_ENV)}개 있음 (값은 표시하지 않음)")
 
 
@@ -232,7 +232,7 @@ def airflow_check():
         return judge_airflow(None, [], web_up)
 
 
-def report(checks):
+def format_report(checks):
     width = max(display_width(check.name) for check in checks)
     lines = []
     for check in checks:
@@ -251,7 +251,7 @@ def main():
     dataset = "합성" if arguments.synthetic else "원본"
     checks = run_checks(dataset)
     print(f"[{dataset}] {datetime.now(timezone.utc).astimezone(ZoneInfo(config.TIMEZONE)):%Y-%m-%d %H:%M} 기준")
-    print(report(checks))
+    print(format_report(checks))
     failed = [check.name for check in checks if check.status == FAIL]
     if failed:
         raise SystemExit(f"\n실패 {len(failed)}개: {', '.join(failed)}")

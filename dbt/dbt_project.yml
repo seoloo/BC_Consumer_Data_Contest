@@ -43,7 +43,7 @@ seeds:
     +persist_docs: {relation: true, columns: true}
 
 # persist_docs: schema.yml의 표 · 열 설명을 PostgreSQL에도 COMMENT로 저장 → DB만 봐도 뜻을 알 수 있고,
-# python -m future_stress.warehouse_docs 가 이 설명으로 데이터 사전을 만듭니다.
+# python -m future_stress.storage.warehouse_docs 가 이 설명으로 데이터 사전을 만듭니다.
 
 models:
   future_stress:

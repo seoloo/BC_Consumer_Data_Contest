@@ -119,7 +119,7 @@ dbt/models/docs.md · schema.yml    설명 (한 곳)
         │ dbt build (persist_docs)
         ▼
 PostgreSQL COMMENT · 열 · 행 수 ──┐
-dbt/target/manifest.json ─────────┤ python -m future_stress.warehouse_docs
+dbt/target/manifest.json ─────────┤ python -m future_stress.storage.warehouse_docs
   (계보 = ref/source, 열쇠 = unique 테스트, 연결 = relationships 테스트)
                                   ▼
                      docs/warehouse/README.md (표 18개 · 테스트 49개 · 계보 · ERD · 열 목록)

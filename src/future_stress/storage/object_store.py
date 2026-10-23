@@ -25,9 +25,9 @@
     3. 계정 키는 코드에 쓰지 않고 .env에서만 읽습니다. local_env가 이 PC 전용 키를 만들어 줍니다.
 
 실행 방법 (저장소 루트에서)
-    .venv\\Scripts\\python -m future_stress.local_env               # .env에 로컬 서비스 계정 만들기 (처음 한 번)
+    .venv\\Scripts\\python -m future_stress.storage.local_env               # .env에 로컬 서비스 계정 만들기 (처음 한 번)
     docker compose up -d                                             # 저장소 띄우기
-    .venv\\Scripts\\python -m future_stress.object_store status        # 버킷에 무엇이 있는지 보기
+    .venv\\Scripts\\python -m future_stress.storage.object_store status        # 버킷에 무엇이 있는지 보기
     .venv\\Scripts\\python -m future_stress.pipeline --object-store    # Bronze를 저장소에 올리고, 거기서 받아 Silver부터 실행
 """
 
@@ -42,10 +42,10 @@ import pandas as pd
 from botocore.config import Config
 from botocore.exceptions import ClientError, EndpointConnectionError
 
-from . import config
-from .io_utils import read_env_value
+from .. import config
+from ..io_utils import read_env_value
 from .local_env import DEFAULT_S3_PORT, init_env  # noqa: F401  (init_env: 예전 명령 'object_store init-env' 유지용)
-from .medallion import DataQualityError
+from ..medallion import DataQualityError
 
 DEFAULT_BUCKET = "bronze"
 SYNTHETIC_BUCKET = "bronze-synthetic"    # 합성 데이터용. 원본과 파일 이름이 같아 같은 버킷에 두면 덮어쓰기 때문
@@ -216,7 +216,7 @@ def download_bronze(store, target_dir, batch_month=None):
 def main():
     parser = argparse.ArgumentParser(description="Bronze 객체 저장소(SeaweedFS) 도구")
     commands = parser.add_subparsers(dest="command", required=True)
-    commands.add_parser("init-env", help=".env에 로컬 서비스 계정 만들기 (python -m future_stress.local_env와 같음)")
+    commands.add_parser("init-env", help=".env에 로컬 서비스 계정 만들기 (python -m future_stress.storage.local_env와 같음)")
     status = commands.add_parser("status", help="버킷에 있는 객체 보기")
     status.add_argument("--prefix", default="")
     upload = commands.add_parser("upload", help="data/bronze를 버킷에 올리기")

@@ -33,7 +33,7 @@
 
 ## 데이터 사전 자동 생성 (2026-10-21)
 
-흐름도와 같은 생각을 데이터베이스 문서에도 적용했습니다. 설명은 dbt 한 곳에 쓰고, `python -m future_stress.warehouse_docs`가 DB와 dbt 결과를 읽어 [데이터 사전](../warehouse/README.md)(표 · 열 · 행 수 · 계보 · ERD)을 다시 만듭니다. 자세한 내용은 [16 dbt](16_dbt.md).
+흐름도와 같은 생각을 데이터베이스 문서에도 적용했습니다. 설명은 dbt 한 곳에 쓰고, `python -m future_stress.storage.warehouse_docs`가 DB와 dbt 결과를 읽어 [데이터 사전](../warehouse/README.md)(표 · 열 · 행 수 · 계보 · ERD)을 다시 만듭니다. 자세한 내용은 [16 dbt](16_dbt.md).
 
 ## Git 작업 방식
 

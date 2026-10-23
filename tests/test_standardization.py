@@ -3,12 +3,12 @@
 import pandas as pd
 import pytest
 
-from future_stress.age_groups import (
+from future_stress.analysis.age_groups import (
     age_group_from_label,
     sort_by_age_group,
     standardize_age_group_name,
 )
-from future_stress.regions import fix_region_name, to_parent_city
+from future_stress.analysis.regions import fix_region_name, to_parent_city
 
 
 @pytest.mark.parametrize("label, expected", [

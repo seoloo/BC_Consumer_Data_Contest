@@ -11,7 +11,8 @@ import pandas as pd
 import psycopg
 import pytest
 
-from future_stress import config, dashboard_data as data
+from future_stress import config
+from future_stress.ops import dashboard_data as data
 
 APP_PATH = Path(__file__).resolve().parents[1] / "dashboard" / "app.py"
 AGES = ["20대이하", "20대", "30대", "40대", "50대", "60대이상"]

@@ -10,13 +10,13 @@
     원래는 검정표의 숫자(14/0, 74/26)와 결과표의 p-value를 손으로 입력했습니다.
     여기서는 모두 데이터에서 직접 계산하므로, 데이터가 바뀌면 결과도 함께 바뀝니다.
 
-원래 위치: notebooks/03_bc_data.ipynb 셀 192~209, 230~233
+원래 위치: contest/notebooks/03_bc_data.ipynb 셀 192~209, 230~233
 """
 
 import pandas as pd
 from scipy.stats import fisher_exact, mannwhitneyu
 
-from . import config
+from .. import config
 from .diagnosis import is_strictly_growing, select_analysis_targets, size_cutoff
 from .stress import stress_column
 
@@ -65,7 +65,7 @@ def summarize_group(cases, group_name):
 
 
 def build_growth_comparison_table(growth_cases, non_growth_cases):
-    """성장군 vs 비성장군 비교표 (results/growth_vs_nongrowth_validation.csv와 같은 형식)."""
+    """성장군 vs 비성장군 비교표 (contest/results/growth_vs_nongrowth_validation.csv와 같은 형식)."""
     return pd.DataFrame([
         summarize_group(growth_cases, "현재 성장"),
         summarize_group(non_growth_cases, "비성장"),
@@ -85,7 +85,7 @@ def run_statistical_tests(growth_cases, non_growth_cases):
         alternative="less": "성장군의 Stress가 더 작다(= 더 위험하다)"를 검정합니다.
 
     Returns:
-        검정 | p-value  (results/statistical_validation.csv와 같은 형식)
+        검정 | p-value  (contest/results/statistical_validation.csv와 같은 형식)
     """
     growth_risk = count_risk(growth_cases)["risk_2035"]
     non_growth_risk = count_risk(non_growth_cases)["risk_2035"]
@@ -116,7 +116,7 @@ def run_size_sensitivity(region_result, cutoff_profile, top_percents=None):
         top_percents: 비교할 상위 % 목록 (기본 20, 25, 30).
 
     Returns:
-        results/size_threshold_sensitivity.csv와 같은 형식의 표
+        contest/results/size_threshold_sensitivity.csv와 같은 형식의 표
     """
     top_percents = top_percents or config.SIZE_SENSITIVITY_TOP_PERCENTS
     rows = []
@@ -173,17 +173,17 @@ def validate_region(region_result, region_name):
 
 
 def build_stress_case_table(growth_cases):
-    """현재 성장 사례 표 (results/stress_test_14_cases_table.csv와 같은 형식)."""
+    """현재 성장 사례 표 (contest/results/stress_test_14_cases_table.csv와 같은 형식)."""
     table = growth_cases.copy()
     table["2040 추가악화폭"] = (table[STRESS_2040] - table[STRESS_2035]).round(2)
     table[STRESS_2035] = table[STRESS_2035].round(2)
     table[STRESS_2040] = table[STRESS_2040].round(2)
     return (
-        table[["시군구", "업종명", "연령대", "월평균증감률", "1월대비6월증감률", STRESS_2035, STRESS_2040, "2040 추가악화폭"]]
+        table[["시군구", "업종명", "연령대", "월평균증감률", "첫달대비마지막달증감률", STRESS_2035, STRESS_2040, "2040 추가악화폭"]]
         .rename(columns={
             "연령대": "현재 핵심연령대",
             "월평균증감률": "월평균 성장률",
-            "1월대비6월증감률": "1→6월 증감률",
+            "첫달대비마지막달증감률": "1→6월 증감률",
             STRESS_2035: "2035 스트레스",
             STRESS_2040: "2040 스트레스",
         })

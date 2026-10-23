@@ -6,7 +6,7 @@ DAG 자체가 제대로 읽히는지는 Airflow 컨테이너 안에서 `airflow 
 
 from datetime import datetime, timezone
 
-from future_stress.orchestration import batch_month_for_run, batch_month_of, has_new_batch, raw_batch_month
+from future_stress.ops.orchestration import batch_month_for_run, batch_month_of, has_new_batch, raw_batch_month
 
 
 def test_batch_month_of_date():

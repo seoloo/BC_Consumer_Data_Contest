@@ -1,6 +1,6 @@
 # 데이터 웨어하우스 데이터 사전
 
-> **자동 생성 문서입니다. 손으로 고치지 마세요.** 만든 시각 2026-10-22 19:02 · `python -m future_stress.warehouse_docs` (설명은 `dbt/models/*.yml` · `dbt/models/docs.md`에서 고칩니다)
+> **자동 생성 문서입니다. 손으로 고치지 마세요.** 만든 시각 2026-10-23 18:34 · `python -m future_stress.storage.warehouse_docs` (설명은 `dbt/models/*.yml` · `dbt/models/docs.md`에서 고칩니다)
 
 PostgreSQL `future_stress` 데이터베이스의 스키마 · 표 · 열을 정리한 문서입니다. 원본이 어디서 왔는지는 [데이터 출처](../data_sources.md), 왜 이렇게 만들었는지는 [15 PostgreSQL](../notes/15_postgresql.md) · [16 dbt](../notes/16_dbt.md)에 있습니다.
 
@@ -165,7 +165,6 @@ erDiagram
   ref_market_types {
     text market_type PK
   }
-  ref_age_groups ||--o{ ref_bc_age_codes : "age_group"
   ref_age_groups ||--o{ gold_age_spending_structure : "age_group"
   ref_age_groups ||--o{ gold_gyeonggi_city_age_spending_structure : "age_group"
   ref_age_groups ||--o{ gold_region_industry_profile : "main_age_group"
@@ -178,6 +177,7 @@ erDiagram
   gold_future_stress ||--o{ gold_seoul_analysis_targets : "province · district · industry_code · industry_name"
   ref_age_groups ||--o{ silver_card_spending : "age_group"
   ref_age_groups ||--o{ silver_future_population : "age_group"
+  ref_age_groups ||--o{ ref_bc_age_codes : "age_group"
 ```
 
 ## 4. 표마다 열

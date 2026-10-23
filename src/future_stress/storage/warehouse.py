@@ -23,8 +23,8 @@ raw에 넣는 표 (Stress · 4유형을 만드는 데 필요한 원본 두 가�
     4. 합성 데이터는 raw_synthetic 스키마에 넣습니다 (같은 표에 넣으면 원본을 덮어쓰기 때문).
 
 실행 방법 (저장소 루트에서, docker compose up -d 뒤)
-    .venv\\Scripts\\python -m future_stress.warehouse load-raw     # data/bronze → raw 스키마
-    .venv\\Scripts\\python -m future_stress.warehouse status       # 표마다 행 수와 마지막 적재
+    .venv\\Scripts\\python -m future_stress.storage.warehouse load-raw     # data/bronze → raw 스키마
+    .venv\\Scripts\\python -m future_stress.storage.warehouse status       # 표마다 행 수와 마지막 적재
     .venv\\Scripts\\python -m future_stress.pipeline --warehouse   # 파이프라인 실행 중에 함께 적재 + 대사 보고서에 기록
 """
 
@@ -40,12 +40,12 @@ import pandas as pd
 import psycopg
 from psycopg import sql
 
-from . import config
-from .card_spending import load_card_files
-from .io_utils import read_csv_with_encoding_fallback, read_env_value, read_parquet
+from .. import config
+from ..analysis.card_spending import load_card_files
+from ..io_utils import read_csv_with_encoding_fallback, read_env_value, read_parquet
 from .local_env import DEFAULT_POSTGRES_DB, DEFAULT_POSTGRES_PORT, DEFAULT_POSTGRES_USER
-from .medallion import DataQualityError, bronze_path, file_fingerprint
-from .population import POPULATION_YEARS
+from ..medallion import DataQualityError, bronze_path, file_fingerprint
+from ..analysis.population import POPULATION_YEARS
 
 RAW_SCHEMA = "raw"
 SYNTHETIC_RAW_SCHEMA = "raw_synthetic"
@@ -350,7 +350,7 @@ _STRUCTURE_VALUES = {"이용금액": "amount", "이용건수": "payment_count", 
 _PROFILE_VALUES = {"이용금액비중": "main_age_share", "업종총이용금액": "industry_total_amount",
                    "연령집중도": "age_concentration", "데이터보유개월수": "months_with_data",
                    "6개월완전": "is_complete_6_months", "월평균증감률": "avg_monthly_change",
-                   "1월대비6월증감률": "change_first_to_last_month", "상승개월수": "rising_months"}
+                   "첫달대비마지막달증감률": "change_first_to_last_month", "상승개월수": "rising_months"}
 _STRESS_VALUES = {f"{year} 순인구효과": f"stress_{year}" for year in config.STRESS_YEARS}
 
 GOLD_COLUMN_MAPS = {

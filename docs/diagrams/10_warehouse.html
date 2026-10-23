@@ -176,7 +176,7 @@
         <b style="font-size:15px">데이터 사전 · ERD는 자동으로</b>
         <span class="small">설명은 dbt schema.yml에 한 번만 쓰고 PostgreSQL COMMENT로도 저장합니다. 스크립트가 DB와 dbt 결과를 읽어 표 · 열 · 행 수 · 계보 · ERD를 <code>docs/warehouse/README.md</code>로 다시 만듭니다. ERD의 선은 모두 매번 검사하는 연결입니다.</span>
       </div>
-      <div class="cmd"><i># 저장소 루트에서</i><br>docker compose up -d<br>docker compose run --rm dbt build<br>python -m future_stress.warehouse compare-gold<br>python -m future_stress.warehouse_docs</div>
+      <div class="cmd"><i># 저장소 루트에서</i><br>docker compose up -d<br>docker compose run --rm dbt build<br>python -m future_stress.storage.warehouse compare-gold<br>python -m future_stress.storage.warehouse_docs</div>
     </div>
   </div>
 </div>

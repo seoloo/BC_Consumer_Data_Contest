@@ -27,7 +27,7 @@ python -m venv .venv
 다음 달 원본이 왔을 때를 시험하려면 합성 7월 파일을 하나 더 만든 뒤 다시 돌립니다. 분석 기간이 2 ~ 7월로 옮겨 갑니다.
 
 ```powershell
-.venv\Scripts\python -m future_stress.synthetic --next-month 202607
+.venv\Scripts\python -m future_stress.ingest.synthetic --next-month 202607
 ```
 
 ## 3. 원본으로 (발표 수치와 비교)
@@ -41,11 +41,11 @@ python -m venv .venv
 서울 · 경기 장래인구는 KOSIS API로 직접 받을 수 있습니다. 인증키는 `.env`에 `KOSIS_API_KEY=발급받은키`로 넣습니다(`.env`는 git에 올라가지 않음). 두 번째 명령은 예전에 내려받은 파일 값과 같은지 비교합니다.
 
 ```powershell
-.venv\Scripts\python -m future_stress.kosis collect
+.venv\Scripts\python -m future_stress.ingest.kosis collect
 ```
 
 ```powershell
-.venv\Scripts\python -m future_stress.kosis compare
+.venv\Scripts\python -m future_stress.ingest.kosis compare
 ```
 
 ## 4. Docker 서비스까지 (객체 저장소 · PostgreSQL · dbt)
@@ -53,7 +53,7 @@ python -m venv .venv
 Docker Desktop이 필요합니다. 첫 줄은 처음 한 번만 실행하며, `.env`에 이 PC 전용 계정(저장소 키, DB 비밀번호)을 만듭니다(값은 화면에 출력하지 않음).
 
 ```powershell
-.venv\Scripts\python -m future_stress.local_env
+.venv\Scripts\python -m future_stress.storage.local_env
 ```
 
 ```powershell
@@ -73,17 +73,17 @@ docker compose run --rm dbt build
 ```
 
 ```powershell
-.venv\Scripts\python -m future_stress.warehouse compare-silver
+.venv\Scripts\python -m future_stress.storage.warehouse compare-silver
 ```
 
 ```powershell
-.venv\Scripts\python -m future_stress.warehouse compare-gold
+.venv\Scripts\python -m future_stress.storage.warehouse compare-gold
 ```
 
 표 · 열 설명과 계보 · ERD가 담긴 [데이터 사전](warehouse/README.md)은 DB와 dbt 결과를 읽어 자동으로 다시 만듭니다.
 
 ```powershell
-.venv\Scripts\python -m future_stress.warehouse_docs
+.venv\Scripts\python -m future_stress.storage.warehouse_docs
 ```
 
 ## 5. 매달 돌리기 (Airflow)
@@ -111,7 +111,7 @@ warehouse가 떠 있고 dbt build까지 끝난 상태에서 띄웁니다(화면:
 서비스와 데이터가 지금 정상인지 한 번에 봅니다. 실패가 있으면 종료 코드 1로 끝납니다.
 
 ```powershell
-.venv\Scripts\python -m future_stress.health
+.venv\Scripts\python -m future_stress.ops.health
 ```
 
 GitHub에서는 PR과 main에 올릴 때마다 [CI](../.github/workflows/ci.yml)가 합성 데이터로 위 과정(테스트 → 파이프라인 → dbt → 파이썬 비교 → 상태 점검)을 처음부터 자동으로 돌립니다.
@@ -121,15 +121,15 @@ GitHub에서는 PR과 main에 올릴 때마다 [CI](../.github/workflows/ci.yml)
 ```text
 src/future_stress/  분석 · 파이프라인 패키지
 dbt/                SQL 모델 (silver · gold), 기준표(seeds), 테스트
-airflow/dags/       월 배치 DAG (일은 src/future_stress/orchestration.py)
-dashboard/          조회 화면 (Streamlit, 데이터 읽기는 src/future_stress/dashboard_data.py)
+airflow/dags/       월 배치 DAG (일은 src/future_stress/ops/orchestration.py)
+dashboard/          조회 화면 (Streamlit, 데이터 읽기는 src/future_stress/ops/dashboard_data.py)
 docker/             Airflow 이미지 (Dockerfile)
 docker-compose.yml  로컬 서비스: 객체 저장소(SeaweedFS) · PostgreSQL · dbt · Airflow
 tests/              단위 테스트와 전체 실행 테스트
 docs/               분석 내용, 설계 기록(notes/), 운영 매뉴얼, 데이터 출처, 데이터 사전(warehouse/), 흐름도(diagrams/)
 data/               데이터 비공개 사유와 재현 안내 (실행하면 raw · bronze · silver · gold · synthetic이 생기며 모두 git 제외)
-notebooks/          실행 출력과 인증정보를 제거한 원래 분석 노트북 (보존용)
-results/            발표자료에 사용한 소규모 집계 결과 CSV (재현 비교 기준)
-assets/             발표에 쓴 결과 이미지
-scripts/            공개용 노트북 정리 스크립트
+contest/notebooks/          실행 출력과 인증정보를 제거한 원래 분석 노트북 (보존용)
+contest/results/            발표자료에 사용한 소규모 집계 결과 CSV (재현 비교 기준)
+contest/assets/             발표에 쓴 결과 이미지
+contest/scripts/            공개용 노트북 정리 스크립트
 ```

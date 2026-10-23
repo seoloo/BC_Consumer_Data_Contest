@@ -2,14 +2,14 @@
 
 실제 BC카드 원본은 공개할 수 없어서 두 가지를 씁니다.
     - 결과를 손으로 계산할 수 있을 만큼 작은 데이터 (함수 하나하나의 계산 확인용)
-    - future_stress.synthetic이 만드는 원본 형식 그대로의 합성 데이터 (파이프라인 전체 실행용)
+    - future_stress.ingest.synthetic이 만드는 원본 형식 그대로의 합성 데이터 (파이프라인 전체 실행용)
 """
 
 import pandas as pd
 import pytest
 
 from future_stress import config
-from future_stress.synthetic import write_synthetic_raw_files
+from future_stress.ingest.synthetic import write_synthetic_raw_files
 
 
 def make_raw_card_rows(region, industry, monthly_amounts_by_age):

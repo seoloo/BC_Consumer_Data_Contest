@@ -8,8 +8,8 @@ data/processed/
 *.xlsx
 *.xls
 *.zip
-!results/
-!results/*.csv
+!contest/results/
+!contest/results/*.csv
 
 __pycache__/
 *.py[cod]

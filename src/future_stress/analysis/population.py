@@ -11,7 +11,7 @@
     인구비중:  시군구 | 연령대 | (주민등록/생활/유동)인구비중
 지역마다 원본 형식이 달라도, 이 모듈을 통과하면 다음 단계는 지역을 구분할 필요가 없습니다.
 
-원래 위치: notebooks/01_population.ipynb 셀 6~55, 81~141, 252
+원래 위치: contest/notebooks/01_population.ipynb 셀 6~55, 81~141, 252
 """
 
 import csv
@@ -20,13 +20,13 @@ from pathlib import Path
 
 import pandas as pd
 
-from . import config
+from .. import config
 from .age_groups import (
     AGE_GROUP_ORDER,
     age_group_from_label,
     standardize_age_group_name,
 )
-from .io_utils import read_csv_with_encoding_fallback, to_number
+from ..io_utils import read_csv_with_encoding_fallback, parse_number_with_commas
 from .regions import SEOUL_DISTRICT_CODE_TO_NAME, fix_region_name
 
 # ===========================================================================
@@ -157,7 +157,7 @@ def load_resident_population(file_paths):
     파일마다 다른 점과 처리
         - 열 이름 앞에 '2026년01월_' 같은 월 정보가 붙어 있음 → 떼어 내서 모든 달의 열 이름을 통일
         - 기준년월이 데이터 안에 없음 → 파일명(population_202601.csv)에서 6자리 숫자를 읽음
-        - 숫자에 쉼표가 있음 → to_number()로 변환
+        - 숫자에 쉼표가 있음 → parse_number_with_commas()로 변환
         - '서울특별시 종로구 (1111000000)'처럼 끝에 행정코드가 붙음 → 지우고 시도/시군구로 분리
     """
     monthly_tables = []
@@ -169,7 +169,7 @@ def load_resident_population(file_paths):
         table["기준년월"] = re.search(r"\d{6}", path.stem).group()
         table["행정구역"] = raw["행정구역"].str.replace(r"\s*\(\d+\)$", "", regex=True)
         for age_group, source_columns in RESIDENT_AGE_COLUMNS.items():
-            table[age_group] = sum(to_number(raw[f"계_{column}"]) for column in source_columns)
+            table[age_group] = sum(parse_number_with_commas(raw[f"계_{column}"]) for column in source_columns)
         monthly_tables.append(table)
 
     population = pd.concat(monthly_tables, ignore_index=True)

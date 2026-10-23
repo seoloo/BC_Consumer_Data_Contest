@@ -10,7 +10,7 @@ import pandas as pd
 import pytest
 import requests
 
-from future_stress.kosis import (
+from future_stress.ingest.kosis import (
     FUTURE_POPULATION_TABLES,
     KosisApiError,
     KosisClient,

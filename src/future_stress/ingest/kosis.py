@@ -23,9 +23,9 @@
     .env는 .gitignore에 들어 있어 저장소에 올라가지 않습니다.
 
 실행 방법 (저장소 루트에서)
-    .venv\\Scripts\\python -m future_stress.kosis collect    # data/raw/kosis/ 에 저장
-    .venv\\Scripts\\python -m future_stress.kosis collect --env-file <다른 프로젝트의 .env>   # 키를 다른 .env에서 읽기
-    .venv\\Scripts\\python -m future_stress.kosis compare    # 받은 값과 data/raw의 파일 값 비교
+    .venv\\Scripts\\python -m future_stress.ingest.kosis collect    # data/raw/kosis/ 에 저장
+    .venv\\Scripts\\python -m future_stress.ingest.kosis collect --env-file <다른 프로젝트의 .env>   # 키를 다른 .env에서 읽기
+    .venv\\Scripts\\python -m future_stress.ingest.kosis compare    # 받은 값과 data/raw의 파일 값 비교
 """
 
 import argparse
@@ -41,10 +41,10 @@ from pathlib import Path
 import pandas as pd
 import requests
 
-from . import config
-from .io_utils import read_env_value
-from .medallion import REGION_LABELS
-from .population import POPULATION_YEARS
+from .. import config
+from ..io_utils import read_env_value
+from ..medallion import REGION_LABELS
+from ..analysis.population import POPULATION_YEARS
 
 API_URL = "https://kosis.kr/openapi/Param/statisticsParameterData.do"
 
@@ -350,7 +350,7 @@ def read_landing_rows(kosis_dir, table, years):
     for year in years:
         path = landing_path(kosis_dir, table, year)
         if not path.exists():
-            raise FileNotFoundError(f"{path}가 없습니다. 먼저 'python -m future_stress.kosis collect'로 받아 주세요.")
+            raise FileNotFoundError(f"{path}가 없습니다. 먼저 'python -m future_stress.ingest.kosis collect'로 받아 주세요.")
         rows += json.loads(path.read_text(encoding="utf-8"))["rows"]
     return rows
 

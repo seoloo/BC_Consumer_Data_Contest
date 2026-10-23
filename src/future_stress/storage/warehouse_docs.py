@@ -17,7 +17,7 @@
 
 실행 방법 (저장소 루트에서, docker compose up -d 와 dbt build 뒤)
     docker compose run --rm dbt build                     # manifest.json을 원본 기준(dev)으로 새로 만듦
-    .venv\\Scripts\\python -m future_stress.warehouse_docs
+    .venv\\Scripts\\python -m future_stress.storage.warehouse_docs
 """
 
 import argparse
@@ -28,7 +28,7 @@ from pathlib import Path
 
 import psycopg
 
-from . import config
+from .. import config
 from .warehouse import Warehouse
 
 MANIFEST_PATH = config.PROJECT_ROOT / "dbt" / "target" / "manifest.json"
@@ -186,7 +186,7 @@ def mermaid_id(relation):
     return re.sub(r"\W", "_", name)
 
 
-def clean(text):
+def table_cell_text(text):
     """표 칸에 넣을 수 있게 줄바꿈 · | 를 정리합니다."""
     return re.sub(r"\s+", " ", str(text or "")).replace("|", "/").strip()
 
@@ -246,7 +246,7 @@ def build_document(manifest, tables, generated_at):
         "# 데이터 웨어하우스 데이터 사전",
         "",
         f"> **자동 생성 문서입니다. 손으로 고치지 마세요.** 만든 시각 {generated_at} · "
-        "`python -m future_stress.warehouse_docs` (설명은 `dbt/models/*.yml` · `dbt/models/docs.md`에서 고칩니다)",
+        "`python -m future_stress.storage.warehouse_docs` (설명은 `dbt/models/*.yml` · `dbt/models/docs.md`에서 고칩니다)",
         "",
         "PostgreSQL `future_stress` 데이터베이스의 스키마 · 표 · 열을 정리한 문서입니다. "
         "원본이 어디서 왔는지는 [데이터 출처](../data_sources.md), 왜 이렇게 만들었는지는 "
@@ -261,7 +261,7 @@ def build_document(manifest, tables, generated_at):
     for unique_id, table in ordered:
         test_total = sum(tests.get(unique_id, {}).values())
         parts.append(f"| `{table['schema']}` | [`{table['name']}`](#{table['schema']}{table['name']}) | {kinds[table['kind']]} | "
-                     f"{table['rows']:,} | {test_total} | {clean(table['description'])} |")
+                     f"{table['rows']:,} | {test_total} | {table_cell_text(table['description'])} |")
     multi_table = sum(tests.get(MULTI_TABLE, {}).values())
     parts += ["", f"표 {len(tables)}개 · 테스트 {total_tests}개 (dbt build가 매번 모두 실행). "
                   f"이 중 {multi_table}개는 여러 표를 함께 보는 직접 만든 SQL 테스트(대사 등, `dbt/tests/`)입니다.", ""]
@@ -286,12 +286,12 @@ def build_document(manifest, tables, generated_at):
         "",
     ]
     for unique_id, table in ordered:
-        parts += [f"### {table['schema']}.{table['name']}", "", clean(table["description"]) or "(설명 없음)", ""]
+        parts += [f"### {table['schema']}.{table['name']}", "", table_cell_text(table["description"]) or "(설명 없음)", ""]
         key_text = ", ".join(f"`{c}`" for c in keys.get(unique_id, []))
         test_text = ", ".join(f"{name} {count}" for name, count in sorted(tests.get(unique_id, {}).items()))
         meta = [f"행 {table['rows']:,}"] + ([f"열쇠 {key_text}"] if key_text else []) + ([f"테스트: {test_text}"] if test_text else [])
         parts += [" · ".join(meta), "", "| 열 | 타입 | 설명 |", "|---|---|---|"]
-        parts += [f"| `{name}` | {kind} | {clean(comment)} |" for name, kind, comment in table["columns"]]
+        parts += [f"| `{name}` | {kind} | {table_cell_text(comment)} |" for name, kind, comment in table["columns"]]
         parts.append("")
     return "\n".join(parts).rstrip() + "\n"
 

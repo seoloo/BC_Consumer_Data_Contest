@@ -40,7 +40,7 @@ PowerShell 5에서는 `&&`를 쓸 수 없으니 한 줄씩 실행합니다. 저�
 .venv\Scripts\python -m pip install -e .
 ```
 
-원본 데이터를 `data/raw/`에 넣은 뒤 아래 명령을 실행하면, `output/`에 결과를 만들고 `results/`의 발표 수치와 비교합니다.
+원본 데이터를 `data/raw/`에 넣은 뒤 아래 명령을 실행하면, `output/`에 결과를 만들고 `contest/results/`의 발표 수치와 비교합니다.
 
 ```powershell
 .venv\Scripts\python -m future_stress.pipeline --compare
@@ -126,7 +126,7 @@ PowerShell 5에서는 `&&`를 쓸 수 없으니 한 줄씩 실행합니다. 저�
 ## 6. 옮기지 않은 것
 
 - **탐색 단계 코드**: '고편중여부' · '현재유형' 분류, 서울 Next Customer 1차 버전, 예비창업자 점수(미래창업기회점수)는 최종 발표에 쓰이지 않아 제외했습니다. 필요하면 노트북에 그대로 남아 있습니다.
-- **그래프 코드**: 발표용 이미지는 `assets/`에 이미 있습니다. 그래프는 Phase 4 대시보드에서 다시 만듭니다.
+- **그래프 코드**: 발표용 이미지는 `contest/assets/`에 이미 있습니다. 그래프는 Phase 4 대시보드에서 다시 만듭니다.
 - **4유형 메뉴 · 상품 전략표** (`final_4type_customer_strategy.csv`): NAVER 관심도 결과를 보고 사람이 해석해 작성한 표입니다. 해석에 쓰는 함수(`classify_menu_by_generation` 등)는 옮겼지만 표 자체는 자동으로 만들지 않습니다.
 
 ## 7. 검증 상태
@@ -152,7 +152,7 @@ PowerShell 5에서는 `&&`를 쓸 수 없으니 한 줄씩 실행합니다. 저�
 원본은 재배포할 수 없어서, 원본이 없으면 파이프라인을 돌려 볼 방법이 없었습니다. `synthetic.py`는 원본 8종과 **파일 이름 · 열 이름 · 인코딩 · 시트 구조가 같은** 합성 파일을 만듭니다. 파이프라인은 원본인지 합성인지 구분하지 않고 같은 코드로 읽습니다.
 
 ```powershell
-.venv\Scripts\python -m future_stress.synthetic
+.venv\Scripts\python -m future_stress.ingest.synthetic
 ```
 
 원본을 다루면서 애먹었던 부분을 일부러 그대로 넣었습니다. 합성 데이터에 이런 경우가 없으면, 정제 코드가 그 경우를 제대로 처리하는지 확인할 수 없기 때문입니다.
@@ -193,5 +193,5 @@ PowerShell 5에서는 `&&`를 쓸 수 없으니 한 줄씩 실행합니다. 저�
 **상태 (2026-10-21):** 실제 KOSIS 호출 확인 완료. 8번 요청 모두 성공했고, 예전 파일과 서울 2,080칸 · 경기 2,560칸이 모두 같았습니다(시도 합계 행 이름 차이를 맞춘 뒤). 자세한 내용은 [기술 기록 09](notes/09_api_collection.md).
 
 ```powershell
-.venv\Scripts\python -m future_stress.kosis collect
+.venv\Scripts\python -m future_stress.ingest.kosis collect
 ```
