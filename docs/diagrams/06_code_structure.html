@@ -71,11 +71,11 @@
     <div class="arrow-r"><svg viewBox="0 0 26 26"><path d="M5 13h15M14 6.5l6.5 6.5-6.5 6.5" fill="none" stroke="#AEB6C4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     <div class="side after">
       <span class="label">지금 · 파이썬 패키지</span>
-      <div class="nums"><div><b>14개</b><span>모듈, 약 2,590줄</span></div><div><b>42개</b><span>테스트 모두 통과</span></div><div><b>6/6</b><span>발표 결과 그대로</span></div></div>
+      <div class="nums"><div><b>14개</b><span>모듈, 약 2,590줄</span></div><div><b>42개</b><span>테스트 모두 통과</span></div><div><b>6/6</b><span>공모전 결과표 그대로</span></div></div>
       <ul>
         <li>계산 하나에 함수 하나, 이름만 봐도 무슨 일인지 알 수 있게 바꿨습니다 (bc_age → build_age_spending_structure)</li>
         <li>연령 · 지역 이름은 파일 하나에서만 관리합니다 (age_groups.py, regions.py)</li>
-        <li>결과표는 데이터에서 바로 계산하고, 발표 숫자와 자동으로 비교합니다 (--compare)</li>
+        <li>결과표는 데이터에서 바로 계산하고, 공모전 결과표와 자동으로 비교합니다 (--compare)</li>
         <li>명령 한 번이면 Bronze → Silver → Gold → 결과 CSV까지 14초 정도 걸립니다</li>
       </ul>
     </div>
@@ -131,7 +131,7 @@
       <div class="l-name" style="background:var(--ink);color:#fff"><b>실행</b><span>메달리온 순서대로</span></div>
       <div class="mods" style="grid-template-columns: 1.4fr 1fr;">
         <div class="mod" style="border:2px solid #B7860B"><div class="m-head"><b>medallion.py</b><span>476</span></div><p>원본 보관(Bronze) → 정리(Silver) → 분석 결과(Gold), 그리고 층 사이에서 건수와 금액이 맞는지 10가지를 확인합니다. 함수 안 주석 [STEP 1]~[전략]이 흐름도 단계와 같습니다.</p><div class="fns"><code>build_bronze</code><code>build_silver</code><code>build_gold</code><code>run_quality_checks</code></div></div>
-        <div class="mod"><div class="m-head"><b>pipeline.py</b><span>139</span></div><p>세 층과 확인 작업을 순서대로 돌리고, 숫자가 안 맞으면 멈춥니다. 발표 결과와 표별로 비교합니다.</p><div class="fns"><code>run_pipeline</code><code>compare_with_published</code><code>main (CLI)</code></div></div>
+        <div class="mod"><div class="m-head"><b>pipeline.py</b><span>139</span></div><p>세 층과 확인 작업을 순서대로 돌리고, 숫자가 안 맞으면 멈춥니다. 공모전 결과표와 표별로 비교합니다.</p><div class="fns"><code>run_pipeline</code><code>compare_with_published</code><code>main (CLI)</code></div></div>
       </div>
     </div>
   </div>
@@ -155,7 +155,7 @@
     <div class="stack" style="gap:16px">
       <div class="card pad stack" style="gap:12px">
         <div class="section-label" style="margin-bottom:2px"><span class="num">4</span><span class="title">돌려 보는 방법</span><span class="desc">Windows PowerShell, 저장소 폴더에서</span></div>
-        <div class="cmd"><span class="c"># 테스트</span><br>.venv\Scripts\python -m pytest<br><span class="c"># 전체 분석 + 발표 숫자와 비교 (data/raw 필요)</span><br>.venv\Scripts\python -m future_stress.pipeline --compare<br><span class="c"># 흐름도 PNG 다시 만들기</span><br>.venv\Scripts\python docs\diagrams\render.py</div>
+        <div class="cmd"><span class="c"># 테스트</span><br>.venv\Scripts\python -m pytest<br><span class="c"># 전체 분석 + 공모전 결과표와 비교 (data/raw 필요)</span><br>.venv\Scripts\python -m future_stress.pipeline --compare<br><span class="c"># 흐름도 PNG 다시 만들기</span><br>.venv\Scripts\python docs\diagrams\render.py</div>
       </div>
       <div class="card pad stack" style="gap:12px">
         <div class="section-label" style="margin-bottom:2px"><span class="num">5</span><span class="title">코드는 이 순서로 읽으면 편합니다</span></div>

@@ -414,8 +414,8 @@ def compare_silver(warehouse, silver_dir=None, silver_schema="silver"):
 
 
 def compare_gold(warehouse, gold_dir=None, gold_schema="gold"):
-    """dbt Gold와 파이썬 Gold가 같은지. 발표 결과(통계 검정 등)는 이 Gold 표들로 계산하므로,
-    모두 같다면 Gold 계산을 SQL로 옮겨도 발표 결과가 바뀌지 않는다는 뜻입니다."""
+    """dbt Gold와 파이썬 Gold가 같은지. 공모전 결과표(통계 검정 등)는 이 Gold 표들로 계산하므로,
+    모두 같다면 Gold 계산을 SQL로 옮겨도 공모전 결과표가 바뀌지 않는다는 뜻입니다."""
     return compare_layer(warehouse, gold_dir or config.GOLD_DIR, gold_schema, GOLD_COLUMN_MAPS)
 
 

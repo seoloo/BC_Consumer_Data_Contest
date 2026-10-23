@@ -2,7 +2,7 @@
 
 실행 방법 (저장소 루트에서)
     .venv/Scripts/python -m future_stress.pipeline              # 계층별 저장 + output/에 결과 CSV
-    .venv/Scripts/python -m future_stress.pipeline --compare    # 실행 후 contest/results/의 발표 수치와 비교
+    .venv/Scripts/python -m future_stress.pipeline --compare    # 실행 후 contest/results/의 공모전 결과표와 비교
     .venv/Scripts/python -m future_stress.pipeline --synthetic  # 원본 없이 합성 데이터로 실행 (data/synthetic/)
     .venv/Scripts/python -m future_stress.pipeline --object-store  # Bronze를 SeaweedFS에 올리고, 거기서 받아 Silver부터
     .venv/Scripts/python -m future_stress.pipeline --warehouse     # Bronze 원본을 PostgreSQL raw 스키마에도 적재
@@ -14,7 +14,7 @@
     2. Silver   정제 · 표준화한 표를 Parquet으로 저장                   medallion.build_silver
     3. Gold     Silver만 읽어 Stress · 4유형 · 검증 · 전략 계산          medallion.build_gold
     4. 대사     계층 사이 건수 · 금액이 맞는지 검사, 실패하면 멈춤        medallion.run_quality_checks
-    5. 내보내기  발표 결과와 같은 형식의 CSV를 output/에 저장
+    5. 내보내기  공모전 결과표와 같은 형식의 CSV를 output/에 저장
 
 흐름도: docs/diagrams/07_medallion.png (계층), docs/diagrams/03_pipeline.png (분석 단계)
 """
@@ -41,7 +41,7 @@ from .storage.object_store import DEFAULT_BUCKET, SYNTHETIC_BUCKET, ObjectStore,
 from .storage.warehouse import RAW_SCHEMA, SYNTHETIC_RAW_SCHEMA, Warehouse, load_raw
 from .ingest.synthetic import write_synthetic_raw_files
 
-# 발표 결과 외에 output/에 함께 내보내는 Gold 표 (사람이 엑셀로 열어 보기 위한 용도)
+# 공모전 결과표 외에 output/에 함께 내보내는 Gold 표 (사람이 엑셀로 열어 보기 위한 용도)
 EXTRA_OUTPUT_TABLES = ["region_validation", "market_type_counts", "seoul_defense_strategy", "illusion_rebalancing"]
 
 
@@ -114,7 +114,7 @@ def build_layers_and_export(bronze_dir, silver_dir, gold_dir, output_dir, extra_
     save_csv(quality_report, output_dir / "quality_report.csv")
     failed = quality_report[quality_report["결과"] == "실패"]
     if not failed.empty:
-        # 대사가 맞지 않으면 결과를 내보내지 않고 멈춥니다. 틀린 숫자가 발표 결과처럼 쓰이는 것을 막기 위해서입니다.
+        # 대사가 맞지 않으면 결과를 내보내지 않고 멈춥니다. 틀린 숫자가 공모전 결과표처럼 쓰이는 것을 막기 위해서입니다.
         raise DataQualityError("계층 사이 대사 실패:\n" + failed.to_string(index=False))
 
     for name in PUBLISHED_TABLES + EXTRA_OUTPUT_TABLES:
@@ -170,7 +170,7 @@ def main():
     parser.add_argument("--raw-dir", default=config.RAW_DATA_DIR, help="원본 데이터 폴더 (기본: data/raw)")
     parser.add_argument("--output-dir", default=config.OUTPUT_DIR, help="결과 CSV 저장 폴더 (기본: output)")
     parser.add_argument("--data-dir", default=None, help="bronze · silver · gold를 만들 폴더 (기본: data)")
-    parser.add_argument("--compare", action="store_true", help="실행 후 contest/results/의 발표 수치와 비교")
+    parser.add_argument("--compare", action="store_true", help="실행 후 contest/results/의 공모전 결과표와 비교")
     parser.add_argument("--synthetic", action="store_true",
                         help="합성 원본을 만들어 data/synthetic/ 아래에서 실행 (원본 데이터가 없을 때)")
     parser.add_argument("--seed", type=int, default=42, help="--synthetic에서 쓸 시드")
@@ -201,7 +201,7 @@ def main():
     print("\n[계층 사이 대사]")
     print(tables["quality_report"][["검사", "계층", "결과", "실제값"]].to_string(index=False))
     if arguments.compare:
-        print("\n[발표 결과와 비교]")
+        print("\n[공모전 결과표와 비교]")
         print(compare_with_published(arguments.output_dir).to_string(index=False))
 
 

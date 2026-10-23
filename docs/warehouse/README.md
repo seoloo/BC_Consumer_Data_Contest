@@ -1,6 +1,6 @@
 # 데이터 웨어하우스 데이터 사전
 
-> **자동 생성 문서입니다. 손으로 고치지 마세요.** 만든 시각 2026-10-23 18:34 · `python -m future_stress.storage.warehouse_docs` (설명은 `dbt/models/*.yml` · `dbt/models/docs.md`에서 고칩니다)
+> **자동 생성 문서입니다. 손으로 고치지 마세요.** 만든 시각 2026-10-23 22:42 · `python -m future_stress.storage.warehouse_docs` (설명은 `dbt/models/*.yml` · `dbt/models/docs.md`에서 고칩니다)
 
 PostgreSQL `future_stress` 데이터베이스의 스키마 · 표 · 열을 정리한 문서입니다. 원본이 어디서 왔는지는 [데이터 출처](../data_sources.md), 왜 이렇게 만들었는지는 [15 PostgreSQL](../notes/15_postgresql.md) · [16 dbt](../notes/16_dbt.md)에 있습니다.
 
@@ -14,7 +14,7 @@ PostgreSQL `future_stress` 데이터베이스의 스키마 · 표 · 열을 정�
 | `ref` | [`bc_age_codes`](#refbc_age_codes) | 기준표 (seed) | 6 | 3 | BC카드 AGE_CD → 연령대. 이 표에 없는 코드(x 등)는 Silver에서 빠짐 |
 | `ref` | [`bc_gender_codes`](#refbc_gender_codes) | 기준표 (seed) | 2 | 2 | BC카드 GENDER_CD → 성별. 이 표에 없는 코드(3 · x)는 개인이 아닌 결제라 Silver에서 빠짐 |
 | `ref` | [`market_types`](#refmarket_types) | 기준표 (seed) | 4 | 2 | 4유형과 전략 방향 (diagnosis.MARKET_TYPE_STRATEGY와 같은 내용). 성장 여부 × Stress 2040 부호로 정함 |
-| `ref` | [`seoul_five_year_age_labels`](#refseoul_five_year_age_labels) | 기준표 (seed) | 19 | 2 | 서울 장래인구에서 쓰는 5세 구간 표기 목록. 발표 결과 재현용으로 원래 노트북의 목록을 그대로 둡니다. 주의: 마지막 '90세 이상'은 원본 파일에 없는 표기라(실제는 '90~94세' · '95세 이상') 서울 90세 이상 인구가 빠집니다. (docs/refactoring_notes.md 4절, docs/notes/07) |
+| `ref` | [`seoul_five_year_age_labels`](#refseoul_five_year_age_labels) | 기준표 (seed) | 19 | 2 | 서울 장래인구에서 쓰는 5세 구간 표기 목록. 공모전 결과표 재현용으로 원래 노트북의 목록을 그대로 둡니다. 주의: 마지막 '90세 이상'은 원본 파일에 없는 표기라(실제는 '90~94세' · '95세 이상') 서울 90세 이상 인구가 빠집니다. (docs/refactoring_notes.md 4절, docs/notes/07) |
 | `silver` | [`silver_card_spending`](#silversilver_card_spending) | dbt 모델 | 159,235 | 7 | 개인 결제만 남기고 코드를 이름으로 바꾼 BC카드 결제 (파이썬 Silver card_spending과 같은 내용) |
 | `silver` | [`silver_future_population`](#silversilver_future_population) | dbt 모델 | 432 | 4 | 시도 × 시군구 × 연령대 장래인구와 2026년 대비 증감률 (파이썬 Silver future_population과 같은 내용) |
 | `gold` | [`gold_age_spending_structure`](#goldgold_age_spending_structure) | dbt 모델 | 13,676 | 4 | 전국 시군구 × 업종 × 연령대 이용금액과 비중(%) (파이썬 Gold age_spending_structure) |
@@ -26,7 +26,7 @@ PostgreSQL `future_stress` 데이터베이스의 스키마 · 표 · 열을 정�
 | `gold` | [`gold_market_type`](#goldgold_market_type) | dbt 모델 | 176 | 2 | 지역 안 상위 25% 분석 대상과 4유형 (파이썬 Gold market_type) |
 | `gold` | [`gold_market_type_counts`](#goldgold_market_type_counts) | dbt 모델 | 4 | 2 | 지역별 4유형 건수 (한 건도 없는 유형도 0으로) |
 | `gold` | [`gold_region_industry_profile`](#goldgold_region_industry_profile) | dbt 모델 | 2,379 | 3 | 전국 지역 × 업종 한 건에 한 줄 · 핵심 연령대, 연령 집중도, 현재 성장 지표 (파이썬 Gold region_industry_profile) |
-| `gold` | [`gold_seoul_analysis_targets`](#goldgold_seoul_analysis_targets) | dbt 모델 | 114 | 1 | 발표 기준(전국 상위 25%) 서울 분석 대상과 성장 판정. 통계 검정은 파이썬이 이 대상으로 계산 |
+| `gold` | [`gold_seoul_analysis_targets`](#goldgold_seoul_analysis_targets) | dbt 모델 | 114 | 1 | 중간 분석 기준(서울, 전국 상위 25%) 서울 분석 대상과 성장 판정. 통계 검정은 파이썬이 이 대상으로 계산 |
 
 표 19개 · 테스트 52개 (dbt build가 매번 모두 실행). 이 중 2개는 여러 표를 함께 보는 직접 만든 SQL 테스트(대사 등, `dbt/tests/`)입니다.
 
@@ -52,40 +52,40 @@ flowchart LR
     silver_future_population["silver_future_population<br/>432행"]
   end
   subgraph gold["gold · 소비구조 · 프로필 · Future Stress · 4유형 (dbt 모델)"]
-    gold_age_spending_structure["gold_age_spending_structure<br/>13,676행"]
-    gold_age_stress["gold_age_stress<br/>4,053행"]
     gold_analysis_window["gold_analysis_window<br/>1행"]
-    gold_future_stress["gold_future_stress<br/>698행"]
-    gold_gyeonggi_city_age_spending_structure["gold_gyeonggi_city_age_spending_structure<br/>1,710행"]
-    gold_gyeonggi_city_region_industry_profile["gold_gyeonggi_city_region_industry_profile<br/>293행"]
-    gold_market_type["gold_market_type<br/>176행"]
-    gold_market_type_counts["gold_market_type_counts<br/>4행"]
-    gold_region_industry_profile["gold_region_industry_profile<br/>2,379행"]
     gold_seoul_analysis_targets["gold_seoul_analysis_targets<br/>114행"]
+    gold_market_type_counts["gold_market_type_counts<br/>4행"]
+    gold_market_type["gold_market_type<br/>176행"]
+    gold_future_stress["gold_future_stress<br/>698행"]
+    gold_age_stress["gold_age_stress<br/>4,053행"]
+    gold_region_industry_profile["gold_region_industry_profile<br/>2,379행"]
+    gold_age_spending_structure["gold_age_spending_structure<br/>13,676행"]
+    gold_gyeonggi_city_region_industry_profile["gold_gyeonggi_city_region_industry_profile<br/>293행"]
+    gold_gyeonggi_city_age_spending_structure["gold_gyeonggi_city_age_spending_structure<br/>1,710행"]
   end
-  silver_card_spending --> gold_age_spending_structure
-  gold_age_spending_structure --> gold_age_stress
-  gold_gyeonggi_city_age_spending_structure --> gold_age_stress
-  silver_future_population --> gold_age_stress
   silver_card_spending --> gold_analysis_window
-  gold_region_industry_profile --> gold_future_stress
-  gold_gyeonggi_city_region_industry_profile --> gold_future_stress
-  gold_age_stress --> gold_future_stress
-  silver_card_spending --> gold_gyeonggi_city_age_spending_structure
-  silver_card_spending --> gold_gyeonggi_city_region_industry_profile
-  gold_gyeonggi_city_age_spending_structure --> gold_gyeonggi_city_region_industry_profile
-  gold_future_stress --> gold_market_type
-  ref_market_types --> gold_market_type_counts
-  gold_market_type --> gold_market_type_counts
-  silver_card_spending --> gold_region_industry_profile
-  gold_age_spending_structure --> gold_region_industry_profile
-  gold_region_industry_profile --> gold_seoul_analysis_targets
-  gold_future_stress --> gold_seoul_analysis_targets
   raw_card_spending --> silver_card_spending
   ref_bc_gender_codes --> silver_card_spending
   ref_bc_age_codes --> silver_card_spending
   raw_future_population --> silver_future_population
   ref_seoul_five_year_age_labels --> silver_future_population
+  gold_region_industry_profile --> gold_seoul_analysis_targets
+  gold_future_stress --> gold_seoul_analysis_targets
+  ref_market_types --> gold_market_type_counts
+  gold_market_type --> gold_market_type_counts
+  gold_future_stress --> gold_market_type
+  gold_region_industry_profile --> gold_future_stress
+  gold_gyeonggi_city_region_industry_profile --> gold_future_stress
+  gold_age_stress --> gold_future_stress
+  gold_age_spending_structure --> gold_age_stress
+  gold_gyeonggi_city_age_spending_structure --> gold_age_stress
+  silver_future_population --> gold_age_stress
+  silver_card_spending --> gold_region_industry_profile
+  gold_age_spending_structure --> gold_region_industry_profile
+  silver_card_spending --> gold_age_spending_structure
+  silver_card_spending --> gold_gyeonggi_city_region_industry_profile
+  gold_gyeonggi_city_age_spending_structure --> gold_gyeonggi_city_region_industry_profile
+  silver_card_spending --> gold_gyeonggi_city_age_spending_structure
 ```
 
 ## 3. ERD (표 사이 연결)
@@ -94,59 +94,6 @@ flowchart LR
 
 ```mermaid
 erDiagram
-  gold_age_spending_structure {
-    text province PK
-    text district PK
-    int industry_code PK
-    text industry_name PK
-    text age_group PK, FK
-  }
-  gold_age_stress {
-    text province FK
-    text district FK
-    int industry_code FK
-    text industry_name FK
-  }
-  gold_future_stress {
-    text province PK
-    text district PK
-    int industry_code PK
-    text industry_name PK
-  }
-  gold_gyeonggi_city_age_spending_structure {
-    text province PK
-    text district PK
-    int industry_code PK
-    text industry_name PK
-    text age_group PK, FK
-  }
-  gold_gyeonggi_city_region_industry_profile {
-    text province PK, FK
-    text district PK, FK
-    int industry_code PK, FK
-    text industry_name PK, FK
-    text main_age_group FK
-  }
-  gold_market_type {
-    text province FK
-    text district FK
-    int industry_code FK
-    text industry_name FK
-    text market_type FK
-  }
-  gold_region_industry_profile {
-    text province PK, FK
-    text district PK, FK
-    int industry_code PK, FK
-    text industry_name PK, FK
-    text main_age_group FK
-  }
-  gold_seoul_analysis_targets {
-    text province FK
-    text district FK
-    int industry_code FK
-    text industry_name FK
-  }
   silver_card_spending {
     text age_group FK
   }
@@ -165,19 +112,72 @@ erDiagram
   ref_market_types {
     text market_type PK
   }
-  ref_age_groups ||--o{ gold_age_spending_structure : "age_group"
-  ref_age_groups ||--o{ gold_gyeonggi_city_age_spending_structure : "age_group"
-  ref_age_groups ||--o{ gold_region_industry_profile : "main_age_group"
-  gold_age_spending_structure }|--o{ gold_region_industry_profile : "province · district · industry_code · industry_name"
-  ref_age_groups ||--o{ gold_gyeonggi_city_region_industry_profile : "main_age_group"
-  gold_gyeonggi_city_age_spending_structure }|--o{ gold_gyeonggi_city_region_industry_profile : "province · district · industry_code · industry_name"
-  gold_future_stress ||--o{ gold_age_stress : "province · district · industry_code · industry_name"
-  ref_market_types ||--o{ gold_market_type : "market_type"
-  gold_future_stress ||--o{ gold_market_type : "province · district · industry_code · industry_name"
-  gold_future_stress ||--o{ gold_seoul_analysis_targets : "province · district · industry_code · industry_name"
+  gold_seoul_analysis_targets {
+    text province FK
+    text district FK
+    int industry_code FK
+    text industry_name FK
+  }
+  gold_market_type {
+    text province FK
+    text district FK
+    int industry_code FK
+    text industry_name FK
+    text market_type FK
+  }
+  gold_future_stress {
+    text province PK
+    text district PK
+    int industry_code PK
+    text industry_name PK
+  }
+  gold_age_stress {
+    text province FK
+    text district FK
+    int industry_code FK
+    text industry_name FK
+  }
+  gold_region_industry_profile {
+    text province PK, FK
+    text district PK, FK
+    int industry_code PK, FK
+    text industry_name PK, FK
+    text main_age_group FK
+  }
+  gold_age_spending_structure {
+    text province PK
+    text district PK
+    int industry_code PK
+    text industry_name PK
+    text age_group PK, FK
+  }
+  gold_gyeonggi_city_region_industry_profile {
+    text province PK, FK
+    text district PK, FK
+    int industry_code PK, FK
+    text industry_name PK, FK
+    text main_age_group FK
+  }
+  gold_gyeonggi_city_age_spending_structure {
+    text province PK
+    text district PK
+    int industry_code PK
+    text industry_name PK
+    text age_group PK, FK
+  }
   ref_age_groups ||--o{ silver_card_spending : "age_group"
   ref_age_groups ||--o{ silver_future_population : "age_group"
   ref_age_groups ||--o{ ref_bc_age_codes : "age_group"
+  gold_future_stress ||--o{ gold_seoul_analysis_targets : "province · district · industry_code · industry_name"
+  ref_age_groups ||--o{ gold_age_spending_structure : "age_group"
+  gold_future_stress ||--o{ gold_age_stress : "province · district · industry_code · industry_name"
+  ref_market_types ||--o{ gold_market_type : "market_type"
+  gold_future_stress ||--o{ gold_market_type : "province · district · industry_code · industry_name"
+  ref_age_groups ||--o{ gold_region_industry_profile : "main_age_group"
+  gold_age_spending_structure }|--o{ gold_region_industry_profile : "province · district · industry_code · industry_name"
+  ref_age_groups ||--o{ gold_gyeonggi_city_age_spending_structure : "age_group"
+  ref_age_groups ||--o{ gold_gyeonggi_city_region_industry_profile : "main_age_group"
+  gold_gyeonggi_city_age_spending_structure }|--o{ gold_gyeonggi_city_region_industry_profile : "province · district · industry_code · industry_name"
 ```
 
 ## 4. 표마다 열
@@ -265,7 +265,7 @@ BC카드 GENDER_CD → 성별. 이 표에 없는 코드(3 · x)는 개인이 아
 
 ### ref.seoul_five_year_age_labels
 
-서울 장래인구에서 쓰는 5세 구간 표기 목록. 발표 결과 재현용으로 원래 노트북의 목록을 그대로 둡니다. 주의: 마지막 '90세 이상'은 원본 파일에 없는 표기라(실제는 '90~94세' · '95세 이상') 서울 90세 이상 인구가 빠집니다. (docs/refactoring_notes.md 4절, docs/notes/07)
+서울 장래인구에서 쓰는 5세 구간 표기 목록. 공모전 결과표 재현용으로 원래 노트북의 목록을 그대로 둡니다. 주의: 마지막 '90세 이상'은 원본 파일에 없는 표기라(실제는 '90~94세' · '95세 이상') 서울 90세 이상 인구가 빠집니다. (docs/refactoring_notes.md 4절, docs/notes/07)
 
 행 19 · 열쇠 `age_label` · 테스트: not_null 1, unique 1
 
@@ -493,7 +493,7 @@ BC카드 GENDER_CD → 성별. 이 표에 없는 코드(3 · x)는 개인이 아
 
 ### gold.gold_seoul_analysis_targets
 
-발표 기준(전국 상위 25%) 서울 분석 대상과 성장 판정. 통계 검정은 파이썬이 이 대상으로 계산
+중간 분석 기준(서울, 전국 상위 25%) 서울 분석 대상과 성장 판정. 통계 검정은 파이썬이 이 대상으로 계산
 
 행 114 · 테스트: composite_relationships 1
 

@@ -111,11 +111,11 @@
           <li class="ok">모듈 14개로 나누고 이름 바꾸기</li>
           <li class="ok">이유를 적은 주석, 리팩토링 노트</li>
           <li class="ok">테스트 42개</li>
-          <li class="ok">원본으로 돌려 발표 숫자 6/6 그대로</li>
+          <li class="ok">원본으로 돌려 공모전 결과표 6/6 그대로</li>
           <li class="ok">Bronze · Silver · Gold 층 구성, 숫자 확인 10개</li>
           <li class="ok">흐름도 10장</li></ul></div>
         <div class="techs"><span class="tech main">Python 패키지</span><span class="tech">pytest</span></div>
-        <div class="dod"><b>기준 통과</b> · <code>--compare</code>로 발표 숫자와 모두 일치</div>
+        <div class="dod"><b>기준 통과</b> · <code>--compare</code>로 공모전 결과표와 모두 일치</div>
       </div></div>
 
     <div class="phase done"><span class="marker"></span>
@@ -169,11 +169,11 @@
       <div class="section-label"><span class="num">2</span><span class="title">진행 기록</span></div>
       <div class="log">
         <div class="log-row"><span class="date">2026-09-18</span><span class="dot" style="background:var(--green)"></span><div><b>공모전 제출, 저장소 공개</b><p>노트북, 발표자료, 공개용 결과 CSV를 올렸습니다.</p></div></div>
-        <div class="log-row"><span class="date">2026-10-20</span><span class="dot" style="background:var(--green)"></span><div><b>Phase 1 리팩토링</b><p>모듈 13개, 테스트 38개로 정리하고 발표 숫자 6/6을 그대로 다시 냈습니다. 정리하다가 서울 90세 이상 누락 같은 문제를 새로 찾았습니다.</p></div></div>
-        <div class="log-row"><span class="date">2026-10-21</span><span class="dot" style="background:var(--green)"></span><div><b>Bronze · Silver · Gold 구성</b><p>원본 보관, Parquet 6개, Parquet 16개로 나누고, 층 사이 숫자 확인 10개를 통과했습니다. 발표 숫자도 그대로입니다.</p></div></div>
+        <div class="log-row"><span class="date">2026-10-20</span><span class="dot" style="background:var(--green)"></span><div><b>Phase 1 리팩토링</b><p>모듈 13개, 테스트 38개로 정리하고 공모전 결과표 6/6을 그대로 다시 냈습니다. 정리하다가 서울 90세 이상 누락 같은 문제를 새로 찾았습니다.</p></div></div>
+        <div class="log-row"><span class="date">2026-10-21</span><span class="dot" style="background:var(--green)"></span><div><b>Bronze · Silver · Gold 구성</b><p>원본 보관, Parquet 6개, Parquet 16개로 나누고, 층 사이 숫자 확인 10개를 통과했습니다. 공모전 결과표도 그대로입니다.</p></div></div>
         <div class="log-row"><span class="date">2026-10-21</span><span class="dot" style="background:var(--green)"></span><div><b>합성 데이터 생성기</b><p>원본 8종과 형식이 같은 파일을 만들어, 원본 없이도 숫자 확인 10개를 통과했습니다. 성별 코드 x, 업종명 공백처럼 원본에서 애먹었던 부분도 그대로 넣었습니다.</p></div></div>
         <div class="log-row"><span class="date">2026-10-21</span><span class="dot" style="background:var(--green)"></span><div><b>KOSIS 인구 수집기</b><p>서울 · 경기 장래인구를 API로 받아, 예전에 내려받은 파일과 4,640칸이 모두 같은 것을 확인했습니다. 시도 합계 행 이름이 원본마다 달라 처음엔 불일치가 났습니다.</p></div></div>
-        <div class="log-row"><span class="date">2026-10-21</span><span class="dot" style="background:var(--green)"></span><div><b>Bronze를 SeaweedFS로</b><p>MinIO 무료판 이미지가 사라져 같은 S3 방식의 SeaweedFS로 바꿨습니다. 원본 60개를 배치 월 폴더에 올리고 받아 지문을 맞춰 봤고, 발표 숫자도 그대로입니다.</p></div></div>
+        <div class="log-row"><span class="date">2026-10-21</span><span class="dot" style="background:var(--green)"></span><div><b>Bronze를 SeaweedFS로</b><p>MinIO 무료판 이미지가 사라져 같은 S3 방식의 SeaweedFS로 바꿨습니다. 원본 60개를 배치 월 폴더에 올리고 받아 지문을 맞춰 봤고, 공모전 결과표도 그대로입니다.</p></div></div>
         <div class="log-row"><span class="date">2026-10-21</span><span class="dot" style="background:var(--green)"></span><div><b>PostgreSQL raw 스키마</b><p>원본을 표기 그대로 DB에 넣었습니다. SQL만으로 개인 결제 159,235행 · 14.89조가 나와 파이썬 Silver와 같았습니다.</p></div></div>
         <div class="log-row"><span class="date">2026-10-21</span><span class="dot" style="background:var(--green)"></span><div><b>dbt Silver 모델</b><p>Silver 규칙을 SQL 모델과 테스트 25개로 옮겼습니다. 파이썬 Silver와 32만 칸을 비교해 모두 같았습니다.</p></div></div>
         <div class="log-row"><span class="date">2026-10-21</span><span class="dot" style="background:var(--green)"></span><div><b>dbt Gold 모델</b><p>소비구조부터 4유형까지 SQL로 옮겨 파이썬 Gold와 12만 칸이 같았습니다. 반올림 방식을 파이썬과 맞추는 게 핵심이었습니다.</p></div></div>

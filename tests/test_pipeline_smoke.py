@@ -1,7 +1,7 @@
 """파이프라인 전체를 합성 원본으로 끝까지 실행해 보는 테스트 (smoke test).
 
 숫자가 맞는지가 아니라, Bronze → Silver → Gold → 대사 → 내보내기가 중간에 끊기지 않고
-이어지는지, 결과 표의 열 이름이 발표 결과 CSV와 같은지를 확인합니다.
+이어지는지, 결과 표의 열 이름이 공모전 결과표 CSV와 같은지를 확인합니다.
 모든 계층은 pytest가 만든 임시 폴더(tmp_path)에 만들어 실제 data/ 폴더를 건드리지 않습니다.
 """
 
@@ -66,7 +66,7 @@ def test_published_tables_have_same_columns(pipeline_run):
     # 4유형 건수는 한 건도 없는 유형이 있어도 항상 4줄 (합성 데이터에는 지속성장형이 없음 · dbt 모델과 같은 모양)
     assert tables["market_type_counts"]["유형"].tolist() == ["착시성장형", "지속성장형", "구조취약형", "회복기회형"]
 
-    # 발표 결과와의 비교 함수도 끝까지 돌아야 함 (합성 데이터라 값은 '불일치'가 정상)
+    # 공모전 결과표와의 비교 함수도 끝까지 돌아야 함 (합성 데이터라 값은 '불일치'가 정상)
     report = compare_with_published(output_dir)
     assert set(report["결과"]) <= {"일치", "불일치", "비교불가"}
 

@@ -21,7 +21,7 @@ Silver · Gold 표를 CSV 대신 Parquet(pyarrow)으로 저장합니다. 열마�
 
 - 카드 결제 Silver: **CSV 16.4MB → Parquet 1.4MB** (약 1/12).
 - 다시 읽어도 열 타입이 그대로라, Gold에서 읽을 때 `dtype` 지정이 필요 없어졌습니다.
-- 발표 결과 6/6이 Parquet을 거친 뒤에도 그대로였습니다. 저장 · 읽기 과정에서 값이 바뀌지 않았다는 뜻입니다.
+- 공모전 결과표 6/6이 Parquet을 거친 뒤에도 그대로였습니다. 저장 · 읽기 과정에서 값이 바뀌지 않았다는 뜻입니다.
 
 ## 다른 방법과 고르지 않은 이유
 
@@ -46,5 +46,5 @@ Parquet은 열마다 하나의 타입을 정해야 하는데, 숫자와 '-' 같�
 
 <details><summary>Q3. 그럼 왜 output/에는 CSV를 남겼나?</summary>
 
-output/은 사람이 엑셀로 바로 열어 보는 결과물이고, 발표 결과(contest/results/*.csv)와 같은 형식으로 비교하기 위해서입니다. 파이프라인 안쪽(Silver · Gold)은 Parquet, 사람에게 보여 주는 바깥쪽은 CSV로 나눴습니다.
+output/은 사람이 엑셀로 바로 열어 보는 결과물이고, 공모전 결과표(contest/results/*.csv)와 같은 형식으로 비교하기 위해서입니다. 파이프라인 안쪽(Silver · Gold)은 Parquet, 사람에게 보여 주는 바깥쪽은 CSV로 나눴습니다.
 </details>

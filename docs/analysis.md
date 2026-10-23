@@ -74,7 +74,7 @@ Future Stress가 음수이면 지금의 소비구조가 미래 인구 감소에 
 
 - Fisher exact p = 0.0206 (2035 위험비율), Mann-Whitney U p = 0.0008 (2035) · 0.0006 (2040)
 - 기준을 지역 안 상위 25%로 바꾼 최종 분석에서도 서울은 같은 방향(성장군이 더 취약)이었습니다.
-- 흐름도 01 · 03 · 04와 아래 그림 두 장은 아직 이 중간 분석 숫자를 씁니다.
+- 아래 그림 두 장은 이 중간 분석 숫자입니다.
 
 ![성장군과 비성장군의 Stress 비교 (중간 분석)](../contest/assets/growth_vs_nongrowth_stress.png)
 
@@ -94,4 +94,4 @@ Future Stress가 음수이면 지금의 소비구조가 미래 인구 감소에 
 | `stress_test_14_cases_table.csv` | 현재 성장 14건 | 중간 분석 |
 | `representative_3_cases_table.csv` | 대표 3사례 고객 구성 재조정 | 중간 분석 |
 
-[발표자료](../contest/bc_card_future_consumer_stress.pptx) · 저장소의 파일은 제출본(14장) 이후 수정본(16장)이며, 숫자는 같은 176건 기준입니다.
+[최종 제출 발표자료](../contest/bc_card_future_consumer_stress.pptx) (14장, 176건 기준)

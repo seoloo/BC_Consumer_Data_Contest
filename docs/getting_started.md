@@ -18,7 +18,7 @@ python -m venv .venv
 
 ## 2. 원본 없이 합성 데이터로
 
-원본은 공개할 수 없어서, 원본과 형식이 같은 합성 파일을 `data/synthetic/raw/`에 만들고 같은 폴더 아래에 bronze · silver · gold · output을 만듭니다. 숫자는 직접 정한 값이라 발표 결과와는 다릅니다.
+원본은 공개할 수 없어서, 원본과 형식이 같은 합성 파일을 `data/synthetic/raw/`에 만들고 같은 폴더 아래에 bronze · silver · gold · output을 만듭니다. 숫자는 직접 정한 값이라 공모전 결과표와는 다릅니다.
 
 ```powershell
 .venv\Scripts\python -m future_stress.pipeline --synthetic
@@ -30,9 +30,9 @@ python -m venv .venv
 .venv\Scripts\python -m future_stress.ingest.synthetic --next-month 202607
 ```
 
-## 3. 원본으로 (발표 수치와 비교)
+## 3. 원본으로 (공모전 결과표와 비교)
 
-원본을 `data/raw/`에 넣었다면 전체 분석을 실행하고 발표 수치와 비교합니다. `data/bronze` (원본 + 적재 영수증) → `data/silver` (정제 Parquet) → `data/gold` (분석 Parquet) 순서로 만들어지고, 층 사이 건수 · 금액 대사를 통과해야 `output/`에 결과 CSV가 저장됩니다.
+원본을 `data/raw/`에 넣었다면 전체 분석을 실행하고 공모전 결과표와 비교합니다. `data/bronze` (원본 + 적재 영수증) → `data/silver` (정제 Parquet) → `data/gold` (분석 Parquet) 순서로 만들어지고, 층 사이 건수 · 금액 대사를 통과해야 `output/`에 결과 CSV가 저장됩니다.
 
 ```powershell
 .venv\Scripts\python -m future_stress.pipeline --compare

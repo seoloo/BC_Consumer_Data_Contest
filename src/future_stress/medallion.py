@@ -92,7 +92,7 @@ RAW_SOURCES = {
 REGION_LABELS = {"서울특별시": "서울", "부산광역시": "부산", "경기도": "경기"}
 REGION_CASE_KEYS = ["시군구", "업종코드", "업종명"]
 
-# 발표 결과(contest/results/)와 같은 이름 · 형식으로 output/에 내보낼 Gold 표
+# 공모전 결과표(contest/results/)와 같은 이름 · 형식으로 output/에 내보낼 Gold 표
 PUBLISHED_TABLES = [
     "growth_vs_nongrowth_validation",
     "statistical_validation",
@@ -317,7 +317,7 @@ def build_gold(silver_dir=None, gold_dir=None):
     gold["future_stress"] = pd.concat(region_results.values(), ignore_index=True)
     gold["age_stress"] = pd.concat(region_age_stress.values(), ignore_index=True)
 
-    # [STEP 2 · 3] 발표 기준 검증: 서울 + 전국 상위 25% → 성장군 vs 비성장군
+    # [STEP 2 · 3] 중간 분석 기준 검증: 서울 + 전국 상위 25% → 성장군 vs 비성장군
     seoul_targets = select_analysis_targets(region_results["서울특별시"], size_cutoff(national_profile))
     seoul_growth, seoul_non_growth = split_by_growth(seoul_targets)
     gold["growth_vs_nongrowth_validation"] = build_growth_comparison_table(seoul_growth, seoul_non_growth)

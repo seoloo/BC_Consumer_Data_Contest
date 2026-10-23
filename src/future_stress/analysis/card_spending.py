@@ -143,7 +143,7 @@ def build_age_spending_structure(card_spending):
 
     반올림을 남겨 둔 이유:
         원래 노트북은 비중을 소수 첫째 자리로 반올림한 뒤 그 값으로 Stress를
-        계산했습니다. 발표 수치와 똑같은 결과를 내기 위해 같은 반올림을 유지합니다.
+        계산했습니다. 공모전 결과표와 똑같은 결과를 내기 위해 같은 반올림을 유지합니다.
     """
     structure = (
         card_spending
