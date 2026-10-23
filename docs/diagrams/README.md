@@ -26,7 +26,7 @@
 | Phase 1.5 | 메달리온 아키텍처: Bronze → Silver → Gold, 층 사이 대사 10개 | 완료 |
 | Phase 2 | 합성 데이터 생성기 · KOSIS 수집기 · SeaweedFS Bronze 저장소 · Docker Compose | 완료 |
 | Phase 3 | PostgreSQL + dbt 데이터 마트 · 품질 검사 · 데이터 사전 · ERD · 출처 문서 | 완료 |
-| Phase 4 | Airflow 월 배치 · Streamlit 대시보드 · [운영 매뉴얼](../operations.md) · CI 설정 · 새 달 원본 처리 | 완료 (CI 첫 실행만 11월에 확인) |
+| Phase 4 | Airflow 월 배치 · Streamlit 대시보드 · [운영 매뉴얼](../operations.md) · CI 설정 · 새 달 원본 처리 | 완료 |
 
 ![전환 로드맵 1/2](parts/09_roadmap_1.png)
 
