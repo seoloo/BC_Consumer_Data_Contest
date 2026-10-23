@@ -13,11 +13,11 @@
 
 | 서비스 | 하는 일 | 주소 (이 PC 안에서만) | 띄우는 방법 | 데이터가 남는 곳 |
 |---|---|---|---|---|
-| object-store (SeaweedFS) | Bronze 원본 보관 (`bronze` · `bronze-synthetic` 버킷, `batch_month=YYYYMM/`) | 127.0.0.1:59100 | `docker compose up -d` | 볼륨 `object-store-data` |
-| warehouse (PostgreSQL 16) | raw · silver · gold 스키마, Airflow 기록 DB(`airflow`) | 127.0.0.1:55532 | `docker compose up -d` | 볼륨 `warehouse-data` |
+| object-store (SeaweedFS) | Bronze 원본 보관 (`bronze` · `bronze-synthetic` 버킷, `batch_month=YYYYMM/`) | 127.0.0.1:39100 | `docker compose up -d` | 볼륨 `object-store-data` |
+| warehouse (PostgreSQL 16) | raw · silver · gold 스키마, Airflow 기록 DB(`airflow`) | 127.0.0.1:35532 | `docker compose up -d` | 볼륨 `warehouse-data` |
 | dbt | raw → silver → gold + 테스트 49개 | - | `docker compose run --rm dbt build` (돌고 끝남) | DB |
-| airflow | 매달 1일 0시(한국 시간)에 지난달 배치 처리 | http://127.0.0.1:58280 | `docker compose --profile airflow up -d` | 볼륨 `airflow-logs` + DB `airflow` |
-| 대시보드 (Streamlit) | gold를 읽기 전용으로 보여 줌 | http://127.0.0.1:58501 | `.venv\Scripts\streamlit run dashboard/app.py` | 없음 (읽기만) |
+| airflow | 매달 1일 0시(한국 시간)에 지난달 배치 처리 | http://127.0.0.1:38280 | `docker compose --profile airflow up -d` | 볼륨 `airflow-logs` + DB `airflow` |
+| 대시보드 (Streamlit) | gold를 읽기 전용으로 보여 줌 | http://127.0.0.1:38501 | `.venv\Scripts\streamlit run dashboard/app.py` | 없음 (읽기만) |
 
 - **계정**은 `.env`에만 있습니다 (git 제외). 처음에 `local_env`가 무작위로 만들고, 화면에 출력하지 않습니다.
 - **원본**은 `data/raw/`에 둡니다 (git 제외, 넣는 방법은 [data/README.md](../data/README.md)). 원본 원래 위치(저장소 밖)에도 그대로 있어야 합니다. 아래 '다시 만들기'의 출발점입니다.
@@ -88,7 +88,7 @@ docker compose run --rm dbt build
 docker compose exec airflow airflow dags trigger future_stress_monthly -c '{\"batch_month\":202607}'
 ```
 
-4. **결과 확인.** Airflow 화면(http://127.0.0.1:58280)에서 8단계가 모두 성공인지 보고, `health`를 돌립니다. 대시보드는 5분마다 다시 읽고, 바로 보려면 옆 메뉴의 '새로 읽기'를 누릅니다.
+4. **결과 확인.** Airflow 화면(http://127.0.0.1:38280)에서 8단계가 모두 성공인지 보고, `health`를 돌립니다. 대시보드는 5분마다 다시 읽고, 바로 보려면 옆 메뉴의 '새로 읽기'를 누릅니다.
 
 배치 월에 원본이 없으면 첫 단계(`has_new_batch`)에서 나머지가 **건너뜀**으로 끝납니다. 실패가 아니라 정상입니다.
 
@@ -115,6 +115,7 @@ backfill의 날짜는 **실행 날짜**입니다. 7월 1일 실행이 6월 배�
 | 단계 | 이렇게 보이면 | 원인 | 할 일 |
 |---|---|---|---|
 | (모든 단계) | `.env 계정 실패` 또는 compose가 '먼저 local_env를 실행해 주세요' | `.env`에 계정 없음 | `python -m future_stress.storage.local_env` |
+| `docker compose up` | `ports are not available ... bind: An attempt was made to access a socket in a way forbidden` | Windows가 그 포트를 예약함(Docker · WSL을 다시 켤 때 동적 범위 49152 ~ 65535 안에서 생김) | `netsh interface ipv4 show excludedportrange protocol=tcp`로 확인. 이 저장소의 포트(39100 · 35532 · 38280 · 38501)는 그 범위 밖이라 보통 생기지 않음. 생기면 `.env`의 `S3_PORT` · `POSTGRES_PORT`를 범위 밖 다른 번호로 |
 | `build_bronze` | `FileNotFoundError: ...에 다음 원본이 없습니다` | `data/raw/`에 원본 8종 중 일부가 없음 | 빠진 파일을 넣고 다시 실행 |
 | `upload` · `download` | `EndpointConnectionError` (1분 뒤 한 번 더 시도 후 실패), health `객체 저장소 실패` | object-store가 꺼짐 | `docker compose up -d` → 아래 '그 단계부터 다시' |
 | `download` | `DataQualityError: 지문이 영수증과 다릅니다` | 저장소의 파일이 올린 것과 다름 (덮어씀 · 손상) | `pipeline --object-store`로 다시 올린 뒤 다시 실행. 계속되면 원본 원래 위치와 비교 |

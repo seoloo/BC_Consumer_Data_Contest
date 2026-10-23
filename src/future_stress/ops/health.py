@@ -44,7 +44,7 @@ RAW_TABLES = [CARD_TABLE.name, FUTURE_TABLE.name]
 # dbt gold 모델 = dbt/models/gold/gold_*.sql (int_로 시작하는 것은 표가 생기지 않는 중간 단계)
 GOLD_TABLES = sorted(path.stem for path in (config.PROJECT_ROOT / "dbt" / "models" / "gold").glob("gold_*.sql"))
 DAG_ID = "future_stress_monthly"
-AIRFLOW_HEALTH_URL = "http://127.0.0.1:58280/api/v2/monitor/health"
+AIRFLOW_HEALTH_URL = "http://127.0.0.1:38280/api/v2/monitor/health"
 BATCH_PREFIX = re.compile(r"^batch_month=(\d{6})/")
 
 OK, WARN, FAIL = "정상", "경고", "실패"

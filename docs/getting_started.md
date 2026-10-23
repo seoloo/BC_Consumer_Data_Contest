@@ -88,7 +88,7 @@ docker compose run --rm dbt build
 
 ## 5. 매달 돌리기 (Airflow)
 
-메모리를 많이 써서 평소에는 띄우지 않고 필요할 때만 띄웁니다(화면: http://127.0.0.1:58280).
+메모리를 많이 써서 평소에는 띄우지 않고 필요할 때만 띄웁니다(화면: http://127.0.0.1:38280).
 
 ```powershell
 docker compose --profile airflow up -d
@@ -100,7 +100,7 @@ docker compose exec airflow airflow dags trigger future_stress_monthly -c '{\"ba
 
 ## 6. 대시보드
 
-warehouse가 떠 있고 dbt build까지 끝난 상태에서 띄웁니다(화면: http://127.0.0.1:58501).
+warehouse가 떠 있고 dbt build까지 끝난 상태에서 띄웁니다(화면: http://127.0.0.1:38501).
 
 ```powershell
 .venv\Scripts\streamlit run dashboard/app.py

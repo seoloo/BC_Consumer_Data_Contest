@@ -24,7 +24,7 @@ Bronze 원본을 PostgreSQL의 `raw` 스키마에 **표기 그대로** 적재합
 
 | 무엇 | 어디 | 핵심 |
 |---|---|---|
-| PostgreSQL 띄우기 | `docker-compose.yml`의 `warehouse` | `postgres:16.4`(이미 이 PC에 있던 버전), `127.0.0.1:55532`, 볼륨 `warehouse-data`, `pg_isready` healthcheck |
+| PostgreSQL 띄우기 | `docker-compose.yml`의 `warehouse` | `postgres:16.4`(이미 이 PC에 있던 버전), `127.0.0.1:35532`, 볼륨 `warehouse-data`, `pg_isready` healthcheck |
 | 계정 | `local_env.py` | S3 키와 함께 이 PC 전용 DB 비밀번호를 `.env`에 만듦 (기존 `object_store init-env`도 같은 함수를 부름) |
 | 파일 → 표 | `warehouse.card_spending_frame()`, `future_population_frame()` | 값 · 표기는 그대로. 카드 CSV는 모두 문자로 읽고 숫자 열만 바꿈. 장래인구는 연도 열만 세로로 풀고, 엑셀 병합 셀은 엑셀에 보이는 그대로 채움 |
 | 적재 | `Warehouse.load()` | 원본 지문 · 행 수 · 합계가 지난 적재와 같으면 '변경 없음'. 다르면 한 트랜잭션에서 지우고 → 만들고 → COPY → 대사 → 기록 |

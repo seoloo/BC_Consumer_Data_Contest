@@ -81,7 +81,7 @@ class ObjectStore:
             port = read_env_value("S3_PORT", env_file)
         except ValueError:
             port = DEFAULT_S3_PORT
-        # 이 PC에서는 127.0.0.1:59100, 컨테이너 안(Airflow)에서는 서비스 이름(http://object-store:8333)으로 접속합니다.
+        # 이 PC에서는 127.0.0.1:39100, 컨테이너 안(Airflow)에서는 서비스 이름(http://object-store:8333)으로 접속합니다.
         # 그래서 S3_ENDPOINT_URL이 있으면 그 주소를 쓰고, 없으면 이 PC 주소를 씁니다.
         endpoint_url = os.getenv("S3_ENDPOINT_URL") or f"http://127.0.0.1:{port}"
         client = boto3.client(

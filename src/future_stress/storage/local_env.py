@@ -15,8 +15,8 @@ from pathlib import Path
 
 from .. import config
 
-DEFAULT_S3_PORT = "59100"          # 다른 프로젝트가 쓰는 59000번과 겹치지 않게
-DEFAULT_POSTGRES_PORT = "55532"    # 다른 프로젝트가 쓰는 55432번과 겹치지 않게
+DEFAULT_S3_PORT = "39100"          # Windows 동적 포트 범위(49152 ~ 65535) 밖. 그 안이면 재시작 때 Windows가 예약해 버릴 수 있음
+DEFAULT_POSTGRES_PORT = "35532"    # 같은 이유로 동적 범위 밖, 다른 프로젝트(55432)와도 겹치지 않게
 DEFAULT_POSTGRES_DB = "future_stress"
 DEFAULT_POSTGRES_USER = "future_stress"
 
