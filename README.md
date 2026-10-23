@@ -10,11 +10,17 @@
 - **문제:** 공모전 때는 노트북 3개(셀 555개)로 분석했습니다. 원본 8종이 파일마다 형식이 달랐고, 결과표 일부는 손으로 옮겨 다시 돌렸을 때 맞는지 확신하기 어려웠습니다.
 - **파이프라인:** 원본 보관 → 정제 → 분석 → 검증 → 조회를 단계로 나누고, 매 단계에서 숫자를 맞춰 보게 만들었습니다. 옮긴 뒤에도 **제출한 발표자료의 핵심 숫자**(176건, 4유형 17 · 9 · 92 · 58, 지역별 검정)와 공모전 때 낸 결과표 6개가 그대로 나옵니다.
 
+![한눈에 보기 1/2](docs/diagrams/parts/01_overview_1.png)
+
+![한눈에 보기 2/2](docs/diagrams/parts/01_overview_2.png)
+
 ## 구조
 
 ![전체 흐름](docs/diagrams/parts/08_target_architecture_1.png)
 
-매달 도는 단계와 파이썬 함수 ↔ dbt 모델 대응은 [아키텍처 흐름도](docs/diagrams/08_target_architecture.png)에 있습니다.
+원본은 Bronze(그대로 보관) → Silver(정제) → Gold(분석) 세 층을 거치고, 층 사이마다 건수 · 금액을 맞춰 봅니다.
+
+![메달리온 아키텍처](docs/diagrams/parts/07_medallion_1.png)
 
 ## 핵심 설계
 
@@ -27,9 +33,49 @@
 
 일부러 쓰지 않은 기술도 있습니다. 결제 데이터가 24만 행이고 월 단위로 들어와 Spark · Kafka는 쓰지 않았습니다([13 앞으로 쓸 기술](docs/notes/13_planned.md)).
 
-## 기술
+## 분석은 이렇게
 
-Python · pandas · SciPy / SeaweedFS (S3) · PostgreSQL · Parquet / dbt / Airflow / Streamlit / pytest · GitHub Actions / Docker Compose
+다섯 단계로 대상을 고르고 판정합니다. 서울은 241건 → 6개월이 다 있는 236건 → 서울 안 상위 25% 61건 → 지금 성장 9건입니다.
+
+![분석 파이프라인 1/3](docs/diagrams/parts/03_pipeline_1.png)
+
+![분석 파이프라인 2/3](docs/diagrams/parts/03_pipeline_2.png)
+
+![분석 파이프라인 3/3](docs/diagrams/parts/03_pipeline_3.png)
+
+결과가 우연이 아닌지 통계 검정, 기준 바꿔 보기, 방문객 보정으로 확인했습니다.
+
+![검증 1/2](docs/diagrams/parts/04_validation_1.png)
+
+![검증 2/2](docs/diagrams/parts/04_validation_2.png)
+
+## 데이터 마트 (PostgreSQL + dbt)
+
+raw · ref · silver · gold 스키마로 나누고, dbt 모델 결과가 파이썬 결과와 한 칸씩 같은지 비교합니다. 표 · 열 설명은 [데이터 사전](docs/warehouse/README.md)으로 자동 생성합니다.
+
+![데이터 웨어하우스 1/2](docs/diagrams/parts/10_warehouse_1.png)
+
+![데이터 웨어하우스 2/2](docs/diagrams/parts/10_warehouse_2.png)
+
+## 왜 이 기술을
+
+Python · pandas · SciPy / SeaweedFS (S3) · PostgreSQL · Parquet / dbt / Airflow / Streamlit / pytest · GitHub Actions / Docker Compose. 기술마다 고른 이유와 일부러 쓰지 않은 기술입니다.
+
+![목표 · 기술 선택 1/4](docs/diagrams/parts/00_goal_and_stack_1.png)
+
+![목표 · 기술 선택 2/4](docs/diagrams/parts/00_goal_and_stack_2.png)
+
+![목표 · 기술 선택 3/4](docs/diagrams/parts/00_goal_and_stack_3.png)
+
+![목표 · 기술 선택 4/4](docs/diagrams/parts/00_goal_and_stack_4.png)
+
+## 대시보드
+
+gold 스키마만 읽기 전용으로 읽어, 지역 · 업종별 Stress와 4유형을 골라 봅니다(캡처는 합성 데이터라 숫자에 뜻이 없음).
+
+| 지역 · 업종 순위 | 한 건 자세히 |
+|---|---|
+| ![순위](docs/dashboard/02_ranking.png) | ![한 건 자세히](docs/dashboard/04_detail.png) |
 
 ## 직접 돌려 보기 (원본 없이)
 
@@ -47,7 +93,54 @@ python -m venv .venv
 
 Docker 서비스 · dbt · Airflow · 대시보드까지 돌리는 방법은 [시작하기](docs/getting_started.md)에 있습니다.
 
-![대시보드 · 한 건 자세히 (합성 데이터)](docs/dashboard/04_detail.png)
+## 진행 과정
+
+공모전 노트북(Phase 0)에서 리팩토링 · 합성 데이터 · 데이터 마트 · 자동화(Phase 1 ~ 4)까지 옮겨 온 과정입니다.
+
+![로드맵 1/2](docs/diagrams/parts/09_roadmap_1.png)
+
+![로드맵 2/2](docs/diagrams/parts/09_roadmap_2.png)
+
+<details>
+<summary><b>흐름도 더 보기</b> · 데이터 · 전략 · 코드 구조 · 메달리온 · 아키텍처 나머지</summary>
+
+#### 02 데이터: 원본 8종의 까다로운 점과 처리 함수
+
+![데이터 1/3](docs/diagrams/parts/02_data_1.png)
+
+![데이터 2/3](docs/diagrams/parts/02_data_2.png)
+
+![데이터 3/3](docs/diagrams/parts/02_data_3.png)
+
+#### 05 전략: 방어형 고객, 고객 구성 최적화, 메뉴 · 상품 전략 (방어형 고객 계산은 중간 분석 14건 기준)
+
+![전략 1/3](docs/diagrams/parts/05_strategy_1.png)
+
+![전략 2/3](docs/diagrams/parts/05_strategy_2.png)
+
+![전략 3/3](docs/diagrams/parts/05_strategy_3.png)
+
+#### 06 코드 구조: Phase 1 리팩토링 때의 모듈 지도와 테스트
+
+![코드 구조 1/3](docs/diagrams/parts/06_code_structure_1.png)
+
+![코드 구조 2/3](docs/diagrams/parts/06_code_structure_2.png)
+
+![코드 구조 3/3](docs/diagrams/parts/06_code_structure_3.png)
+
+#### 07 메달리온: 층별 표와 층 사이 대사
+
+![메달리온 2/3](docs/diagrams/parts/07_medallion_2.png)
+
+![메달리온 3/3](docs/diagrams/parts/07_medallion_3.png)
+
+#### 08 아키텍처: 파이썬 함수 ↔ dbt 모델, Airflow 단계, 자동으로 확인하는 것
+
+![아키텍처 2/3](docs/diagrams/parts/08_target_architecture_2.png)
+
+![아키텍처 3/3](docs/diagrams/parts/08_target_architecture_3.png)
+
+</details>
 
 ## 더 보기
 
@@ -59,8 +152,9 @@ Docker 서비스 · dbt · Airflow · 대시보드까지 돌리는 방법은 [�
 | [운영 매뉴얼](docs/operations.md) | 매달 할 일 · 지난달 다시 돌리기 · 실패했을 때 |
 | [데이터 사전 · ERD](docs/warehouse/README.md) | DB의 표 · 열 · 계보 (자동 생성) |
 | [데이터 출처](docs/data_sources.md) | 원본마다 제공처 · 기간 · 형식 |
-| [흐름도](docs/diagrams/README.md) | 주제별 그림 11장과 진행 단계 |
+| [흐름도](docs/diagrams/README.md) | 주제별 그림 11장(전체 한 장 · 나눠 보기)과 진행 단계 |
 | [리팩토링 노트](docs/refactoring_notes.md) | 노트북을 옮기며 찾은 문제 11가지 |
+| [최종 제출 발표자료](contest/bc_card_future_consumer_stress.pptx) | 공모전 제출본 (14장) |
 
 ## 데이터 공개 범위
 
