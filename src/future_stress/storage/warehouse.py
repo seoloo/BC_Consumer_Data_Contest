@@ -350,7 +350,7 @@ _STRUCTURE_VALUES = {"이용금액": "amount", "이용건수": "payment_count", 
 _PROFILE_VALUES = {"이용금액비중": "main_age_share", "업종총이용금액": "industry_total_amount",
                    "연령집중도": "age_concentration", "데이터보유개월수": "months_with_data",
                    "6개월완전": "is_complete_6_months", "월평균증감률": "avg_monthly_change",
-                   "1월대비6월증감률": "change_first_to_last_month", "상승개월수": "rising_months"}
+                   "첫달대비마지막달증감률": "change_first_to_last_month", "상승개월수": "rising_months"}
 _STRESS_VALUES = {f"{year} 순인구효과": f"stress_{year}" for year in config.STRESS_YEARS}
 
 GOLD_COLUMN_MAPS = {

@@ -53,7 +53,7 @@ def test_growth_metrics_and_incomplete_months(cleaned):
     assert bool(seongdong["6개월완전"]) is True
     assert seongdong["월평균증감률"] == 1.9
     assert seongdong["상승개월수"] == 5
-    assert seongdong["1월대비6월증감률"] == 10.0
+    assert seongdong["첫달대비마지막달증감률"] == 10.0
 
     dobong = profile.loc["도봉구"]
     assert dobong["데이터보유개월수"] == 5

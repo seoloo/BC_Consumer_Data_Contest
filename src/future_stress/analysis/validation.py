@@ -179,11 +179,11 @@ def build_stress_case_table(growth_cases):
     table[STRESS_2035] = table[STRESS_2035].round(2)
     table[STRESS_2040] = table[STRESS_2040].round(2)
     return (
-        table[["시군구", "업종명", "연령대", "월평균증감률", "1월대비6월증감률", STRESS_2035, STRESS_2040, "2040 추가악화폭"]]
+        table[["시군구", "업종명", "연령대", "월평균증감률", "첫달대비마지막달증감률", STRESS_2035, STRESS_2040, "2040 추가악화폭"]]
         .rename(columns={
             "연령대": "현재 핵심연령대",
             "월평균증감률": "월평균 성장률",
-            "1월대비6월증감률": "1→6월 증감률",
+            "첫달대비마지막달증감률": "1→6월 증감률",
             STRESS_2035: "2035 스트레스",
             STRESS_2040: "2040 스트레스",
         })

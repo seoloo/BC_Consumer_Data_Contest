@@ -187,7 +187,7 @@ def calculate_monthly_growth(card_spending, months=None):
     결과 열
         데이터보유개월수    6개월 중 결제가 있었던 달 수
         6개월완전          6개월 모두 결제가 있었는지
-        1월대비6월증감률    (마지막 달 - 첫 달) / 첫 달 × 100. 발표 결과(1 ~ 6월)와 같은 열 이름을 그대로 씁니다
+        첫달대비마지막달증감률  (마지막 달 - 첫 달) / 첫 달 × 100. 발표 표로 내보낼 때는 '1→6월 증감률' (공모전 기간이 1 ~ 6월)
         월평균증감률        5번의 전월 대비 증감률 평균
         상승개월수          전월보다 이용금액이 늘어난 달 수 (0~5)
 
@@ -219,10 +219,10 @@ def calculate_monthly_growth(card_spending, months=None):
         month_over_month_change = (amounts[:, 1:] / amounts[:, :-1] - 1) * 100
         # 반올림 후 0과 비교하는 원래 방식을 유지합니다 (0.04%는 0.0이 되어 '성장 아님').
         growth["월평균증감률"] = np.round(np.nanmean(month_over_month_change, axis=1), 1)
-        growth["1월대비6월증감률"] = np.round((amounts[:, -1] - amounts[:, 0]) / amounts[:, 0] * 100, 1)
+        growth["첫달대비마지막달증감률"] = np.round((amounts[:, -1] - amounts[:, 0]) / amounts[:, 0] * 100, 1)
     growth["상승개월수"] = (month_over_month_change > 0).sum(axis=1).astype(float)
 
-    growth_columns = ["월평균증감률", "상승개월수", "1월대비6월증감률"]
+    growth_columns = ["월평균증감률", "상승개월수", "첫달대비마지막달증감률"]
     growth.loc[~growth["6개월완전"], growth_columns] = np.nan
     return growth
 

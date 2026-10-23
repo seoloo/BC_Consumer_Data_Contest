@@ -104,7 +104,8 @@ def window_label(analysis_window):
     return f"{start // 100}.{start % 100:02d} ~ {end // 100}.{end % 100:02d} ({int(row['month_count'])}개월)"
 
 
-def stress_column(year):
+def gold_stress_column(year):
+    """gold 표의 Stress 열 이름. 예: 2040 → 'stress_2040' (파이썬 Gold는 stress.stress_column → '2040 순인구효과')"""
     if year not in config.STRESS_YEARS:
         raise ValueError(f"Stress 연도는 {config.STRESS_YEARS} 중 하나입니다: {year}")
     return f"stress_{year}"
@@ -125,7 +126,7 @@ def stress_ranking(future_stress, year, region=None, industry=None, most_vulnera
         region: '서울' · '부산' · '경기' 또는 None(전체)
         industry: 업종 이름 또는 None(전체)
     """
-    column = stress_column(year)
+    column = gold_stress_column(year)
     frame = with_region_label(future_stress).dropna(subset=[column])
     if region:
         frame = frame[frame["region"] == region]
@@ -186,7 +187,7 @@ def age_breakdown(age_stress, province, district, industry_code, year):
                       & (age_stress["industry_code"] == industry_code)]
     frame = (rows.set_index("age_group")
              .reindex(AGE_GROUP_ORDER)
-             .rename(columns={f"change_rate_{year}": "change_rate", stress_column(year): "contribution"}))
+             .rename(columns={f"change_rate_{year}": "change_rate", gold_stress_column(year): "contribution"}))
     return frame[["amount_share", "change_rate", "contribution", "amount"]].rename_axis("age_group").reset_index()
 
 

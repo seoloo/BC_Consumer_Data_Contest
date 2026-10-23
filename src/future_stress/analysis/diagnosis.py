@@ -55,7 +55,7 @@ def is_strictly_growing(cases):
     값이 비어 있으면(6개월 미완전) 비교 결과가 False가 되어 자연스럽게 '성장 아님'이 됩니다.
     """
     return (
-        (cases["1월대비6월증감률"] > 0)
+        (cases["첫달대비마지막달증감률"] > 0)
         & (cases["월평균증감률"] > 0)
         & (cases["상승개월수"] >= config.MIN_RISING_MONTHS)
     )

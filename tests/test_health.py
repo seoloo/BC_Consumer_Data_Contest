@@ -70,7 +70,7 @@ def test_airflow_failed_run_names_the_step():
 
 def test_report_aligns_korean_names_and_shows_actions_only_for_problems():
     checks = [health.Check("gold 표", OK, "9개 표"), health.Check("객체 저장소", FAIL, "연결할 수 없음", "docker compose up -d")]
-    lines = health.report(checks).splitlines()
+    lines = health.format_report(checks).splitlines()
     # 한글을 두 칸으로 세었을 때 내용이 같은 칸에서 시작
     assert (health.display_width(lines[0][:lines[0].index("9개")])
             == health.display_width(lines[1][:lines[1].index("연결")]))

@@ -3,6 +3,14 @@
 날짜별로 무엇을 왜 했고, 숫자로 무엇을 확인했고, 무엇에 부딪혔는지 적습니다. 최신이 위입니다.
 기술마다 정리한 내용은 [README 목차](README.md)의 주제 문서에 있습니다.
 
+## 2026-10-23 — 폴더 구조 · 이름 정리
+
+- 공모전 산출물(노트북 · 발표 이미지 · 결과 CSV · 정리 스크립트 · 발표자료)을 `contest/`로 모음. 최상위가 '원래 분석'과 '파이프라인'으로 나뉘어 보이게.
+- 패키지를 역할별로 나눔: `analysis/`(분석 규칙) · `ingest/`(수집 · 합성) · `storage/`(저장소 · DB) · `ops/`(Airflow 단계 · 점검 · 대시보드 데이터). 맨 위에는 `config` · `io_utils` · `medallion` · `pipeline`만. 명령도 바뀜(예: `future_stress.health` → `future_stress.ops.health`), 문서 · CI · DAG · compose를 함께 고침.
+- 이름 정리: 열 `1월대비6월증감률` → `첫달대비마지막달증감률`(분석 기간이 옮겨 가므로. 발표 표로 내보낼 때만 '1→6월 증감률'), 대시보드 `stress_column` → `gold_stress_column`(같은 이름의 다른 함수와 구분), `clean` → `table_cell_text`, `report` → `format_report`, `to_number` → `parse_number_with_commas`, `describe_case` → `case_diagnosis_label`.
+- **확인:** 테스트 94개, 원본 6/6, dbt = 파이썬 Gold 8개 표(원본 · 합성), Airflow DAG 읽기 · 8단계 그대로.
+- **부딪힘:** 명령 이름을 글자 규칙으로 바꿀 때 `dashboard_data가`처럼 한글이 바로 붙은 곳은 단어 경계로 잡히지 않아 3곳을 따로 고침.
+
 ## 2026-10-23 — README 정리 · CI 실제 결과 확인
 
 - README를 한 페이지(77줄)로 줄임: 무엇을 풀었나 → 구조 → 핵심 설계 → 3줄 실행 → 더 보기. 실행 방법 · 분석 내용 · 흐름도 목록은 `docs/`의 문서로 옮김(지운 내용 없음).

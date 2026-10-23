@@ -232,7 +232,7 @@ def airflow_check():
         return judge_airflow(None, [], web_up)
 
 
-def report(checks):
+def format_report(checks):
     width = max(display_width(check.name) for check in checks)
     lines = []
     for check in checks:
@@ -251,7 +251,7 @@ def main():
     dataset = "합성" if arguments.synthetic else "원본"
     checks = run_checks(dataset)
     print(f"[{dataset}] {datetime.now(timezone.utc).astimezone(ZoneInfo(config.TIMEZONE)):%Y-%m-%d %H:%M} 기준")
-    print(report(checks))
+    print(format_report(checks))
     failed = [check.name for check in checks if check.status == FAIL]
     if failed:
         raise SystemExit(f"\n실패 {len(failed)}개: {', '.join(failed)}")

@@ -36,7 +36,7 @@ PostgreSQL gold (dbt) ──읽기 전용──▶ dashboard_data.py ──▶ d
 |---|---|---|
 | 개요 | 분석 대상 수, 2040년 취약 건수, 착시성장형 수, 4유형 × 지역 건수, raw 적재 기록 | `gold_market_type`, `gold_market_type_counts`, `raw._load_log` |
 | 지역 · 업종 순위 | 지역 · 업종 · 순서 · 건수를 골라 Stress 막대 (빨강 취약 · 파랑 안정) | `gold_future_stress` |
-| 4유형 지도 | 가로 = 1월 대비 6월 증감률(지금), 세로 = Stress 2040(미래), 색 = 취약 / 안정, 모양 = 성장 / 비성장 | `gold_market_type` |
+| 4유형 지도 | 가로 = 첫 달 대비 마지막 달 증감률(지금), 세로 = Stress 2040(미래), 색 = 취약 / 안정, 모양 = 성장 / 비성장 | `gold_market_type` |
 | 한 건 자세히 | 연령대별 ① 이용금액 비중 ② 인구 증감률 ③ 기여도 = ① ÷ 100 × ② | `gold_age_stress`, `gold_future_stress` |
 
 **화면 안에서 맞춰 보는 것 두 가지**

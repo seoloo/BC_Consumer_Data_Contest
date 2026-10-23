@@ -202,7 +202,7 @@ with detail_tab:
     industry_name = pick_industry.selectbox("업종", list(in_district["industry_name"]), key="detail_industry")
     case = in_district[in_district["industry_name"] == industry_name].iloc[0]
 
-    stress = case[data.stress_column(year)]
+    stress = case[data.gold_stress_column(year)]
     typed = market_type[(market_type["province"] == case["province"]) & (market_type["district"] == district)
                         & (market_type["industry_code"] == case["industry_code"])]
     first, second, third, fourth = st.columns(4)

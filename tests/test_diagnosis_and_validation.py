@@ -10,7 +10,7 @@ from future_stress.analysis.validation import build_growth_comparison_table, run
 def make_cases(growth_rows, stress_2035, stress_2040):
     """(1→6월, 월평균, 상승개월수) 튜플 목록으로 사례 표를 만듭니다."""
     return pd.DataFrame({
-        "1월대비6월증감률": [row[0] for row in growth_rows],
+        "첫달대비마지막달증감률": [row[0] for row in growth_rows],
         "월평균증감률": [row[1] for row in growth_rows],
         "상승개월수": [row[2] for row in growth_rows],
         "2035 순인구효과": stress_2035,

@@ -186,7 +186,7 @@ def mermaid_id(relation):
     return re.sub(r"\W", "_", name)
 
 
-def clean(text):
+def table_cell_text(text):
     """표 칸에 넣을 수 있게 줄바꿈 · | 를 정리합니다."""
     return re.sub(r"\s+", " ", str(text or "")).replace("|", "/").strip()
 
@@ -261,7 +261,7 @@ def build_document(manifest, tables, generated_at):
     for unique_id, table in ordered:
         test_total = sum(tests.get(unique_id, {}).values())
         parts.append(f"| `{table['schema']}` | [`{table['name']}`](#{table['schema']}{table['name']}) | {kinds[table['kind']]} | "
-                     f"{table['rows']:,} | {test_total} | {clean(table['description'])} |")
+                     f"{table['rows']:,} | {test_total} | {table_cell_text(table['description'])} |")
     multi_table = sum(tests.get(MULTI_TABLE, {}).values())
     parts += ["", f"표 {len(tables)}개 · 테스트 {total_tests}개 (dbt build가 매번 모두 실행). "
                   f"이 중 {multi_table}개는 여러 표를 함께 보는 직접 만든 SQL 테스트(대사 등, `dbt/tests/`)입니다.", ""]
@@ -286,12 +286,12 @@ def build_document(manifest, tables, generated_at):
         "",
     ]
     for unique_id, table in ordered:
-        parts += [f"### {table['schema']}.{table['name']}", "", clean(table["description"]) or "(설명 없음)", ""]
+        parts += [f"### {table['schema']}.{table['name']}", "", table_cell_text(table["description"]) or "(설명 없음)", ""]
         key_text = ", ".join(f"`{c}`" for c in keys.get(unique_id, []))
         test_text = ", ".join(f"{name} {count}" for name, count in sorted(tests.get(unique_id, {}).items()))
         meta = [f"행 {table['rows']:,}"] + ([f"열쇠 {key_text}"] if key_text else []) + ([f"테스트: {test_text}"] if test_text else [])
         parts += [" · ".join(meta), "", "| 열 | 타입 | 설명 |", "|---|---|---|"]
-        parts += [f"| `{name}` | {kind} | {clean(comment)} |" for name, kind, comment in table["columns"]]
+        parts += [f"| `{name}` | {kind} | {table_cell_text(comment)} |" for name, kind, comment in table["columns"]]
         parts.append("")
     return "\n".join(parts).rstrip() + "\n"
 

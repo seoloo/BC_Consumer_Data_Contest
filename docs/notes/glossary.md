@@ -109,7 +109,7 @@
 | 말 | 뜻 (쉬운 말) | 어디서 |
 |---|---|---|
 | **Future Stress** | 지금 손님의 연령 구성이 2040년 인구 변화에 얼마나 노출됐는지. Σ(연령별 소비 비중 × 인구 증감률). 음수면 손님 연령층이 줄어드는 쪽. | `stress.py` |
-| **엄격 성장** | 월평균 증감률 > 0, 1월 대비 6월 > 0, 오른 달 3번 이상을 모두 만족. | `diagnosis.is_strictly_growing()` |
+| **엄격 성장** | 월평균 증감률 > 0, 첫 달 대비 마지막 달 > 0, 오른 달 3번 이상을 모두 만족. | `diagnosis.is_strictly_growing()` |
 | **4유형** | 지금 성장 여부 × Stress 부호로 나눈 상권 유형 (착시성장 · 지속성장 · 구조취약 · 회복기회). | `diagnosis.classify_market_type()` |
 | **HHI** | 한쪽으로 얼마나 쏠렸는지 재는 지수. 비중 제곱의 합. 클수록 한 연령대에 의존. | `calculate_age_concentration()` |
 | **Mann-Whitney U · Fisher · Spearman** | 두 집단 분포 비교 · 두 비율 비교 · 순위가 얼마나 같은지 보는 통계 방법. | `validation.py`, `robustness.py` |
