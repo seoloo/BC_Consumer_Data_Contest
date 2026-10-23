@@ -12,19 +12,9 @@
 
 ## 구조
 
-```mermaid
-flowchart LR
-    src["원본 8종<br/>BC카드 · 장래인구 · 생활/유동인구"] --> bronze["Bronze<br/>SeaweedFS (S3)<br/>지문 영수증"]
-    kosis["KOSIS API"] --> src
-    bronze --> raw[("PostgreSQL<br/>raw")]
-    raw --> dbt["dbt<br/>silver · gold<br/>+ 테스트"]
-    bronze --> py["파이썬<br/>silver · gold<br/>+ 층 사이 대사"]
-    dbt --> cmp{"한 칸씩 비교<br/>차이 0"}
-    py --> cmp
-    dbt --> dash["Streamlit<br/>gold 읽기 전용"]
-    airflow["Airflow 월 배치"] -.-> bronze
-    ci["GitHub Actions<br/>합성 데이터로 전체 실행"] -.-> cmp
-```
+![전체 흐름](docs/diagrams/parts/08_target_architecture_1.png)
+
+매달 도는 단계와 파이썬 함수 ↔ dbt 모델 대응은 [아키텍처 흐름도](docs/diagrams/08_target_architecture.png)에 있습니다.
 
 ## 핵심 설계
 

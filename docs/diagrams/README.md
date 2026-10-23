@@ -13,7 +13,7 @@
 | 05 | [전략](05_strategy.png) | [1](parts/05_strategy_1.png) · [2](parts/05_strategy_2.png) · [3](parts/05_strategy_3.png) | 방어형 고객, 고객 구성 최적화, 메뉴 · 상품 전략 |
 | 06 | [코드 구조](06_code_structure.png) | [1](parts/06_code_structure_1.png) · [2](parts/06_code_structure_2.png) · [3](parts/06_code_structure_3.png) | 리팩토링 결과, 모듈 지도, 테스트 |
 | 07 | [메달리온 아키텍처](07_medallion.png) | [1](parts/07_medallion_1.png) · [2](parts/07_medallion_2.png) · [3](parts/07_medallion_3.png) | Bronze → Silver → Gold 계층, 계층 사이 대사 |
-| 08 | [목표 아키텍처](08_target_architecture.png) | [1](parts/08_target_architecture_1.png) · [2](parts/08_target_architecture_2.png) · [3](parts/08_target_architecture_3.png) | 데이터 마트 구조 (Phase 2 시작 때 그린 계획) |
+| 08 | [목표 아키텍처](08_target_architecture.png) | [1](parts/08_target_architecture_1.png) · [2](parts/08_target_architecture_2.png) · [3](parts/08_target_architecture_3.png) | 지금 구조: 전체 흐름, 파이썬 함수 ↔ dbt 모델, Airflow 단계, 자동으로 확인하는 것 |
 | 09 | [로드맵](09_roadmap.png) | [1](parts/09_roadmap_1.png) · [2](parts/09_roadmap_2.png) | 단계별 할 일과 완료 기준, 진행 기록 |
 | 10 | [데이터 웨어하우스](10_warehouse.png) | [1](parts/10_warehouse_1.png) · [2](parts/10_warehouse_2.png) | raw · ref · silver · gold 스키마, 파이썬 결과와 비교 |
 
